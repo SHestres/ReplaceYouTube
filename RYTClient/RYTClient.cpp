@@ -2,13 +2,31 @@
 //
 
 #include <iostream>
+#include <net>
+#include <string_view>
 
 int main()
 {
-    std::cout << "Hello World from client!\n";
+    std::cout << "Connecting to server..." << std::endl;
 
+    std::net::io_context context;
+    std::net::ip::tcp::resolver resolver(context);
+    std::net::ip::tcp::socket socket(context);
 
+    auto endpoints = resolver.resolve("localhost", "12345");
+    std::net::connect(socket, endpoints);
 
+    std::string message;
+    message.resize(128);
+
+    std::net::read(socket, std::net::buffer(message));
+
+    std::cout << "Received message from server: " << message << std::endl;
+
+    socket.shutdown(std::net::socket_base::shutdown_both);
+    socket.close();
+
+    return 0;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
