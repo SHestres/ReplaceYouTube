@@ -3,31 +3,18 @@
 
 
 #include <iostream>
-#include <net>
-#include <string_view>
+#include <ws2tcpip.h> //Includes what's needed to interface with windows sockets
+
+#pragma comment (lib, "ws2_32.lib")
 
 
-int main()
+
+
+void main()
 {
-    std::cout << "Starting server..." << std::endl;
 
-    std::net::io_context context;
-    std::net::ip::tcp::acceptor acceptor(context, { std::net::ip::tcp::v4(), 12345 });
 
-    while (true)
-    {
-        std::net::ip::tcp::socket socket(context);
-        acceptor.accept(socket);
 
-        std::cout << "Client connected: " << socket.remote_endpoint() << std::endl;
-
-        std::string message = "Hello from server!";
-        std::net::write(socket, std::net::buffer(message));
-
-        socket.shutdown(std::net::socket_base::shutdown_send);
-    }
-
-    return 0;
 }
 
 
