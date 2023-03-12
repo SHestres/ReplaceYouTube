@@ -1,4 +1,3 @@
-// RYTServer.cpp : This file contains the 'main' function. Program execution begins and ends there.
 // Following tutorial at https://www.youtube.com/watch?v=WDn-htpBlnU
 
 
