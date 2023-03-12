@@ -1,10 +1,11 @@
 // Following tutorial at https://www.youtube.com/watch?v=WDn-htpBlnU
 
+//Jumping point for abstracting the network layer https://www.youtube.com/watch?v=y4_mFrTeD_A&list=PLZo2FfoMkJeEogzRXEJeTb3xpA2RAzwCZ&index=9
 
 #include <iostream>
-#include <ws2tcpip.h> //Includes what's needed to interface with windows sockets
+#include <ws2tcpip.h>					//Header file for Winsock functions
 
-#pragma comment (lib, "ws2_32.lib")
+#pragma comment (lib, "ws2_32.lib")		//Winsock Library file
 
 
 
