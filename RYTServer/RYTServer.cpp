@@ -56,18 +56,57 @@ void main()
 		std::cerr << "Client socket invalid." << std::endl;
 	}
 
+	char host[NI_MAXHOST];		//Client's remote name
+	char service[NI_MAXSERV];	//Service (i.e. port) the client is connected to
 
+	ZeroMemory(host, NI_MAXHOST);	//same as memset(host, 0, NI_MAXHOST); Clears the memory at &host
+	ZeroMemory(service, NI_MAXSERV);
+
+	if (getnameinfo((SOCKADDR*)&client, sizeof(client), host, NI_MAXHOST, service, NI_MAXSERV, 0) == 0) //If you can't get the client name
+	{
+		std::cout << host << " connected on port " << service << std::endl;
+	}
+	else
+	{
+		inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST); //Converts the ip address into a string, stores in string buffer "host"
+		std::cout << host << " connected on port " <<
+			ntohs(client.sin_port) << std::endl;
+	}
 
 	//Close listening socket
+	closesocket(listening); //Only closed in this case becuase we're currently only accepting one client
 
 	//While loop: Accept and echo message back to client
+	char buf[4096]; //Limited to 4096 for tutorial purposes, can and should be much larger
 
+	while (true) //Example functionality of a server
+	{
+		ZeroMemory(buf, 4096);
 
+		//Wait for client to send data
+		int bytesReceived = recv(clientSocket, buf, 4096, 0); //Copies bytes recieved into buf, and returned the number of bytes
+		if (bytesReceived == SOCKET_ERROR)
+		{
+			std::cerr << "Error in recv(). Exiting" << std::endl;
+			break;
+		}
+		if(bytesReceived == 0)
+		{
+			std::cout << "Client disconnected" << std::endl;
+			break;
+		}
+		
+
+		//Echo message back to client
+		send(clientSocket, buf, bytesReceived + 1, 0); //Adding one to length sends the null ternimator because buf was zeroed.
+
+	}
 
 	//Close the socket
+	closesocket(clientSocket);
 
-	//Shut down winsock
-
+	//Shut down / clean up winsock
+	WSACleanup();
 
 }
 
