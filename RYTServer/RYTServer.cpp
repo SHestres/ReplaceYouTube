@@ -9,7 +9,7 @@ void Listener_MessageReceived(CTcpListener* listener, int client, std::string ms
 
 void main()
 {
-	CTcpListener server("192.169.1.241", 54000, Listener_MessageReceived);
+	CTcpListener server("", 54000, Listener_MessageReceived); 
 
 	if (server.Init())
 	{

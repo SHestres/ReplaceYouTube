@@ -19,6 +19,7 @@ class CTcpListener
 
 public:
 
+	//Pass an empty string to listen on all IPs
 	CTcpListener(std::string ipAddress, int port, MessageRecievedHandler handler);
 	
 	~CTcpListener();

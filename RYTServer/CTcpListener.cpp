@@ -97,18 +97,27 @@ SOCKET CTcpListener::CreateSocket()
 		sockaddr_in hint;
 		hint.sin_family = AF_INET;
 		hint.sin_port = htons(m_port);
-		inet_pton(AF_INET, m_ipAddress.c_str(), &hint.sin_addr);
+		if (m_ipAddress != "")
+		{
+			inet_pton(AF_INET, m_ipAddress.c_str(), &hint.sin_addr);
+		}
+		else
+		{
+			hint.sin_addr.S_un.S_addr = INADDR_ANY;
+		}
 
 		int bindOk = bind(listening, (sockaddr*)&hint, sizeof(hint));
 		if (bindOk != SOCKET_ERROR)
 		{
 			int listenOk = listen(listening, SOMAXCONN);
 			if (listenOk == SOCKET_ERROR) {
+				std::cerr << "Listening gave winsock error " << WSAGetLastError() << std::endl;
 				return -1;
 			}
 		}
 		else
 		{
+			std::cerr << "Binding the socket gave winsock error " << WSAGetLastError() << std::endl;
 			return -1;
 		}
 	}
