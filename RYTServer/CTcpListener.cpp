@@ -60,6 +60,9 @@ void CTcpListener::Run()
 		{
 			//Close socket to only connect to one client at a time
 			closesocket(listening);
+			
+
+			
 			//Loop receive / send
 			int bytesReceived = 0;
 			do
@@ -128,6 +131,28 @@ SOCKET CTcpListener::CreateSocket()
 //Wait for a connection
 SOCKET CTcpListener::WaitForConnection(SOCKET listening) 
 {
-	SOCKET client = accept(listening, NULL, NULL); //Will stall while waiting for a client
-	return client;
+	//Get Connection
+	sockaddr_in client;
+	int clientSize = sizeof(client);
+	SOCKET clientSock = accept(listening, (sockaddr*) &client, &clientSize); //Will stall while waiting for a client
+	
+	//Print Info
+	char host[NI_MAXHOST];		//Client's remote name
+	char service[NI_MAXSERV];	//Service (i.e. port) the client is connected to
+
+	ZeroMemory(host, NI_MAXHOST);	//same as memset(host, 0, NI_MAXHOST); Clears the memory at &host
+	ZeroMemory(service, NI_MAXSERV);
+
+	if (getnameinfo((SOCKADDR*)&client, sizeof(client), host, NI_MAXHOST, service, NI_MAXSERV, 0) == 0) //If you can't get the client name
+	{
+		std::cout << host << " connected on port " << service << std::endl;
+	}
+	else
+	{
+		inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST); //Converts the ip address into a string, stores in string buffer "host"
+		std::cout << host << " connected on port " <<
+			ntohs(client.sin_port) << std::endl;
+	}
+	
+	return clientSock;
 }
