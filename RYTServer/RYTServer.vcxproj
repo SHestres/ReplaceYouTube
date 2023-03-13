@@ -127,7 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CTcpListener.cpp" />
     <ClCompile Include="RYTServer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CTcpListener.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
