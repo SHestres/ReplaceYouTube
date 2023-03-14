@@ -3,14 +3,49 @@
 
 #include <iostream>
 #include <string>
-#include <ws2tcpip.h>					//Header file for Winsock functions
+#include <ws2tcpip.h>	//Header file for Winsock functions
+
+#include "TcpClientNetworking.h"
 
 #pragma comment (lib, "ws2_32.lib")		//Winsock Library file
+
+//Forward Declaration
+void DoNothing(TcpConnection ServerConnection, std::string msg);
 
 void main()
 {
 	std::string serverIP = "10.140.100.111";		//Server ip address
 	int port = 54000;								//Listening port number on the server
+
+	TcpConnection server(serverIP, port, DoNothing);
+
+	int attempts = 0;
+	bool connected = false;
+	do
+	{
+		connected = server.Init();
+		attempts++;
+	} while (!connected && attempts < 10);
+
+	while (true)
+	{
+		std::cout << ">";
+
+		std::string userInput;
+		getline(std::cin, userInput);
+		server.Send(userInput);
+
+		std::string serverResponse;
+		server.waitForResponse(&serverResponse);
+
+		std::cout << "Server>" << serverResponse << std::endl;
+	}
+}
+
+void DoNothing(TcpConnection ServerConnection, std::string msg)
+{}
+
+	/*
 
 	//Initialize Winsock
 	WSADATA wsData;
@@ -72,7 +107,7 @@ void main()
 			int bytesReceived = recv(sock, buf, 4096, 0);
 			if (bytesReceived < 0)
 			{
-				std::cout << "Received nothing from the server" << std::endl;
+				std::cout << "Error recieving from server" << std::endl;
 			}
 			else if (bytesReceived == 0)
 			{
@@ -87,5 +122,4 @@ void main()
 	//Gracefully close everything
 	closesocket(sock);
 	WSACleanup();
-
-}
+	*/
