@@ -1,6 +1,37 @@
 // Following tutorial at https://www.youtube.com/watch?v=WDn-htpBlnU
 
-//Jumping point for abstracting the network layer https://www.youtube.com/watch?v=y4_mFrTeD_A&list=PLZo2FfoMkJeEogzRXEJeTb3xpA2RAzwCZ&index=9
+
+#include <iostream>
+
+#include"CTcpListener.h"
+
+void Listener_MessageReceived(CTcpListener* listener, int client, std::string msg);
+
+void main()
+{
+	CTcpListener server("", 54000, Listener_MessageReceived); 
+
+	if (server.Init())
+	{
+		server.Run();
+	}
+
+}
+
+void Listener_MessageReceived(CTcpListener* listener, int client, std::string msg)
+{
+	listener->Send(client, msg);
+}
+
+
+
+
+
+
+//The remainder of this file is leftover from the bare-bones server
+
+
+/*
 
 #include <iostream>
 #include <ws2tcpip.h>					//Header file for Winsock functions
@@ -27,7 +58,7 @@ void main()
 	/*
 		A socket is often just a number that get's mapped in the OS, but on windows systems
 		it's given an actual type
-	*/
+	*//*
 	SOCKET listening = socket(AF_INET, SOCK_STREAM, 0); //(Address family, Socket type (stream for tcp), protocol flag)
 	if (listening == INVALID_SOCKET)
 	{
@@ -108,16 +139,6 @@ void main()
 	//Shut down / clean up winsock
 	WSACleanup();
 
-}
+}*/
 
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
