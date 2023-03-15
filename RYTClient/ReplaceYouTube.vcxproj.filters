@@ -16,6 +16,9 @@
     <Filter Include="Source Files\VideoPlayer">
       <UniqueIdentifier>{45b64be8-c91a-4f87-a928-c27204405d2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\VideoPlayer\Rendering">
+      <UniqueIdentifier>{723657e7-746c-49de-a826-5b8a2c881677}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RYTClient.cpp">
@@ -30,6 +33,15 @@
     <ClCompile Include="..\RYTServer\glad.c">
       <Filter>Source Files\VideoPlayer</Filter>
     </ClCompile>
+    <ClCompile Include="EBO.cpp">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="VAO.cpp">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="VBO.cpp">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TcpClientNetworking.h">
@@ -38,5 +50,22 @@
     <ClInclude Include="VideoPlayer.h">
       <Filter>Source Files\VideoPlayer</Filter>
     </ClInclude>
+    <ClInclude Include="EBO.h">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="VAO.h">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="VBO.h">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="default.frag">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </None>
+    <None Include="default.vert">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </None>
   </ItemGroup>
 </Project>

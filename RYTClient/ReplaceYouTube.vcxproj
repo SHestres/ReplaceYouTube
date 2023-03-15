@@ -133,13 +133,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\RYTServer\glad.c" />
+    <ClCompile Include="EBO.cpp" />
     <ClCompile Include="RYTClient.cpp" />
     <ClCompile Include="TcpClientNetworking.cpp" />
+    <ClCompile Include="VAO.cpp" />
+    <ClCompile Include="VBO.cpp" />
     <ClCompile Include="VideoPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EBO.h" />
     <ClInclude Include="TcpClientNetworking.h" />
+    <ClInclude Include="VAO.h" />
+    <ClInclude Include="VBO.h" />
     <ClInclude Include="VideoPlayer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="default.frag" />
+    <None Include="default.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
