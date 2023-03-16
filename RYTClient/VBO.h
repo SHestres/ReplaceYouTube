@@ -14,6 +14,7 @@ class VBO
 		void Bind();
 		void Unbind();
 		void Delete();
+
 };
 
 #endif VBO_CLASS_H

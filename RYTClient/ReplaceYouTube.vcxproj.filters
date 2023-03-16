@@ -42,6 +42,9 @@
     <ClCompile Include="VBO.cpp">
       <Filter>Source Files\VideoPlayer\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="shaderClass.cpp">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TcpClientNetworking.h">
@@ -57,6 +60,9 @@
       <Filter>Source Files\VideoPlayer\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="VBO.h">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="shaderClass.h">
       <Filter>Source Files\VideoPlayer\Rendering</Filter>
     </ClInclude>
   </ItemGroup>

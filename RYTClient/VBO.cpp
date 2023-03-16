@@ -1,5 +1,6 @@
 #include "VBO.h"
 
+
 VBO::VBO(GLfloat* vertices, GLsizeiptr size)
 {
 	//Create the buffer
@@ -23,4 +24,5 @@ void VBO::Unbind()
 void VBO::Delete()
 {
 	glDeleteBuffers(1, &ID);
+	delete(this);
 }
