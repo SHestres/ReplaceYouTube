@@ -7,13 +7,22 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+
 #include "shaderClass.h"
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
 
+
+
 #pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "opengl32.lib")
+
+
+#include <mfapi.h>  //Microsoft Media Foundation
+
+
+#pragma comment(lib, "Mfplat.lib")  //Media foundation
 
 
 class VideoPlayer
@@ -38,18 +47,20 @@ private:
 	std::string w_name;
 	GLFWwindow* window;
 
-	//Vertex Array
 	VAO* VAO1;
-	//Vertex Buffer
 	VBO* VBO1;
-	//Index Buffer
 	EBO* EBO1;
 
 	Shader* shaderProgram;
-
 	GLuint* uni_IDs;
-	/*
-	GLfloat vertices[12];
-	GLuint indices[6];
-	*/
+
+	int InitRendering();
+	void DrawToScreen();
+
+	void InitDecoder();
+	void ReceiveEncodedData();
+
+	//For server
+	void InitEncoder();
+	void SendEncodedData();
 };

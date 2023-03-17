@@ -20,6 +20,87 @@ VideoPlayer::~VideoPlayer()
 //Initializes glad and glfw, opens a window, and defines a viewport
 int VideoPlayer::Init()
 {
+	if (InitRendering() < 0)
+	{
+		std::cerr << "Couldn't initialize rendering." << std::endl;
+		return -1;
+	}
+	if (InitEncoder() < 0)
+	{
+		std::cerr << "Couldn't initialize Encoder." << std::endl;
+		return -1;
+	}
+
+	return 0;
+}
+
+void VideoPlayer::Cleanup()
+{
+	VAO1->Delete();
+	VBO1->Delete();
+	EBO1->Delete();
+	shaderProgram->Delete();
+
+	delete(uni_IDs);
+
+	glfwDestroyWindow(window);
+	glfwTerminate();
+}
+
+void VideoPlayer::Run()
+{
+	while (!glfwWindowShouldClose(window))
+	{
+		DrawToScreen();
+	}
+}
+
+void VideoPlayer::DrawToScreen()
+{
+	//pollKeys(window);
+		/*
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
+		{
+			//glfwGetCursorPos(window, &x, &y);
+		}
+		*/
+
+		//Clear buffer and set to solid navy blue color
+	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+	//Apply function to color buffer
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//std::cout << xScale << std::endl;
+
+	//Actually use shaderProgram
+	shaderProgram->Activate();
+	//Set the values of the uniforms
+	glUniform1i(uni_IDs[0], w_wid);
+	glUniform1i(uni_IDs[1], w_hei);
+	/*glUniform1f(uniID_xScale, xScale);
+	glUniform1f(uniID_yScale, yScale);
+	glUniform1f(uniID_xOff, xOffset);
+	glUniform1f(uniID_yOff, yOffset);*/
+
+	//Bind the VAO. Unnecesary if only one, but a good habit
+	VAO1->Bind();
+
+	//Draw the primatives: Type, starting ind, number of verticies to draw
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	//Draw the primatives: Type, Num of indices, datatype of indices, index of indices
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	//Swap buffers to actually draw the frame
+	glfwSwapBuffers(window);
+
+
+	//Allows window to respond
+	glfwPollEvents();
+}
+
+int VideoPlayer::InitRendering()
+{
 	/////////Configuration
 	glfwInit();
 
@@ -50,9 +131,6 @@ int VideoPlayer::Init()
 	//Tell openGL the area of the window we want to render in
 	glViewport(0, 0, w_wid, w_hei);
 
-
-
-	
 
 	GLfloat vertices[] =
 	{
@@ -94,67 +172,39 @@ int VideoPlayer::Init()
 	uni_IDs[0] = glGetUniformLocation(shaderProgram->ID, "width");
 	uni_IDs[1] = glGetUniformLocation(shaderProgram->ID, "height");
 
-
-
 	return 0;
 }
 
-void VideoPlayer::Cleanup()
+void VideoPlayer::InitDecoder()
 {
-	VAO1->Delete();
-	VBO1->Delete();
-	EBO1->Delete();
-	shaderProgram->Delete();
-
-	delete(uni_IDs);
-
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	//Some initiliazation??
 }
 
-void VideoPlayer::Run()
+void VideoPlayer::ReceiveEncodedData()
 {
-	while (!glfwWindowShouldClose(window))
-	{
-		//pollKeys(window);
-		/*
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
-		{
-			//glfwGetCursorPos(window, &x, &y);
-		}
-		*/
+	//Receive bytes from server
 
-		//Clear buffer and set to solid navy blue color
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-		//Apply function to color buffer
-		glClear(GL_COLOR_BUFFER_BIT);
+	//Decode once there's enough
 
-		//std::cout << xScale << std::endl;
+	//Reconstruct into frame data
 
-		//Actually use shaderProgram
-		shaderProgram->Activate();
-		//Set the values of the uniforms
-		glUniform1i(uni_IDs[0], w_wid);
-		glUniform1i(uni_IDs[1], w_hei);
-		/*glUniform1f(uniID_xScale, xScale);
-		glUniform1f(uniID_yScale, yScale);
-		glUniform1f(uniID_xOff, xOffset);
-		glUniform1f(uniID_yOff, yOffset);*/
-
-		//Bind the VAO. Unnecesary if only one, but a good habit
-		VAO1->Bind();
-
-		//Draw the primatives: Type, starting ind, number of verticies to draw
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		//Draw the primatives: Type, Num of indices, datatype of indices, index of indices
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-		//Swap buffers to actually draw the frame
-		glfwSwapBuffers(window);
-
-
-		//Allows window to respond
-		glfwPollEvents();
-	}
+	//Send to Renderer
 }
+
+void VideoPlayer::InitEncoder()
+{
+	//Some initiliazation??
+	
+	//Open file and get bytestream
+
+}
+
+void VideoPlayer::SendEncodedData()
+{
+	//Take available bytes from bytestream
+
+	//Encode once there's enough data
+
+	//Send to client
+}
+

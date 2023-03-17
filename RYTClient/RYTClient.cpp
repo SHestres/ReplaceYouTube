@@ -17,8 +17,11 @@ void main()
 {
 	VideoPlayer player;
 
-	player.Init();
-	player.Run();
+	if (player.Init() == 0)
+	{
+		player.Run();
+	}
+
 
 
 
