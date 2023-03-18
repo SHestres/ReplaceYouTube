@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
 //#include <input.h>
 
 #include <glad/glad.h>
@@ -20,18 +21,29 @@
 
 
 #include <mfapi.h>  //Microsoft Media Foundation
+#include <mfidl.h>	//Source resolver
 
+#pragma comment(lib, "Mfplat.lib")  
+#pragma comment(lib, "mfuuid.lib") //GUID symbols
 
-#pragma comment(lib, "Mfplat.lib")  //Media foundation
+//#pragma comment(lib, "Mfh265enc.dll")
+
+//#pragma comment(lib, "dxva2.lib")
+//#pragma comment(lib, "evr.lib")
+//#pragma comment(lib, "mf.lib")
+//#pragma comment(lib, "mfplat.lib")
+//#pragma comment(lib, "mfplay.lib")
+//#pragma comment(lib, "mfreadwrite.lib")
+
 
 
 class VideoPlayer
 {
 
 public:
-	VideoPlayer();
+	VideoPlayer(std::string FileName);
 
-	VideoPlayer(int WindowWidth, int WindowHeight, std::string WindowName);
+	VideoPlayer(std::string FileName, int WindowWidth, int WindowHeight, std::string WindowName);
 
 	~VideoPlayer();
 
@@ -57,10 +69,13 @@ private:
 	int InitRendering();
 	void DrawToScreen();
 
-	void InitDecoder();
+	int InitDecoder();
 	void ReceiveEncodedData();
 
 	//For server
-	void InitEncoder();
+	int InitEncoder();
 	void SendEncodedData();
+
+	std::string filename;
+	
 };

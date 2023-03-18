@@ -15,7 +15,7 @@ void DoNothing(TcpConnection ServerConnection, std::string msg);
 
 void main()
 {
-	VideoPlayer player;
+	VideoPlayer player("success.mp4");
 
 	if (player.Init() == 0)
 	{

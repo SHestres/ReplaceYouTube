@@ -1,15 +1,15 @@
 #include "VideoPlayer.h"
 
-VideoPlayer::VideoPlayer()
+
+VideoPlayer::VideoPlayer(std::string FileName)
 {
 	w_wid = 800;
 	w_hei = 600;
 	w_name = "VideoPlayer";
-
 }
 
-VideoPlayer::VideoPlayer(int WindowWidth = 800, int WindowHeight = 600, std::string WindowName = "VideoPlayer")
-	:w_wid(WindowWidth), w_hei(WindowHeight), w_name(WindowName)
+VideoPlayer::VideoPlayer(std::string FileName, int WindowWidth = 800, int WindowHeight = 600, std::string WindowName = "VideoPlayer")
+	:filename(FileName), w_wid(WindowWidth), w_hei(WindowHeight), w_name(WindowName)
 {}
 
 VideoPlayer::~VideoPlayer()
@@ -175,9 +175,10 @@ int VideoPlayer::InitRendering()
 	return 0;
 }
 
-void VideoPlayer::InitDecoder()
+int VideoPlayer::InitDecoder()
 {
 	//Some initiliazation??
+	return 0;
 }
 
 void VideoPlayer::ReceiveEncodedData()
@@ -191,13 +192,71 @@ void VideoPlayer::ReceiveEncodedData()
 	//Send to Renderer
 }
 
-void VideoPlayer::InitEncoder()
+int VideoPlayer::InitEncoder()
 {
-	//Some initiliazation??
+	//Create bytestream from file
+	IMFByteStream* videoStream;
+	std::wstring filename_w(filename.begin(), filename.end());
+	HRESULT vsOK = MFCreateFile(MF_ACCESSMODE_READ, MF_OPENMODE_FAIL_IF_NOT_EXIST, MF_FILEFLAGS_NONE, filename_w.c_str(), &videoStream);
+
+	//Create the source resolver
+	IMFSourceResolver* resolver;
+	HRESULT srOK = MFCreateSourceResolver(&resolver);
+	if (srOK != S_OK)
+	{
+		std::cerr << "Couldn't create source resolver" << std::endl;
+	}
+
+	//Resolve the Source from the bytestream
+	MF_OBJECT_TYPE objectType;
+	IUnknown* source;
+	HRESULT objOK= resolver->CreateObjectFromByteStream(videoStream, NULL, NULL, NULL, &objectType, &source);
+	if (objOK != S_OK)
+	{
+		std::cerr << "Couldn't create Source object from filestream." << std::endl;
+		return -1;
+	}
+	if (objectType == MF_OBJECT_INVALID)
+	{
+		std::cerr << "Source Object was invalid when created." << std::endl;
+		return -1;
+	}
+
+
+	//Get an array of activators for possible transformers
+	MFT_REGISTER_TYPE_INFO h265_t = { MFMediaType_Video, MFVideoFormat_H265 };
+	//MFT_REGISTER_TYPE_INFO mp4_t = {MFMediaType_Video, MFVideoFormat_MP4}
+	IMFActivate** encoderActivatorArr;
+	UINT32 numActivators;
+	HRESULT mftOK = MFTEnumEx(MFT_CATEGORY_VIDEO_ENCODER, 0, NULL, &h265_t, &encoderActivatorArr, &numActivators);//(MFT Category, flags, input media type, output media type, (out) activator[], (out) numActivatorsFound)
+	if (numActivators <= 0)
+	{
+		std::cerr << "No available matching Media Transforms. Exiting" << std::endl;
+		return -1;
+	}
+	if (mftOK != S_OK)
+	{
+		std::cerr << "Couldn't create Media Transform Activator." << std::endl;
+		return -1;
+	}
+	if (numActivators == 1)
+	{
+		//std::cout << "MFT guid was " << encoderActivatorArr[0]->GetGUID << std::endl;
+	}
+	std::cout << "Num of activators: " << numActivators << std::endl;
+
+
+	//Choose an activator
+
+	//Create the sink
 	
 	//Open file and get bytestream
 
+	//Create ASF Media Sink
+
+	return 0;
 }
+
 
 void VideoPlayer::SendEncodedData()
 {
