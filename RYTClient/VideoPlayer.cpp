@@ -242,11 +242,11 @@ int VideoPlayer::InitEncoder()
 	//
 
 	//Get an array of activators for possible transformers
-	MFT_REGISTER_TYPE_INFO h265_t = { MFMediaType_Video, MFVideoFormat_H265 };
+	MFT_REGISTER_TYPE_INFO h264_t = { MFMediaType_Video, MFVideoFormat_H264 };
 	//MFT_REGISTER_TYPE_INFO mp4_t = {MFMediaType_Video, MFVideoFormat_MP4}
 	IMFActivate** encoderActivatorArr;
 	UINT32 numActivators;
-	HRESULT mftOK = MFTEnumEx(MFT_CATEGORY_VIDEO_ENCODER, 0, NULL, &h265_t, &encoderActivatorArr, &numActivators);//(MFT Category, flags, input media type, output media type, (out) activator[], (out) numActivatorsFound)
+	HRESULT mftOK = MFTEnumEx(MFT_CATEGORY_VIDEO_ENCODER, 0, NULL, &h264_t, &encoderActivatorArr, &numActivators);//(MFT Category, flags, input media type, output media type, (out) activator[], (out) numActivatorsFound)
 	if (numActivators <= 0)
 	{
 		std::cerr << "No available matching Media Transforms. Exiting" << std::endl;

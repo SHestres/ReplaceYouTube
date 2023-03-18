@@ -27,7 +27,7 @@
 #pragma comment(lib, "Mfplat.lib")  
 #pragma comment(lib, "mfuuid.lib") //GUID symbols
 
-//#pragma comment(lib, "Mfh265enc.dll")
+//#pragma comment(lib, "mfh265enc.dll")
 
 //#pragma comment(lib, "dxva2.lib")
 //#pragma comment(lib, "evr.lib")
