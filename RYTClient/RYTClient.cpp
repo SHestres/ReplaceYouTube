@@ -15,7 +15,8 @@ void DoNothing(TcpConnection ServerConnection, std::string msg);
 
 void main()
 {
-	VideoPlayer player("success.mp4");
+	//VideoPlayer player("C:\\Users\\sidne\\source\\repos\\SHestres\\ReplaceYouTube\\success.mp4");
+	VideoPlayer player("..\\success.mp4");
 
 	if (player.Init() == 0)
 	{

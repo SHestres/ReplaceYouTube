@@ -2,6 +2,7 @@
 
 
 VideoPlayer::VideoPlayer(std::string FileName)
+	: filename(FileName)
 {
 	w_wid = 800;
 	w_hei = 600;
@@ -194,10 +195,25 @@ void VideoPlayer::ReceiveEncodedData()
 
 int VideoPlayer::InitEncoder()
 {
+	ULONG startOK = MFStartup(MF_VERSION);
+	if (startOK != S_OK)
+	{
+		std::cerr << "Couldn't start Media Foundation." << std::endl;
+		return -1;
+	}
+
+	std::cout << "Filename: " << filename << std::endl;
+
 	//Create bytestream from file
+	//std::experimental::filesystem::path p{ filename };
 	IMFByteStream* videoStream;
-	std::wstring filename_w(filename.begin(), filename.end());
+	/*LPCWSTR filename_w = */std::wstring filename_w(filename.begin(), filename.end());
 	HRESULT vsOK = MFCreateFile(MF_ACCESSMODE_READ, MF_OPENMODE_FAIL_IF_NOT_EXIST, MF_FILEFLAGS_NONE, filename_w.c_str(), &videoStream);
+	if (vsOK != S_OK)
+	{
+		std::cerr << "Couldn't create bytestream from file. Error: " << vsOK << std::endl;
+		return -1;
+	}
 
 	//Create the source resolver
 	IMFSourceResolver* resolver;
@@ -205,6 +221,7 @@ int VideoPlayer::InitEncoder()
 	if (srOK != S_OK)
 	{
 		std::cerr << "Couldn't create source resolver" << std::endl;
+		return -1;
 	}
 
 	//Resolve the Source from the bytestream
@@ -222,6 +239,7 @@ int VideoPlayer::InitEncoder()
 		return -1;
 	}
 
+	//
 
 	//Get an array of activators for possible transformers
 	MFT_REGISTER_TYPE_INFO h265_t = { MFMediaType_Video, MFVideoFormat_H265 };
