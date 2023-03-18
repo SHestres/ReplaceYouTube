@@ -257,14 +257,23 @@ int VideoPlayer::InitEncoder()
 		std::cerr << "Couldn't create Media Transform Activator." << std::endl;
 		return -1;
 	}
-	if (numActivators == 1)
+	if (numActivators != 1)
 	{
-		//std::cout << "MFT guid was " << encoderActivatorArr[0]->GetGUID << std::endl;
+		std::cout << "Too many MFTransforms." << std::endl;
+		return -1;
 	}
-	std::cout << "Num of activators: " << numActivators << std::endl;
 
+	
 
-	//Choose an activator
+	//Choose an activator, build transform
+	IMFTransform* encoder;
+	HRESULT encodeOK = encoderActivatorArr[0]->ActivateObject(IID_IMFTransform, (void**)&encoder);
+	if (encodeOK != S_OK)
+	{
+		std::cerr << "Couldn't create encoder" << std::endl;
+		return -1;
+	}
+
 
 	//Create the sink
 	
