@@ -239,7 +239,6 @@ int VideoPlayer::InitEncoder()
 		return -1;
 	}
 
-	//
 
 	//Get an array of activators for possible transformers
 	MFT_REGISTER_TYPE_INFO h264_t = { MFMediaType_Video, MFVideoFormat_H264 };
@@ -276,10 +275,12 @@ int VideoPlayer::InitEncoder()
 
 
 	//Create the sink
-	
-	//Open file and get bytestream
-
-	//Create ASF Media Sink
+	IMFByteStream* outNetStream;
+	outNetStream->SetLength(4096);
+	IMFMediaType* encodedType;
+	MFCreateMediaType(&encodedType);
+	IMFMediaSink* encodedSink;
+	MFCreateADTSMediaSink(outNetStream, encodedType, &encodedSink);
 
 	return 0;
 }
