@@ -21,11 +21,14 @@
 #pragma comment(lib, "opengl32.lib")
 
 
-#include <mfapi.h>  //Microsoft Media Foundation
+#include <mfapi.h>  //Microsoft Media Foundation api
 #include <mfidl.h>	//Source resolver
+#include <mfreadwrite.h>
+#include <codecapi.h> //h264 MPEG2 profile
 
 #pragma comment(lib, "Mfplat.lib")  
 #pragma comment(lib, "mfuuid.lib") //GUID symbols
+#pragma comment(lib, "mfreadwrite.lib")
 
 //#pragma comment(lib, "mfh265enc.dll")
 
@@ -75,7 +78,10 @@ private:
 
 	//For server
 	int InitEncoder();
-	void SendEncodedData();
+	int SendEncodedData();
+	IMFSourceReader* m_sourceReader;
+	IMFSinkWriter* m_sinkWriter;
+	IMFByteStream* m_outNetStream;
 
 	std::string filename;
 	
