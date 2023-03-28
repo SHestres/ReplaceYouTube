@@ -21,6 +21,10 @@
 #pragma comment(lib, "opengl32.lib")
 
 
+#include <assert.h>
+#include <thread>
+#include <future>
+
 #include <mfapi.h>  //Microsoft Media Foundation api
 #include <mfidl.h>	//Source resolver
 #include <mfreadwrite.h>
@@ -29,6 +33,7 @@
 #pragma comment(lib, "Mfplat.lib")  
 #pragma comment(lib, "mfuuid.lib") //GUID symbols
 #pragma comment(lib, "mfreadwrite.lib")
+#pragma comment(lib, "mf.lib")
 
 //#pragma comment(lib, "mfh265enc.dll")
 
@@ -84,5 +89,29 @@ private:
 	IMFByteStream* m_outNetStream;
 
 	std::string filename;
+
+	//Brooooo
+	HRESULT OpenFile(LPCWSTR sURL);
+	HRESULT CreateMediaSource(LPCWSTR url, IMFMediaSource** ppMediaSource);
+	HRESULT ConfigureAudioOutput();
+	HRESULT ConfigureVideoOutput();
+	HRESULT ConfigureContainer();
+	HRESULT FinalizeMediaSession(IMFByteStream* ppByteStream);
+	//HRESULT Transcode();
+	HRESULT CreateOutputStream();
+	
+	HRESULT StartMediaSession();
+	HRESULT ShutdownMediaSession();
+	HRESULT ProcessMediaSessionEvents();
+
+	IMFMediaSource* m_pSource;
+	IMFMediaSession* m_pSession;
+	IMFTranscodeProfile* m_pProfile;
+	IMFTopology* m_pTopology;
+
+
+		//Remove
+	int InitEncoderOld();
+	int SendEncodedDataOld();
 	
 };
