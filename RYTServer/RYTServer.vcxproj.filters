@@ -21,9 +21,15 @@
     <ClCompile Include="CTcpListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Encoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CTcpListener.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Encoder.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

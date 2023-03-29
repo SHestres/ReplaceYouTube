@@ -91,7 +91,7 @@ private:
 	std::string filename;
 
 	//Brooooo
-	HRESULT OpenFile(LPCWSTR sURL);
+	HRESULT OpenFileAndCreateSession(LPCWSTR sURL);
 	HRESULT CreateMediaSource(LPCWSTR url, IMFMediaSource** ppMediaSource);
 	HRESULT ConfigureAudioOutput();
 	HRESULT ConfigureVideoOutput();

@@ -5,16 +5,23 @@
 #include <string>
 #include <ws2tcpip.h>	//Header file for Winsock functions
 
-#include "TcpClientNetworking.h"
-#include "VideoPlayer.h"
+//#include "TcpClientNetworking.h"
+//#include "VideoPlayer.h"
+
+//#include "AppWindow.cpp"
 
 #pragma comment (lib, "ws2_32.lib")		//Winsock Library file
 
 //Forward Declaration
-void DoNothing(TcpConnection ServerConnection, std::string msg);
+//void DoNothing(TcpConnection ServerConnection, std::string msg);
 
-void main()
+
+
+void AppMain()
 {
+
+
+	/* Video Player
 	//VideoPlayer player("C:\\Users\\sidne\\source\\repos\\SHestres\\ReplaceYouTube\\success.mp4");
 	VideoPlayer player("..\\success.mp4");
 
@@ -22,9 +29,7 @@ void main()
 	{
 		player.Run();
 	}
-
-
-
+	*/
 
 
 	/* Server connection
@@ -57,7 +62,11 @@ void main()
 	}
 
 	*/
+
 }
 
-void DoNothing(TcpConnection ServerConnection, std::string msg)
-{}
+
+
+
+//void DoNothing(TcpConnection ServerConnection, std::string msg)
+//{}

@@ -19,6 +19,9 @@
     <Filter Include="Source Files\VideoPlayer\Rendering">
       <UniqueIdentifier>{723657e7-746c-49de-a826-5b8a2c881677}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\VideoPlayer\Window">
+      <UniqueIdentifier>{eb3474a7-37f8-4f30-9903-49a121057b82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RYTClient.cpp">
@@ -45,6 +48,9 @@
     <ClCompile Include="shaderClass.cpp">
       <Filter>Source Files\VideoPlayer\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="AppWindow.cpp">
+      <Filter>Source Files\VideoPlayer\Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TcpClientNetworking.h">
@@ -65,6 +71,9 @@
     <ClInclude Include="shaderClass.h">
       <Filter>Source Files\VideoPlayer\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="AppWindow.h">
+      <Filter>Source Files\VideoPlayer\Window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
@@ -73,5 +82,10 @@
     <None Include="default.vert">
       <Filter>Source Files\VideoPlayer\Rendering</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="backup.txt">
+      <Filter>Source Files\VideoPlayer</Filter>
+    </Text>
   </ItemGroup>
 </Project>

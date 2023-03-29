@@ -112,7 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\RYTServer\glad.c" />
+    <ClCompile Include="AppWindow.cpp" />
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="RYTClient.cpp" />
     <ClCompile Include="shaderClass.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="VideoPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AppWindow.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="shaderClass.h" />
     <ClInclude Include="TcpClientNetworking.h" />
@@ -153,6 +155,9 @@
   <ItemGroup>
     <None Include="default.frag" />
     <None Include="default.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="backup.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

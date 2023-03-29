@@ -4,18 +4,31 @@
 #include <iostream>
 
 #include"CTcpListener.h"
+#include "Encoder.h"
 
 void Listener_MessageReceived(CTcpListener* listener, int client, std::string msg);
 
 void main()
 {
-	CTcpListener server("", 54000, Listener_MessageReceived); 
+	/*/CTcpListener server("", 54000, Listener_MessageReceived);
 
 	if (server.Init())
 	{
 		server.Run();
 	}
+	*/
 
+	Encoder encoder;
+
+	int encode = encoder.Init("..\\success.mp4", "..\\output.av1");
+	if(encode == 0)
+	{
+		encoder.SendEncodedData();
+	}
+	else if (encode == 2)
+	{
+		std::cout << "File not compressed" << std::endl;
+	}
 }
 
 void Listener_MessageReceived(CTcpListener* listener, int client, std::string msg)
