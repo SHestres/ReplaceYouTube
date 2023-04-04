@@ -29,4 +29,6 @@ private:
 	void Cleanup();
 	void ChooseGLFWVersionForPlatform();
 
+	void DemoWindows();
+
 };
