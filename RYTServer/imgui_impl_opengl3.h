@@ -20,6 +20,8 @@
 #pragma once
 #include "imgui.h"      // IMGUI_IMPL_API
 
+#pragma comment(lib, "opengl32.lib")  //Link the library
+
 // Backend API
 IMGUI_IMPL_API bool     ImGui_ImplOpenGL3_Init(const char* glsl_version = nullptr);
 IMGUI_IMPL_API void     ImGui_ImplOpenGL3_Shutdown();

@@ -54,6 +54,9 @@
     <ClCompile Include="imgui_impl_glfw.cpp">
       <Filter>Source Files\Window\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>Source Files\Window\ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CTcpListener.h">
