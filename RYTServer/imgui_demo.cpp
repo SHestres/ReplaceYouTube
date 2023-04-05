@@ -245,6 +245,7 @@ void*                               GImGuiDemoMarkerCallbackUserData = NULL;
 // You may then search for keywords in the code when you are interested by a specific feature.
 void ImGui::ShowDemoWindow(bool* p_open)
 {
+
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most functions would normally just crash if the context is missing.
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context. Refer to examples app!");
@@ -5851,18 +5852,20 @@ static void ShowDemoWindowInputs()
             bool focus_3 = ImGui::Button("Focus on 3");
             int has_focus = 0;
             static char buf[128] = "click on a button to set focus";
+            char buf2[128] = "click on a button to set focus";
+            char buf3[128] = "click on a button to set focus";
 
             if (focus_1) ImGui::SetKeyboardFocusHere();
             ImGui::InputText("1", buf, IM_ARRAYSIZE(buf));
             if (ImGui::IsItemActive()) has_focus = 1;
 
             if (focus_2) ImGui::SetKeyboardFocusHere();
-            ImGui::InputText("2", buf, IM_ARRAYSIZE(buf));
+            ImGui::InputText("2", buf2, IM_ARRAYSIZE(buf2));
             if (ImGui::IsItemActive()) has_focus = 2;
 
             ImGui::PushTabStop(false);
             if (focus_3) ImGui::SetKeyboardFocusHere();
-            ImGui::InputText("3 (tab skip)", buf, IM_ARRAYSIZE(buf));
+            ImGui::InputText("3 (tab skip)", buf3, IM_ARRAYSIZE(buf3));
             if (ImGui::IsItemActive()) has_focus = 3;
             ImGui::SameLine(); HelpMarker("Item won't be cycled through when using TAB or Shift+Tab.");
             ImGui::PopTabStop();
