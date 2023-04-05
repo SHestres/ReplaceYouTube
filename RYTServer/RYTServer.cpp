@@ -20,7 +20,7 @@ void main()
 	*/
 	/*
 	Window win;
-	if(win.OpenWindow() != 0) return;
+	if(win.OpenWindow("Video Importer") != 0) return;
 	win.Run();
 	*/
 
