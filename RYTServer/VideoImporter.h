@@ -9,7 +9,8 @@
 #define META_FILE_OFFSET 100
 
 
-template <typename T> void fputobj(FILE f, T obj);
+template <typename T> void fputobj(FILE* f, T* obj);
+template <typename T> void fgetobj(FILE* f, T* obj);
 
 typedef struct EncodedVideoMetadata
 {

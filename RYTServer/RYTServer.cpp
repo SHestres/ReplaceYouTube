@@ -12,12 +12,14 @@ void Listener_MessageReceived(CTcpListener* listener, int client, std::string ms
 
 void main()
 {
-	std::cout << sizeof(char) << std::endl;
-	/*
+
+	
 	VideoImporter importer;
 
+	importer.createDemoData();
+	importer.StoreDatabase();
 	importer.LoadDatabase();
-	*/
+	
 	/*
 	Window win;
 	if(win.OpenWindow("Video Importer") != 0) return;

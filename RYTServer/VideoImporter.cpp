@@ -8,6 +8,25 @@ VideoImporter::VideoImporter(std::string trieFile, std::string metaFile)
 
 bool VideoImporter::LoadDatabase()
 {
+	FILE* testFile;
+	//Testing
+	errno_t err = fopen_s(&testFile, "test.dbst", "r");
+	if (err)
+	{
+		std::cerr << "Couldn't open file to read. Err: " << err << std::endl;
+		return false;
+	}
+	int num;
+	fgetobj(testFile, &num);
+	std::cout << num << std::endl;
+	fgetobj(testFile, &num);
+	std::cout << num << std::endl;
+	fgetobj(testFile, &num);
+	std::cout << num << std::endl;
+	fgetobj(testFile, &num);
+	std::cout << num << std::endl;
+
+	fclose(testFile);
 	//Open metaFile
 	
 
@@ -34,8 +53,27 @@ bool VideoImporter::LoadDatabase()
 
 bool VideoImporter::StoreDatabase()
 {
+	FILE* testFile;
+	//Testing
+	errno_t err = fopen_s(&testFile, "test.dbst", "w+");
+	if (err)
+	{
+		std::cerr << "Couldn't open file to write" << std::endl;
+		return false;
+	}
+
+	int num = 93;
+	fputobj(testFile, &num);
+	num = 92;
+	fputobj(testFile, &num);
+	num = 3;
+	fputobj(testFile, &num);
+	num = 4;
+	fputobj(testFile, &num);
+
+	fclose(testFile);
 	//Create file to write encVids
-	errno_t err = fopen_s(&m_trieFile, m_trieFilePath.c_str(), "w"); //This assumes that a home video library won't be prohibitively long. If that ever changes maybe I'll change this
+	//errno_t err = fopen_s(&m_trieFile, m_trieFilePath.c_str(), "w"); //This assumes that a home video library won't be prohibitively long. If that ever changes maybe I'll change this
 
 	//Write each encVid to file based on vidPtrs array order
 	
@@ -50,6 +88,8 @@ bool VideoImporter::StoreDatabase()
 
 bool VideoImporter::createDemoData() //For Testing
 {
+
+
 	return true;
 }
 
