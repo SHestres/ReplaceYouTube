@@ -57,6 +57,9 @@
     <ClCompile Include="imgui_demo.cpp">
       <Filter>Source Files\Window\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="StorageHash.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CTcpListener.h">
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="imgui_impl_glfw.h">
       <Filter>Source Files\Window\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="StorageHash.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

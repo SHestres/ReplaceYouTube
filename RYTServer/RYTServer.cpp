@@ -12,7 +12,7 @@ void Listener_MessageReceived(CTcpListener* listener, int client, std::string ms
 void main()
 {
 	Window win;
-	if(win.OpenWindow() != 0) return;
+	if(win.OpenWindow("Video Importer") != 0) return;
 	win.Run();
 
 	/*/CTcpListener server("", 54000, Listener_MessageReceived);

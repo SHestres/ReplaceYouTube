@@ -1,5 +1,7 @@
 #include "Window.h"
 
+float default_font_size_var;
+
 Window::Window()
 {
 
@@ -7,14 +9,14 @@ Window::Window()
 
 Window::~Window()
 {
-
+    Cleanup();
 }
 
-int Window::OpenWindow()
+int Window::OpenWindow(const char* WindowTitle)
 {
     ChooseGLFWVersionForPlatform();
     if (!glfwInit()) return -1;
-    if (InitImGui() != 0)
+    if (InitImGui(WindowTitle) != 0)
     {
         std::cerr << "Error initializing imgui" << std::endl;
         return -1;
@@ -25,6 +27,21 @@ int Window::OpenWindow()
 void Window::Run()
 {
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    //Persistent Window Variables
+    bool closeable = false;
+    bool showInput = false;
+    bool textEntered = false;
+
+    char vidName[32];
+    char textEntry[32];
+    ZeroMemory(textEntry, 32);
+
+    char filePath[256];
+    ZeroMemory(filePath, 256);
+
+    std::cout << "Display x: " << m_pio->DisplaySize.x << " y: " << m_pio->DisplaySize.y << std::endl;
+    default_font_size_var = 2;// (float)m_pio->DisplaySize.y / 1080;
 
     while (!glfwWindowShouldClose(m_window))
     {
@@ -40,23 +57,68 @@ void Window::Run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-
+        //DemoWindows(); continue;
+        
         //My Window
-        char vidName[100];
-        bool showInput = false;
-
-        ImGui::Begin("Importer");
-
-        ImGui::Text("This Button is going to be for importing videos");
-        if (ImGui::Button("Get File"))
         {
-            ImGui::Text("You pushed the button");
-        }
-        ImGui::InputText("Video Name", vidName, 100);
-        if (showInput)
-            ImGui::Text("Video will take the name %s", vidName);
+            //Set to fullscreen
+            ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings;
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->Pos);
+            ImGui::SetNextWindowSize(viewport->Size);
 
-        ImGui::End();
+            //Begin
+            ImGui::Begin("Importer", &closeable, flags);
+            ImGui::BeginTabBar("TabBar");
+
+            if(ImGui::BeginTabItem("Import Videos"))
+            {
+                //Window Styling
+                ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE);
+
+                //Window Body
+                Title("Video File to import and encode");
+
+                ImGui::InputTextWithHint("##FilePathInput", "Path to Video File", filePath, 256);
+                ImGui::SameLine();
+                ImGui::PushTabStop(false);  //False skips the elements
+                if (ImGui::Button("Browse"))
+                {
+                    std::string fileNameStr, filePathStr;
+                    if (openFileWithExplorer(&fileNameStr, &filePathStr))
+                    {
+                        strcpy_s(filePath, filePathStr.c_str());
+                    }
+                    else
+                    {
+                        strcpy_s(filePath, "Error. Couldn't get filename");
+                    }
+                }
+                ImGui::PopTabStop();
+
+                Title("Video Title in Player");
+                if (ImGui::InputTextWithHint("##VideoTitleInput", "Video Title", textEntry, 32, ImGuiInputTextFlags_EnterReturnsTrue))
+                {
+                    textEntered = true;
+                    strcpy_s(vidName, textEntry);
+                }
+                if (textEntered)
+                    ImGui::Text("Video will take the name \"%s\"", vidName);
+                
+
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Server Info"))
+            {
+                Title("Nothing to see here yet! :)");
+                ImGui::EndTabItem();
+            }
+
+
+            ImGui::EndTabBar();
+            ImGui::End();
+        }
 
         // Rendering
         ImGui::Render();
@@ -114,6 +176,17 @@ void Window::DemoWindows()
             show_another_window = false;
         ImGui::End();
     }
+
+    // Rendering
+    ImGui::Render();
+    int display_w, display_h;
+    glfwGetFramebufferSize(m_window, &display_w, &display_h);
+    glViewport(0, 0, display_w, display_h);
+    glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    glfwSwapBuffers(m_window);
 }
 
 void Window::Cleanup()
@@ -127,10 +200,10 @@ void Window::Cleanup()
     glfwTerminate();
 }
 
-int Window::InitImGui()
+int Window::InitImGui(const char* WindowTitle)
 {
     // Create window with graphics context
-    m_window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+    m_window = glfwCreateWindow(1280, 720, WindowTitle, NULL, NULL);
     if (m_window == NULL)
         return -1;
     glfwMakeContextCurrent(m_window);
@@ -187,4 +260,74 @@ void Window::ChooseGLFWVersionForPlatform()
     //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
+}
+
+void Title(const char* title, float multiplier)
+{
+    if (multiplier > 0) ImGui::SetWindowFontScale(default_font_size_var * multiplier);
+    else ImGui::SetWindowFontScale(TITLE_FONT_SIZE);
+    ImGui::Text(title);
+    ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE);
+}
+
+//Get File with Explorer
+//std::string sSelectedFile;
+//std::string sFilePath;
+bool openFileWithExplorer(std::string* SelectedFile, std::string* FilePath)
+{
+    //  CREATE FILE OBJECT INSTANCE
+    HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    if (FAILED(f_SysHr))
+        return FALSE;
+
+    // CREATE FileOpenDialog OBJECT
+    IFileOpenDialog* f_FileSystem;
+    f_SysHr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&f_FileSystem));
+    if (FAILED(f_SysHr)) {
+        CoUninitialize();
+        return FALSE;
+    }
+
+    //  SHOW OPEN FILE DIALOG WINDOW
+    f_SysHr = f_FileSystem->Show(NULL);
+    if (FAILED(f_SysHr)) {
+        f_FileSystem->Release();
+        CoUninitialize();
+        return FALSE;
+    }
+
+    //  RETRIEVE FILE NAME FROM THE SELECTED ITEM
+    IShellItem* f_Files;
+    f_SysHr = f_FileSystem->GetResult(&f_Files);
+    if (FAILED(f_SysHr)) {
+        f_FileSystem->Release();
+        CoUninitialize();
+        return FALSE;
+    }
+
+    //  STORE AND CONVERT THE FILE NAME
+    PWSTR f_Path;
+    f_SysHr = f_Files->GetDisplayName(SIGDN_FILESYSPATH, &f_Path);
+    if (FAILED(f_SysHr)) {
+        f_Files->Release();
+        f_FileSystem->Release();
+        CoUninitialize();
+        return FALSE;
+    }
+
+    //  FORMAT AND STORE THE FILE PATH
+    std::wstring path(f_Path);
+    std::string c(path.begin(), path.end());
+    *FilePath = c;
+
+    //  FORMAT STRING FOR EXECUTABLE NAME
+    const size_t slash = FilePath->find_last_of("/\\");
+    *SelectedFile = FilePath->substr(slash + 1);
+
+    //  SUCCESS, CLEAN UP
+    CoTaskMemFree(f_Path);
+    f_Files->Release();
+    f_FileSystem->Release();
+    CoUninitialize();
+    return TRUE;
 }
