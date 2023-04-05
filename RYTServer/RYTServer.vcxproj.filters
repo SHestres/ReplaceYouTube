@@ -57,7 +57,7 @@
     <ClCompile Include="imgui_demo.cpp">
       <Filter>Source Files\Window\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="StorageHash.cpp">
+    <ClCompile Include="VideoImporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,7 +101,7 @@
     <ClInclude Include="imgui_impl_glfw.h">
       <Filter>Source Files\Window\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="StorageHash.h">
+    <ClInclude Include="VideoImporter.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
