@@ -8,7 +8,7 @@
 //#pragma comment(lib, "Kernel32.lib")
 
 #define META_FILE_OFFSET 100
-
+#define MAX_VIDEO_TITLE_LENGTH 40
 
 template <typename T> void fputobj(FILE* f, T* obj);
 template <typename T> void fgetobj(FILE* f, T* obj);

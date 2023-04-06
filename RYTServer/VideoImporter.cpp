@@ -43,7 +43,9 @@ bool VideoImporter::LoadDatabase()
 
 	//Allocate trieNodePtrs array
 
-	//Import trieNodes and place in trieNodePtrs array
+	//Import trieNodes 
+		//Place in trieNodePtrs array as they're loaded
+		//Update the trieNodePtrs location and vidPtrs location in each as they load
 
 	//(Maybe) Update all ptrs in trieNodes based on indicies and Ptrs arrays
 
