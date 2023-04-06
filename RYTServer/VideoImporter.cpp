@@ -88,6 +88,24 @@ bool VideoImporter::StoreDatabase()
 
 bool VideoImporter::createDemoData() //For Testing
 {
+	m_numVids = 2;
+	encVid_t* videoPtrs[2];
+	m_videoPtrs = videoPtrs;
+
+	m_numTrieNodes = 6;
+	TrieNode* trieNodes[6];
+	m_trieNodePtrs = trieNodes;
+
+	*videoPtrs[0] =
+	{
+		1, "Test1"
+	};
+
+	*videoPtrs[1] =
+	{
+		2, "Test2"
+	};
+
 
 
 	return true;

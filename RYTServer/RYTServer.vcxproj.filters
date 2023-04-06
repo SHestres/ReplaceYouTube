@@ -19,6 +19,9 @@
     <Filter Include="Source Files\Window\ImGui">
       <UniqueIdentifier>{06e1c027-dbb6-46b7-8c63-114a9fa2a851}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\VideoLibrary">
+      <UniqueIdentifier>{20dfd391-5ad9-4b9d-b950-162e30eb566c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RYTServer.cpp">
@@ -58,6 +61,9 @@
       <Filter>Source Files\Window\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="VideoImporter.cpp">
+      <Filter>Source Files\VideoLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Trie.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -102,7 +108,10 @@
       <Filter>Source Files\Window\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="VideoImporter.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\VideoLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Trie.h">
+      <Filter>Source Files\VideoLibrary</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

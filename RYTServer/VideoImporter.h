@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include "Trie.h"
 
 //#include <WinBase.h>
 
@@ -44,10 +45,12 @@ private:
 	FILE* m_metaFile;
 	void* m_metaFileBase;
 	void* m_trieFileBase;
-
 	
 	int m_numVids; //The number of encoded videos in the database
-	encVid_t* videoPtrs;
+	encVid_t** m_videoPtrs;
+
+	int m_numTrieNodes;
+	TrieNode** m_trieNodePtrs;
 
 	int VidpToInt(encVid_t* vidp);
 	encVid_t* IntToVidp(int ind);
