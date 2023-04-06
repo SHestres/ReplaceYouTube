@@ -5,6 +5,10 @@
 
 #include "VideoImporter.h"
 
+typedef int encVid_i;
+typedef int trieNode_i;
+
+
 template<typename T>
 class TrieNodeBase {
 public:
@@ -16,35 +20,46 @@ public:
     virtual T getData() const = 0;
     virtual void setData(const T& data) = 0;
     virtual void addChild(char c, TrieNodeBase<T>* child) = 0;
+    virtual char getC() const = 0;
 };
 
+
+
+
+
 /*
-class TrieNode : TrieNodeBase<encVid_t>
-{
-    int ind; //The index of this node in the nodePtrs array
-    encVid_t* data;
-
-
-};*/
-
-template<typename T>
+* The trie will handle reallocating the nodePtrsArr
+*/
+template<typename T/*, TrieNodeBase<T> */ >
 class Trie {
 public:
-    Trie() {
-        root = new TrieNodeBase<T>();
+    Trie(TrieNodeBase*** nodeArr, encVid_t*** dataArr, int* numOfNodes, int* nodeAllocatedSpace) {
+        root = new TrieNodeBase<T>(nodeArr, dataArr);
+        dataPtrsArr = dataArr;
+        nodePtrsArr = nodeArr;
+        numNodes = numOfNodes;
+        nodeAllocSpace = nodeAllocatedSpace;
     }
 
     ~Trie() {
         delete root;
     }
 
-    void insert(TrieNodeBase<T>* node) {
+    //Data must already be in the dataPtrsArray
+    void insert(T data)
+    {
+        TrieNodeBase<T>* node = new TrieNodeBase<T>(nodePtrsArr, dataPtrsArr);
+        node->setData(T);
+        insertNode(node);
+    }
+
+    void insertNode(TrieNodeBase<T>* node) {
         TrieNodeBase<T>* current = root;
         const std::string& word = node->getWord();
         for (char c : word) {
             TrieNodeBase<T>* child = current->find(c);
             if (child == nullptr) {
-                child = new TrieNodeBase<T>();
+                child = new TrieNodeBase<T>(nodePtrsArr, dataPtrsArr);
                 child->setWord(current->getWord() + c);
                 //current->children[c] = child;
                 current->addChild(c, child);
@@ -53,6 +68,15 @@ public:
         }
         current->setData(node->getData());
         current->setIsEndOfWord(true);
+        
+        (*nodePtrsArr)[numNodes] = node;
+
+        *numNodes++;
+        if (*numNodes > *nodeAllocSpace - 2)
+        {
+            nodePtrsArr = realloc(*nodePtrsArr, nodeAllocSpace + 10);
+            *nodeAllocSpace += 10;
+        }
     }
 
     bool contains(TrieNodeBase<T>* node) const {
@@ -115,6 +139,11 @@ public:
 
 private:
     TrieNodeBase<T>* root;
+    encVid_t*** dataPtrsArr;
+    TrieNodeBase*** nodePtrsArr;
+
+    int* numNodes; //Tracks the number of nodes in the array
+    int* nodeAllocSpace; //Tracks the maximum number of nodes before the nodePtrsArr needs to be reallocated
 
     void listHelper(int& x, const TrieNodeBase<T>* node, TrieNodeBase<T>** result, int& i) const {
         if (node->getIsEndOfWord()) {
@@ -131,4 +160,6 @@ private:
             }
         }
     }
+
+    
 };

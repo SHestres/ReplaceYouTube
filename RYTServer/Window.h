@@ -11,6 +11,8 @@
 #include "imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 
+#include "VideoImporter.h"
+
 
 #define DEFAULT_FONT_SIZE default_font_size_var
 #define TITLE_FONT_SIZE default_font_size_var * 1.25f

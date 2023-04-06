@@ -33,9 +33,9 @@ void Window::Run()
     bool showInput = false;
     bool textEntered = false;
 
-    char vidName[32];
-    char textEntry[32];
-    ZeroMemory(textEntry, 32);
+    char vidName[MAX_VIDEO_TITLE_LENGTH];
+    char textEntry[MAX_VIDEO_TITLE_LENGTH];
+    ZeroMemory(textEntry, MAX_VIDEO_TITLE_LENGTH);
 
     char filePath[256];
     ZeroMemory(filePath, 256);
@@ -97,7 +97,7 @@ void Window::Run()
                 ImGui::PopTabStop();
 
                 Title("Video Title in Player");
-                if (ImGui::InputTextWithHint("##VideoTitleInput", "Video Title", textEntry, 32, ImGuiInputTextFlags_EnterReturnsTrue))
+                if (ImGui::InputTextWithHint("##VideoTitleInput", "Video Title", textEntry, MAX_VIDEO_TITLE_LENGTH, ImGuiInputTextFlags_EnterReturnsTrue))
                 {
                     textEntered = true;
                     strcpy_s(vidName, textEntry);
