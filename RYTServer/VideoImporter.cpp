@@ -95,7 +95,7 @@ bool VideoImporter::createDemoData() //For Testing
 	m_videoPtrs = videoPtrs;
 
 	m_numTrieNodes = 6;
-	TrieNode* trieNodes[6];
+	TrieNode<encVid_t*>* trieNodes[6];
 	m_trieNodePtrs = trieNodes;
 
 	*videoPtrs[0] =

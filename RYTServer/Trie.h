@@ -3,11 +3,12 @@
 #include <iostream>
 #include <string>
 
-#include "VideoImporter.h"
+//#include "VideoImporter.h"
 
 typedef int encVid_i;
 typedef int trieNode_i;
 
+#define MAX_VIDEO_TITLE_LENGTH 40
 
 template<typename T>
 class TrieNodeBase {
@@ -24,16 +25,61 @@ public:
 };
 
 
+//Must be a constant size
+template <typename T>
+class TrieNode : TrieNodeBase<T>
+{
+public:
 
+    TrieNode(TrieNode*** pnodeArr, T** pdataArr);
+
+    void updateArrPtrs(TrieNode*** pnodeArr, T** pdataArr);
+
+    //Get the next node
+    TrieNode* find(char c);
+
+    bool getIsEndOfWord();
+
+    void setIsEndOfWord(bool isEndOfWord);
+
+    std::string getWord();
+
+    void setWord(const std::string& word);
+
+    T getData();
+
+    void setData(const T& data);
+
+    void addChild(char c, T child);
+
+    char getC();
+
+private:
+    TrieNode*** nodePtrsArr;
+    T** dataPtrsArr;
+
+    //int ind; //The index of this node in the nodePtrs array - Uneccessary?
+    char c;
+    int numChildren;
+
+    char nextChar[40];
+    trieNode_i nextNode[40];
+
+    char title[MAX_VIDEO_TITLE_LENGTH];
+    encVid_i dataInd; //Index of the data in the arrayPtr
+
+    bool isEndNode = false;
+
+};
 
 
 /*
 * The trie will handle reallocating the nodePtrsArr
 */
-template<typename T/*, TrieNodeBase<T> */ >
+template<typename T>
 class Trie {
 public:
-    Trie(TrieNodeBase*** nodeArr, encVid_t*** dataArr, int* numOfNodes, int* nodeAllocatedSpace) {
+    Trie(TrieNodeBase<T>*** nodeArr, T** dataArr, int* numOfNodes, int* nodeAllocatedSpace) {
         root = new TrieNodeBase<T>(nodeArr, dataArr);
         dataPtrsArr = dataArr;
         nodePtrsArr = nodeArr;
@@ -139,8 +185,8 @@ public:
 
 private:
     TrieNodeBase<T>* root;
-    encVid_t*** dataPtrsArr;
-    TrieNodeBase*** nodePtrsArr;
+    T** dataPtrsArr;
+    TrieNodeBase<T>*** nodePtrsArr;
 
     int* numNodes; //Tracks the number of nodes in the array
     int* nodeAllocSpace; //Tracks the maximum number of nodes before the nodePtrsArr needs to be reallocated

@@ -1,102 +1,93 @@
 #include "Trie.h"
 
-//Must be a constant size
-class TrieNode : TrieNodeBase<encVid_t*>
-{
-public:
-
-    TrieNode(TrieNode*** pnodeArr, encVid_t*** pdataArr)
+template <typename T>
+TrieNode<T>::TrieNode<T>(TrieNode*** pnodeArr, T** pdataArr)
     {
         nodePtrsArr = pnodeArr;
         dataPtrsArr = pdataArr;
         numChildren = 0;
     }
 
-    void updateArrPtrs(TrieNode*** pnodeArr, encVid_t*** pdataArr)
-    {
-        nodePtrsArr = pnodeArr;
-        dataPtrsArr = pdataArr;
-    }
+template <typename T>
+void TrieNode<T>::updateArrPtrs(TrieNode*** pnodeArr, T** pdataArr)
+{
+    nodePtrsArr = pnodeArr;
+    dataPtrsArr = pdataArr;
+}
 
-    //Get the next node
-    TrieNode* find(char c)
+//Get the next node
+template <typename T>
+TrieNode<T>* TrieNode<T>::find(char c)
+{
+    for (int i = 0; i < numChildren; i++)
     {
-        for (int i = 0; i < numChildren; i++)
+        if (nextChar[i] == c)
         {
-            if (nextChar[i] == c)
-            {
-                return (*nodePtrsArr)[nextNode[i]];
-            }
+            return (*nodePtrsArr)[nextNode[i]];
         }
     }
+    return nullptr;
+}
 
-    bool getIsEndOfWord()
+template <typename T>
+bool TrieNode<T>::getIsEndOfWord()
+{
+    return isEndNode;
+}
+
+template <typename T>
+void TrieNode<T>::setIsEndOfWord(bool isEndOfWord)
+{
+    isEndNode = isEndOfWord;
+}
+
+template <typename T>
+std::string TrieNode<T>::getWord()
+{
+    return title;
+}
+
+template <typename T>
+void TrieNode<T>::setWord(const std::string& word)
+{
+    strcpy(title, word.c_str());
+}
+
+template <typename T>
+T TrieNode<T>::getData()
+{
+    return (*dataPtrsArr)[dataInd];
+}
+
+template <typename T>
+void TrieNode<T>::setData(const T& data)
+{
+    int ind = ptrToArrInd((T)data, dataPtrsArr);
+    if (ind == -1) throw std::invalid_argument("Data not in dataPtrsArr");
+    else
     {
-        return isEndNode;
+        dataInd = ind;
     }
+}
 
-    void setIsEndOfWord(bool isEndOfWord)
-    {
-        isEndNode = isEndOfWord;
-    }
+template <typename T>
+void TrieNode<T>::addChild(char c, T child)
+{
+    int ind = ptrToArrInd(child, nodePtrsArr);
+    if (ind == -1) throw std::invalid_argument("Child node not in dataPtrsArr");
+    nextChar[numChildren] = c;
+    nextNode[numChildren] = ind;
+    numChildren++;
+}
 
-    std::string getWord()
-    {
-        return title;
-    }
+template <typename T>
+char TrieNode<T>::getC()
+{
+    return c;
+}
 
-    void setWord(const std::string& word)
-    {
-        strcpy(title, word.c_str());
-    }
-
-    encVid_t* getData()
-    {
-        return (*dataPtrsArr)[dataInd];
-    }
-
-    void setData(const encVid_t*& data)
-    {
-        int ind = ptrToArrInd((encVid_t*)data, dataPtrsArr);
-        if (ind == -1) throw std::invalid_argument("Data not in dataPtrsArr");
-        else
-        {
-            dataInd = ind;
-        }
-    }
-
-    void addChild(char c, TrieNode* child)
-    {
-        int ind = ptrToArrInd(child, nodePtrsArr);
-        if (ind == -1) throw std::invalid_argument("Child node not in dataPtrsArr");
-        nextChar[numChildren] = c;
-
-    }
-
-    char getC()
-    {
-        return c;
-    }
-
-private:
-    TrieNode*** nodePtrsArr;
-    encVid_t*** dataPtrsArr;
-
-    //int ind; //The index of this node in the nodePtrs array - Uneccessary?
-    char c;
-    int numChildren;
-    
-    char nextChar[40];
-    trieNode_i nextNode[40];
-
-    char title[MAX_VIDEO_TITLE_LENGTH];
-    encVid_i dataInd; //Index of the data in the arrayPtr
-    
-    bool isEndNode = false;
-
-};
-
-template <typename T> int ptrToArrInd(T* ptr, T*** arr)
+//T must be a pointer type
+template <typename T> int ptrToArrInd(T ptr, T** arr)
 {
     int i = -1;
     bool done = false;
@@ -105,9 +96,9 @@ template <typename T> int ptrToArrInd(T* ptr, T*** arr)
         do
         {
             i++;
-            done = (*arr)[i] == data;
+            done = (*arr)[i] == ptr;
         } while (!done);
     }
-    catch () { return -1; }
+    catch (std::exception e) { return -1; }
     return i;
 }

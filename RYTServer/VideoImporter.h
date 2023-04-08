@@ -19,6 +19,7 @@ typedef struct EncodedVideoMetadata
 	std::string name;
 }encVid_t;
 
+/*
 struct TrieNode
 {
 	char l; //The letter represented by this node
@@ -26,7 +27,7 @@ struct TrieNode
 	TrieNode* nextNodes[50];
 	int numNexts;
 	encVid_t video;
-};
+};*/
 
 class VideoImporter
 {
@@ -50,7 +51,7 @@ private:
 	encVid_t** m_videoPtrs;
 
 	int m_numTrieNodes;
-	TrieNode** m_trieNodePtrs;
+	TrieNode<encVid_t*>** m_trieNodePtrs;
 
 	int VidpToInt(encVid_t* vidp);
 	encVid_t* IntToVidp(int ind);
