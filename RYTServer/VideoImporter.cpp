@@ -1,12 +1,13 @@
 #include "VideoImporter.h"
 
-VideoImporter::VideoImporter(std::string trieFile, std::string metaFile)
+VideoLibrary::VideoLibrary(std::string trieFile, std::string metaFile)
 	: m_trieFilePath(trieFile), m_metaFilePath(metaFile)
+	, m_trie(Trie<encVid_t*>(& m_trieNodePtrs, &m_videoPtrs, &m_numTrieNodes, &m_nodeAllocSpace))
 {
-
+	
 }
 
-bool VideoImporter::LoadDatabase()
+bool VideoLibrary::LoadDatabase()
 {
 	FILE* testFile;
 	//Testing
@@ -53,7 +54,7 @@ bool VideoImporter::LoadDatabase()
 }
 
 
-bool VideoImporter::StoreDatabase()
+bool VideoLibrary::StoreDatabase()
 {
 	FILE* testFile;
 	//Testing
@@ -88,37 +89,45 @@ bool VideoImporter::StoreDatabase()
 	return true;
 }
 
-bool VideoImporter::createDemoData() //For Testing
+bool VideoLibrary::createDemoData() //For Testing
 {
+
+
 	m_numVids = 2;
 	encVid_t* videoPtrs[2];
 	m_videoPtrs = videoPtrs;
 
-	m_numTrieNodes = 6;
-	TrieNode<encVid_t*>* trieNodes[6];
-	m_trieNodePtrs = trieNodes;
-
-	*videoPtrs[0] =
+	videoPtrs[0] = new encVid_t
 	{
 		1, "Test1"
 	};
 
-	*videoPtrs[1] =
+	videoPtrs[1] = new encVid_t
 	{
 		2, "Test2"
 	};
+
+	m_numVids = 2;
+	m_numTrieNodes = 0;
+
+	m_trie.insert(videoPtrs[0]);
+	m_trie.insert(videoPtrs[1]);
+
+	std::cout << "Inserted both" << std::endl;
+
+	//m_trie = new Trie<encVid_t*>(&m_trieNodePtrs, &m_videoPtrs, &m_numTrieNodes, &m_numVids);
 
 
 
 	return true;
 }
 
-int VideoImporter::VidpToInt(encVid_t* vidp)
+int VideoLibrary::VidpToInt(encVid_t* vidp)
 {
 	return (char*)vidp - m_metaFileBase;
 }
 
-encVid_t* VideoImporter::IntToVidp(int ind)
+encVid_t* VideoLibrary::IntToVidp(int ind)
 {
 	return (encVid_t*)((char*)m_metaFileBase + ind);
 }

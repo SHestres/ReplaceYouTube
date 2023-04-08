@@ -13,10 +13,11 @@
 template <typename T> void fputobj(FILE* f, T* obj);
 template <typename T> void fgetobj(FILE* f, T* obj);
 
+//This needs to be a constant sizee
 typedef struct EncodedVideoMetadata
 {
 	int key;
-	std::string name;
+	char name[MAX_VIDEO_TITLE_LENGTH];
 }encVid_t;
 
 /*
@@ -29,15 +30,21 @@ struct TrieNode
 	encVid_t video;
 };*/
 
-class VideoImporter
+class VideoLibrary
 {
 public:
-	VideoImporter(std::string trieFile = "./trieFile", std::string metaFile = "./metaFile");
+	VideoLibrary(std::string trieFile = "./trieFile", std::string metaFile = "./metaFile");
 
 	bool LoadDatabase();
 	bool StoreDatabase();
 
 	bool createDemoData(); //For Testing
+
+	int getNumVids() { return m_numVids; }
+	int getNumNodes() { return m_numTrieNodes; }
+	Trie<encVid_t*>* getTrie() { return &m_trie; }
+	encVid_t** getVidPtrsArr() { return m_videoPtrs;  }
+	TrieNode<encVid_t*>** getTrieNodeArr() { return m_trieNodePtrs; }
 
 private:
 	std::string m_trieFilePath;
@@ -46,11 +53,14 @@ private:
 	FILE* m_metaFile;
 	void* m_metaFileBase;
 	void* m_trieFileBase;
+
+	Trie<encVid_t*> m_trie;
 	
 	int m_numVids; //The number of encoded videos in the database
 	encVid_t** m_videoPtrs;
 
 	int m_numTrieNodes;
+	int m_nodeAllocSpace = 0;
 	TrieNode<encVid_t*>** m_trieNodePtrs;
 
 	int VidpToInt(encVid_t* vidp);

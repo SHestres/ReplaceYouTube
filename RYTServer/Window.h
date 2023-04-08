@@ -27,7 +27,7 @@ public:
 	~Window();
 
 	int OpenWindow(const char* WindowTitle);
-	void Run();
+	void Run(VideoLibrary* library);
 
 private:
 	GLFWwindow* m_window;

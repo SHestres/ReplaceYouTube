@@ -5,26 +5,24 @@
 
 #include"CTcpListener.h"
 #include "Encoder.h"
-#include "Window.h"
-#include "VideoImporter.h"
+#include "Window.h" //Has Video importer already
 
 void Listener_MessageReceived(CTcpListener* listener, int client, std::string msg);
 
 void main()
 {
+	VideoLibrary library;
 
-	
-	VideoImporter importer;
-
-	importer.createDemoData();
-	importer.StoreDatabase();
-	importer.LoadDatabase();
-	
+	library.createDemoData();
 	/*
+	library.StoreDatabase();
+	library.LoadDatabase();
+	*/
+	
 	Window win;
 	if(win.OpenWindow("Video Importer") != 0) return;
-	win.Run();
-	*/
+	win.Run(&library);
+	
 
 	/*/CTcpListener server("", 54000, Listener_MessageReceived);
 

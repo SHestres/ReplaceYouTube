@@ -64,7 +64,7 @@
       <Filter>Source Files\VideoLibrary</Filter>
     </ClCompile>
     <ClCompile Include="Trie.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\VideoLibrary</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

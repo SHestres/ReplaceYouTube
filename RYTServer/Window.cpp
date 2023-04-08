@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "VideoImporter.h"
 
 float default_font_size_var;
 
@@ -24,7 +25,7 @@ int Window::OpenWindow(const char* WindowTitle)
 
 }
 
-void Window::Run()
+void Window::Run(VideoLibrary* library)
 {
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -36,6 +37,10 @@ void Window::Run()
     char vidName[MAX_VIDEO_TITLE_LENGTH];
     char textEntry[MAX_VIDEO_TITLE_LENGTH];
     ZeroMemory(textEntry, MAX_VIDEO_TITLE_LENGTH);
+
+    //Video Metadata vars
+    int numVidsDataShown = 1;
+
 
     char filePath[256];
     ZeroMemory(filePath, 256);
@@ -112,6 +117,25 @@ void Window::Run()
             if (ImGui::BeginTabItem("Server Info"))
             {
                 Title("Nothing to see here yet! :)");
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Library"))
+            {
+                
+                ImGui::SliderInt("Number of videos shown", &numVidsDataShown, 1, 15);
+                encVid_t** vidArr = library->getVidPtrsArr();
+                for (int i = 0; i < library->getNumVids() && i < numVidsDataShown; i++)
+                {
+                    
+                    std::string title = vidArr[i]->name;
+                    encVid_t* vid = library->getTrie()->getData(title);
+                    if (ImGui::TreeNode(title.c_str()))
+                    {
+                        ImGui::Text("The title is %s", title);
+                    }
+                }
+
                 ImGui::EndTabItem();
             }
 

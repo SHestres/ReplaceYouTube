@@ -1,7 +1,9 @@
-#include "Trie.h"
+//None of this will link. Moved to header file
+
+/*#include "Trie.h"
 
 template <typename T>
-TrieNode<T>::TrieNode<T>(TrieNode*** pnodeArr, T** pdataArr)
+TrieNode<T>::TrieNode<T>(TrieNode<T>*** pnodeArr, T** pdataArr)
     {
         nodePtrsArr = pnodeArr;
         dataPtrsArr = pdataArr;
@@ -9,7 +11,7 @@ TrieNode<T>::TrieNode<T>(TrieNode*** pnodeArr, T** pdataArr)
     }
 
 template <typename T>
-void TrieNode<T>::updateArrPtrs(TrieNode*** pnodeArr, T** pdataArr)
+void TrieNode<T>::updateArrPtrs(TrieNode<T>*** pnodeArr, T** pdataArr)
 {
     nodePtrsArr = pnodeArr;
     dataPtrsArr = pdataArr;
@@ -101,4 +103,4 @@ template <typename T> int ptrToArrInd(T ptr, T** arr)
     }
     catch (std::exception e) { return -1; }
     return i;
-}
+}*/
