@@ -3,34 +3,58 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RYTServer", "RYTServer\RYTServer.vcxproj", "{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RYTServerSide", "RYTServer\RYTServer.vcxproj", "{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RYTClient", "RYTClient\ReplaceYouTube.vcxproj", "{3BE378CE-04CA-4B18-9F62-958F558BE179}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "RYTNode", "RYTNode\RYTNode.njsproj", "{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Debug|Any CPU.Build.0 = Debug|x64
 		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Debug|x64.ActiveCfg = Debug|x64
 		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Debug|x64.Build.0 = Debug|x64
 		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Debug|x86.ActiveCfg = Debug|Win32
 		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Debug|x86.Build.0 = Debug|Win32
+		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Release|Any CPU.ActiveCfg = Release|x64
+		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Release|Any CPU.Build.0 = Release|x64
 		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Release|x64.ActiveCfg = Release|x64
 		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Release|x64.Build.0 = Release|x64
 		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Release|x86.ActiveCfg = Release|Win32
 		{3CDF7E0E-4D16-4102-91CC-CCF188FA4FA2}.Release|x86.Build.0 = Release|Win32
+		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Debug|Any CPU.Build.0 = Debug|x64
 		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Debug|x64.ActiveCfg = Debug|x64
 		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Debug|x64.Build.0 = Debug|x64
 		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Debug|x86.ActiveCfg = Debug|Win32
 		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Debug|x86.Build.0 = Debug|Win32
+		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Release|Any CPU.ActiveCfg = Release|x64
+		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Release|Any CPU.Build.0 = Release|x64
 		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Release|x64.ActiveCfg = Release|x64
 		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Release|x64.Build.0 = Release|x64
 		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Release|x86.ActiveCfg = Release|Win32
 		{3BE378CE-04CA-4B18-9F62-958F558BE179}.Release|x86.Build.0 = Release|Win32
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Debug|x64.Build.0 = Debug|Any CPU
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Debug|x86.Build.0 = Debug|Any CPU
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Release|x64.ActiveCfg = Release|Any CPU
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Release|x64.Build.0 = Release|Any CPU
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Release|x86.ActiveCfg = Release|Any CPU
+		{4417E9DB-81C6-494B-A7ED-459D2C9C99D2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

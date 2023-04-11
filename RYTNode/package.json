@@ -1,0 +1,9 @@
+{
+  "name": "rytnode",
+  "version": "0.0.0",
+  "description": "RYTNode",
+  "main": "server.js",
+  "author": {
+    "name": ""
+  }
+}
