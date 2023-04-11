@@ -8,7 +8,8 @@
 typedef int encVid_i;
 typedef int trieNode_i;
 
-//extern struct EncodedVideoMetadata;
+template<typename T>
+class Trie;
 
 #define MAX_VIDEO_TITLE_LENGTH 40
 
@@ -34,7 +35,7 @@ class TrieNode //: public TrieNodeBase<T>
 {
 public:
 
-    TrieNode(TrieNode<T>*** pnodeArr, T** pdataArr);
+    TrieNode(TrieNode<T>*** pnodeArr, T** pdataArr, Trie<T>* trie);
 
     void updateArrPtrs(TrieNode<T>*** pnodeArr, T** pdataArr);
 
@@ -73,6 +74,10 @@ private:
 
     bool isEndNode = false;
 
+    Trie<T>* m_trie;
+
+    
+
 };
 
 /*
@@ -87,11 +92,12 @@ public:
         : Trie((TrieNodeBase<T)nodeArr, dataArr, numOfNodes, nodeAllocatedSpace)
     {}*/
 
-    Trie(TrieNode<T>*** nodeArr, T** dataArr, int* numOfNodes, int* nodeAllocatedSpace) {
-        root = new TrieNode<T>(nodeArr, dataArr);
+    Trie(TrieNode<T>*** nodeArr, T** dataArr, int* numOfNodes, int* nodeAllocatedSpace, int* numVideos) {
+        root = new TrieNode<T>(nodeArr, dataArr, this);
         dataPtrsArr = dataArr;
         nodePtrsArr = nodeArr;
         numNodes = numOfNodes;
+        numVids = numVideos;
         nodeAllocSpace = nodeAllocatedSpace;
     }
 
@@ -100,10 +106,11 @@ public:
     }
 
     //Data must already be in the dataPtrsArray
-    void insert(T data)
+    void insert(T data, std::string word)
     {
-        TrieNode<T>* node = new TrieNode<T>(nodePtrsArr, dataPtrsArr);
+        TrieNode<T>* node = new TrieNode<T>(nodePtrsArr, dataPtrsArr, this);
         node->setData(data);
+        node->setWord(word);
         insertNode(node);
     }
 
@@ -113,9 +120,10 @@ public:
         for (char c : word) {
             TrieNode<T>* child = current->find(c);
             if (child == nullptr) {
-                child = new TrieNode<T>(nodePtrsArr, dataPtrsArr);
+                child = new TrieNode<T>(nodePtrsArr, dataPtrsArr, this);
                 child->setWord(current->getWord() + c);
-                //current->children[c] = child;
+                
+                addToNodeArr(child);
                 current->addChild(c, child);
             }
             current = child;
@@ -123,18 +131,25 @@ public:
         if (current->getIsEndOfWord()) throw std::invalid_argument("Node already exists in trie");
         current->setData(node->getData());
         current->setIsEndOfWord(true);
-        
-        //Ensure space in the nodes array
+
+        addToNodeArr(node);
+
+    }
+
+    void addToNodeArr(TrieNode<T>* node)
+    {
+    //Ensure space in the nodes array
         if (*numNodes > *nodeAllocSpace - 2)
         {
-            *nodePtrsArr = (TrieNode<T>**)realloc(*nodePtrsArr, *nodeAllocSpace + 10);
+            TrieNode<T>** temp = (TrieNode<T>**)realloc(*nodePtrsArr, *nodeAllocSpace + 10);
+            if (temp == nullptr) throw std::exception("Couldn't reallocate nodePtrArr");
+            *nodePtrsArr = temp;
             *nodeAllocSpace += 10;
         }
-
+        //Add the node
         (*nodePtrsArr)[*numNodes] = node;
 
         *numNodes++;
-
     }
 
     bool contains(TrieNode<T>* node) const {
@@ -195,6 +210,9 @@ public:
         return result;
     }
 
+    int* numNodes; //Tracks the number of nodes in the array 
+    int* numVids;
+
 private:
     TrieNode<T>* root;
 
@@ -202,8 +220,9 @@ private:
 
     TrieNode<T>*** nodePtrsArr;
     
-    int* numNodes; //Tracks the number of nodes in the array
+    
     int* nodeAllocSpace; //Tracks the maximum number of nodes before the nodePtrsArr needs to be reallocated
+    
 
     void listHelper(int& x, const TrieNode<T>* node, TrieNode<T>** result, int& i) const {
         if (node->getIsEndOfWord()) {
@@ -232,11 +251,13 @@ private:
 //Idk why, but the rest of this won't link in a cpp file
 
 template <typename T>
-TrieNode<T>::TrieNode<T>(TrieNode<T>*** pnodeArr, T** pdataArr)
+TrieNode<T>::TrieNode<T>(TrieNode<T>*** pnodeArr, T** pdataArr, Trie<T>* trie)
 {
+    m_trie = trie;
     nodePtrsArr = pnodeArr;
     dataPtrsArr = pdataArr;
     numChildren = 0;
+    isEndNode = false;
 }
 
 template <typename T>
@@ -294,7 +315,7 @@ T TrieNode<T>::getData()
 template <typename T>
 void TrieNode<T>::setData(T data)
 {
-    int ind = ptrToArrInd(data, dataPtrsArr);
+    int ind = ptrToArrInd(data, dataPtrsArr, *(m_trie->numVids));
     if (ind == -1) throw std::invalid_argument("Data not in dataPtrsArr");
     else
     {
@@ -305,7 +326,7 @@ void TrieNode<T>::setData(T data)
 template <typename T>
 void TrieNode<T>::addChild(char c, TrieNode<T>* child)
 {
-    int ind = ptrToArrInd(child, nodePtrsArr);
+    int ind = ptrToArrInd(child, nodePtrsArr, *(m_trie->numNodes));
     if (ind == -1) throw std::invalid_argument("Child node not in dataPtrsArr");
     nextChar[numChildren] = c;
     nextNode[numChildren] = ind;
@@ -319,18 +340,14 @@ char TrieNode<T>::getC()
 }
 
 //T must be a pointer type
-template <typename type> int ptrToArrInd(type ptr, type** arr)
+template <typename T> 
+int ptrToArrInd(T ptr, T** arr, int max)
 {
-    int i = -1;
-    bool done = false;
-    try
+    for (int i = 0; i < max; i++)
     {
-        do
-        {
-            i++;
-            done = (*arr)[i] == ptr;
-        } while (!done);
+        if ((*arr)[i] == ptr) return i;
     }
-    catch (std::exception e) { return -1; }
-    return i;
+    return -1;
+
+    //done = (*arr)[i] == ptr;
 }

@@ -2,7 +2,7 @@
 
 VideoLibrary::VideoLibrary(std::string trieFile, std::string metaFile)
 	: m_trieFilePath(trieFile), m_metaFilePath(metaFile)
-	, m_trie(Trie<encVid_t*>(& m_trieNodePtrs, &m_videoPtrs, &m_numTrieNodes, &m_nodeAllocSpace))
+	, m_trie(Trie<encVid_t*>(& m_trieNodePtrs, &m_videoPtrs, &m_numTrieNodes, &m_nodeAllocSpace, &m_numVids))
 {
 	
 }
@@ -110,9 +110,11 @@ bool VideoLibrary::createDemoData() //For Testing
 	m_numVids = 2;
 	m_numTrieNodes = 0;
 
-	m_trie.insert(videoPtrs[0]);
-	m_trie.insert(videoPtrs[1]);
-
+	try {
+		m_trie.insert(videoPtrs[0], videoPtrs[0]->name);
+		m_trie.insert(videoPtrs[1], videoPtrs[1]->name);
+	}
+	catch (std::invalid_argument excpt) { std::cerr << "Title already exists in library" << std::endl; }
 	std::cout << "Inserted both" << std::endl;
 
 	//m_trie = new Trie<encVid_t*>(&m_trieNodePtrs, &m_videoPtrs, &m_numTrieNodes, &m_numVids);
