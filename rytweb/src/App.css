@@ -1,38 +1,97 @@
-.App {
-  text-align: center;
+footer
+{
+    text-align: center;
+    font-size:small;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#Logo{
+    /*border: 1px solid blue;*/
+    padding-left: 8%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.App-header{
+    /*border: 1px solid red;*/
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.profile{
+    /*border: 1px solid blue;*/
+    display:flex;
+    margin-left: auto;
+    justify-items: right;
+    align-items: center;
+    column-gap: 10px;
 }
 
-.App-link {
-  color: #61dafb;
+button{
+    background-color: rgb(60, 60, 255);
+    color: white;
+    border-color: rgb(60, 60, 255);
+    border-radius: 5px;
+    margin: 0px;
+}
+/*
+.logout-btn{
+    background-color: red;
+    color: white;
+    border-color: red;
+    border-radius: 5px;
+}*/
+
+.navbar-btn{
+    /*border: 1px solid blue;*/
+    color:azure;
+    align-items: center;
+    padding: 30%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.navbar-btn:visited{
+    text-decoration: none;
+}
+
+.navbar-btn:link{
+    text-decoration: none;
+}
+
+.login-panel{
+    position:absolute;
+    left: 0;
+    right: 0;
+    padding: 30px;
+    background-color: #1c1c1ce0;
+    border-radius: 10px;
+    width: 30%;
+    margin-top: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+    justify-items: center;
+
+    
+    
+    /*border: 1px solid blue;*/
+}
+
+input[type=text]{
+    height: 40px;
+    width: 100%;
+    align-self: center;
+}
+
+#signInButton{
+    height: 40px;
+    width: 100%;
+    align-self: center;
+}
+
+.login-bg{
+    width: 100%;
+}
+
+img{
+    object-fit: cover;
 }
