@@ -4,27 +4,29 @@ const app = express();
 
 app.set("view engine", "ejs");
 
-app.use(express.static("public"));
+//app.use(express.static("public"));
+app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.send("Hi. Welcome to the base page");
+    res.send("Hi. This is the base page");
 });
 
-app.get("/render", (req, res) => {
-    res.render("../index", {text: "World"});
-});
+app.post('/api/login', (req, res) =>{
+    console.log('Trying to post');
+    console.log(req.body);
+    res.json({user: 'Mike'});
+})
 
-app.get("/render/gpt", (req, res) => {
-    res.render("../GPT_vid", {
-        videoTitle: 'My Video Title',
-        videoPath: 'path/to/video.mp4',
-        videoDescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at tincidunt nulla, nec molestie arcu. Phasellus consequat mauris in posuere tristique. Aenean posuere magna at diam vehicula, id egestas velit placerat.'
-    });
-});
-
+/*
+app.post("/api/login", (req, res) =>{
+    console.log('Trying to post');
+    console.log(req.body);
+    res.json({user: 'Mike'});
+})
+*/
 const usersRouter = require("./routes/users.js");
 
 app.use("/users", usersRouter);
 
 
-app.listen("3000");
+app.listen("5100");

@@ -24,21 +24,27 @@ export default function Login()
 
     //Sign in button callback
     function doLogin(){
-        fetch('/api/login', {
+        console.log("fetching");
+        fetch('http://localhost:5100/api/login', {
             method: 'POST',
+            mode: 'no-cors',
             body: JSON.stringify({username, password}),
             headers: {'Content-Type': 'application/json'}
-        }).then(res => res.json()).then(res=> {
+        })
+        .then((res) => res.json())
+        .then((res)=> {
             //Clear the vars in global state (and form fields)
             if(res.user) {
                 setUsername('');
                 setPassword('');
                 //Store the username into the global state
                 dispatch({type: 'login', user: res.user });
+                console.log(res.user);
                 //Redirect the use to '/'
                 history.push('/');
             }
         })
+        console.log('Fetch should be complete');
     }
 
     return(
