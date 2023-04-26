@@ -1,5 +1,6 @@
 import {Switch, Route} from 'react-router-dom'
 import Login from './components/Login'
+import Browser from './components/Browser'
 import useGlobalState from './services/useGlobalState'
 
 import './App.css'
@@ -17,7 +18,7 @@ function App() {
             <Login/>
           </Route>
           <Route path="/browse">
-            <h1>Browing page</h1>
+            <Browser/>
           </Route>
         </Switch>
       </div>

@@ -25,18 +25,18 @@ export default function Login()
     //Sign in button callback
     function doLogin(){
         console.log("fetching");
+        let content = JSON.stringify({username, password});
         fetch('http://localhost:5100/api/login', {
             method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({username, password}),
-            headers: {'Content-Type': 'application/json'}
+            body: content,
+            headers: {'Content-Length': content.length, 'Content-Type': 'application/json'}
         })
         .then((res) => res.json())
         .then((res)=> {
+            setUsername('');
+            setPassword('');
             //Clear the vars in global state (and form fields)
             if(res.user) {
-                setUsername('');
-                setPassword('');
                 //Store the username into the global state
                 dispatch({type: 'login', user: res.user });
                 console.log(res.user);
@@ -44,7 +44,7 @@ export default function Login()
                 history.push('/');
             }
         })
-        console.log('Fetch should be complete');
+        .catch(console.log('There was an error logging in'));
     }
 
     return(
