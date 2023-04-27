@@ -22,6 +22,13 @@ export default function Login()
         setPassword(evt.target.value);
     }
 
+    function keyPressHandler(evt){
+        if(evt.keyCode === 13)
+        {
+            doLogin();
+        }
+    }
+
     //Sign in button callback
     function doLogin(){
         console.log("fetching");
@@ -40,7 +47,7 @@ export default function Login()
             if(res.user) {
                 //Store the username into the global state
                 dispatch({type: 'login', user: res.user });
-                console.log(res.user);
+                //console.log(res.user);
                 //Redirect the use to '/'
                 history.push('/');
             }
@@ -52,8 +59,8 @@ export default function Login()
         <Layout>
             <div className="login-panel">
                 <h1>Sign In</h1>
-                <input type='text' placeholder='Username' onChange={setUsernameHandler} value={username}></input>
-                <input type='text' placeholder='Password' onChange={setPasswordHandler} value={password}></input>
+                <input type='text' placeholder='Username' onChange={setUsernameHandler} value={username} onKeyDown={keyPressHandler}></input>
+                <input type='text' placeholder='Password' onChange={setPasswordHandler} value={password} onKeyDown={keyPressHandler}></input>
                 <button id='signInButton' onClick={doLogin}>Sign In</button>
             </div>
             <img className="login-bg" src={bgImg} alt="Login"></img>

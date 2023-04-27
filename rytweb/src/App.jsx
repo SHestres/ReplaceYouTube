@@ -2,8 +2,10 @@ import {Switch, Route} from 'react-router-dom'
 import Login from './components/Login'
 import Browser from './components/Browser'
 import useGlobalState from './services/useGlobalState'
+import Protected from './components/Protected'
 
 import './App.css'
+import DetectAuth from './components/DetectAuth'
 
 function App() {
   const {StateProvider} = useGlobalState();
@@ -12,14 +14,14 @@ function App() {
       <div className="App">
         <Switch>
           <Route path="/" exact>
-            <h1>Homepage</h1>
+            <DetectAuth />
           </Route>
           <Route path="/login">
             <Login/>
           </Route>
-          <Route path="/browse">
+          <Protected path="/browse">
             <Browser/>
-          </Route>
+          </Protected>
         </Switch>
       </div>
     </StateProvider>

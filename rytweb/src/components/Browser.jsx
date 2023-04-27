@@ -11,7 +11,7 @@ export default function Browser(){
         fetch('http://localhost:5100/api/genres')
         .then((res) => res.json())
         .then((res) => {
-            console.log(res)
+            //console.log(res)
             setGenres(res);
             setIsLoading(false)
         })
