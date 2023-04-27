@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const fs = require("fs")
 
 const app = express();
 
@@ -17,22 +18,29 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
-    res.send("Hi. This is the base page");
+    res.send("Base api page");
 });
 
 app.post('/api/login', (req, res) =>{
     let users = require("./assets/users.json")
-    console.log(users)
+    //console.log(users)
     let userByName = users[req.body.username];
-    console.log(userByName);
+    //console.log(userByName);
     let user;
     if(userByName){
         if(userByName.password == req.body.password){
             user = userByName.name;
         }
     }
-    console.log(user);
-    res.json({user});
+    //console.log(user);
+    res.send({user});
+})
+
+app.get('/api/genres', (req, res)=>{
+    console.log("Getting genres internal");
+    const getFile = fs.readFileSync('./assets/genres.json')
+    //console.log(JSON.parse(getFile));
+    res.json(JSON.parse(getFile))
 })
 
 

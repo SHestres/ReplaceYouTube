@@ -33,6 +33,7 @@ export default function Login()
         })
         .then((res) => res.json())
         .then((res)=> {
+            //console.log(res);
             setUsername('');
             setPassword('');
             //Clear the vars in global state (and form fields)
