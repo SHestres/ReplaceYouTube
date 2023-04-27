@@ -52,7 +52,7 @@ export default function Login()
                 history.push('/');
             }
         })
-        .catch(console.log('There was an error logging in'));
+        .catch((e) => console.log('There was an error logging in'));
     }
 
     return(

@@ -6,7 +6,7 @@ footer
 
 #Logo{
     /*border: 1px solid blue;*/
-    padding-left: 8%;
+    padding-left: 5%;
     padding-right: 8%;
 }
 
@@ -71,9 +71,6 @@ button{
     flex-direction: column;
     row-gap: 12px;
     justify-items: center;
-
-    
-    
     /*border: 1px solid blue;*/
 }
 
@@ -115,5 +112,11 @@ img{
 }
 
 .translate-row{
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+}
+
+.video-details{
     
 }

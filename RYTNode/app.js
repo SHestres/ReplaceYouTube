@@ -36,8 +36,18 @@ app.post('/api/login', (req, res) =>{
     res.send({user});
 })
 
+app.get('/api/list/:genre', (req, res) => {
+    console.log(`Getting list of ${req.params.genre} movies`);
+    let data = require("./assets/movies/movies.json")
+    let filtered = data.filter((video) => {
+        return video.Genre.includes(req.params.genre)
+    })
+    console.log(filtered)
+    res.json(filtered)
+})
+
 app.get('/api/genres', (req, res)=>{
-    console.log("Getting genres internal");
+    //console.log("Getting genres internal");
     const getFile = fs.readFileSync('./assets/genres.json')
     //console.log(JSON.parse(getFile));
     res.json(JSON.parse(getFile))
