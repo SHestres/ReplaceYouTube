@@ -95,7 +95,7 @@ img{
 }
 
 .movie-row{
-    border: 1px green solid;
+    /*border: 1px green solid;*/
 }
 
 .movie-category-label{
@@ -104,27 +104,34 @@ img{
     padding-bottom: 10px;
     font-size: 20px;
     height: 20px;
-    border: 1px solid blue;
+    /*border: 1px solid blue;*/
 
 }
 
 .row{
     height: 150px;
-    border: 1px solid orange;
+    /*border: 1px solid orange;*/
     margin-bottom: 20px;
+    
+    display: flex;
+    align-items: center;
+    overflow: visible;
 }
 
 .translate-row{
     height: 100%;
     display: flex;
-    overflow-y: visible;
-    overflow-x: auto;
+    /*overflow-y: visible;*/
+    overflow-x: scroll;
     /*display: grid;
     grid-auto-flow: column;*/
 
     gap: 10px;
 
-    border: 1px dashed yellow;
+    /*border: 1px dashed yellow;*/
+    padding-top: 5%;
+    padding-bottom: 5%;
+
  }
 
  .translate-row::-webkit-scrollbar {
@@ -141,27 +148,37 @@ img{
     background-image: var(--backImg);
     background-size: auto 100%;
     background-repeat: no-repeat;
-    height: 100%;
+    height: 150px;
     aspect-ratio: var(--backWidth) / var(--backHeight);
     background-position: center;
     
+    align-self: center;
     flex-shrink: 0;
-    border: 1px solid red;
-}
+    /*border: 1px solid red;*/
+
+    transition: 600ms;
+
+  }
 
   
   .video-card:hover{
-        animation-name: hoverGrow;
-        animation-duration: 1s;
-        height: 120%;
-        
+        transform: scale(1.5);
+        position:sticky;
+
+        z-index: 1;
   }
 
+  .video-card:hover .video-details{
+    visibility: visible;
+  }
 
- /*
+ 
 .video-details{
-    height: 100%;
+    background-color: #101010B0;
+    height: 30%;
     width: 100%;
-    top: 0;
-    left: 0;
-}*/
+    margin-bottom: 0px;
+    /*visibility: hidden;*/
+}
+
+
