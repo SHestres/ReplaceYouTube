@@ -15,13 +15,17 @@ export default function GenreCollection({ genre })
     }, [genre.name]);
 
     return(
-    <div className="movie-row">
-        <div className="movie-category-label">{genre.name}</div>
-        <div className="row">
-            <div className="translate-row">
-                {content.map((movie) => <VideoCard key={uniqueId()} {...movie} />)}
+        content.length > 0 ? 
+        (
+            <div className="movie-row">
+                <div className="movie-category-label">{genre.name}</div>
+                <div className="row">
+                    <div className="translate-row">
+                        {content.map((movie) => <VideoCard key={uniqueId()} {...movie} />)}
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        ) 
+        : null
     )
 }
