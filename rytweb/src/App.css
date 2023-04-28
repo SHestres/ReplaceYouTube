@@ -144,7 +144,6 @@ img{
   }
 
   .video-card{
-            
     background-image: var(--backImg);
     background-size: auto 100%;
     background-repeat: no-repeat;
@@ -156,8 +155,10 @@ img{
     flex-shrink: 0;
     /*border: 1px solid red;*/
 
+    border-radius: 10px;
     transition: 600ms;
-
+    position:relative;
+    
   }
 
   
@@ -174,11 +175,18 @@ img{
 
  
 .video-details{
-    background-color: #101010B0;
-    height: 30%;
+    background-color: #101010E0;
+    height: 40%;
     width: 100%;
-    margin-bottom: 0px;
-    /*visibility: hidden;*/
+    padding: 10px;
+
+    position: absolute;
+    bottom: 0;
+    
+    visibility: hidden;
 }
 
+.video-title{
+    margin: 0px;
+}
 

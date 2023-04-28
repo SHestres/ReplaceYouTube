@@ -72,7 +72,8 @@ export default function VideoCard({Title, id, vote_average, poster, Images }) {
     return (
         <div className="video-card" style={style}>
             <div className="video-details">
-                <h4>{Title}</h4>
+                <h4 className="video-title">{Title}</h4>
+                <div>A brief description</div>
             </div>
         </div>)
 }
