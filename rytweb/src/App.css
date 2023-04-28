@@ -129,8 +129,8 @@ img{
     gap: 10px;
 
     /*border: 1px dashed yellow;*/
-    padding-top: 5%;
-    padding-bottom: 5%;
+    padding: 5%;
+    margin-left: -5%;
 
  }
 
@@ -158,6 +158,8 @@ img{
     border-radius: 10px;
     transition: 600ms;
     position:relative;
+
+    overflow: hidden;
     
   }
 
@@ -173,15 +175,18 @@ img{
     visibility: visible;
   }
 
+
  
 .video-details{
     background-color: #101010E0;
     height: 40%;
     width: 100%;
     padding: 10px;
-
+    
     position: absolute;
     bottom: 0;
+
+    border: 1px solid #101010E0;
     
     visibility: hidden;
 }
