@@ -95,28 +95,39 @@ img{
 }
 
 .movie-row{
-
+    border: 1px green solid;
 }
 
 .movie-category-label{
     font-weight: bold;
     font-size: large;
-    padding-top: 10px;
+    padding-bottom: 10px;
     font-size: 20px;
     height: 20px;
+    border: 1px solid blue;
+
 }
 
 .row{
     height: 150px;
-    border-bottom: 10px solid white;
+    border: 1px solid orange;
+    
 }
 
 .translate-row{
+    height: 100%;
+    /*display: grid;
+    grid-auto-flow: column;*/
     display: flex;
-    flex-direction: row;
-    justify-items: center;
-}
-
-.video-details{
+    margin: 30px;
     
-}
+    border: 5px dashed yellow;
+ }
+
+ /*
+.video-details{
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}*/
