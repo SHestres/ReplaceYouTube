@@ -165,9 +165,7 @@ img{
 
   
   .video-card:hover{
-        transform: scale(1.5);
-        position:sticky;
-
+        transform: scale(1.25);
         z-index: 1;
   }
 
@@ -179,12 +177,15 @@ img{
  
 .video-details{
     background-color: #101010E0;
-    height: 40%;
-    width: 100%;
-    padding: 10px;
-    
+    height: 30%;
+    width: 90%;
+    padding: 5% 5% 0% 5%;
+
     position: absolute;
     bottom: 0;
+
+    display: flex;
+    justify-content: space-between;
 
     border: 1px solid #101010E0;
     
@@ -193,5 +194,17 @@ img{
 
 .video-title{
     margin: 0px;
+}
+
+.play-btn{
+    color: white;
+    border: 1px solid white;
+    border-radius: 50%;
+    padding: 8px;
+    
+}
+
+.plot-sum{
+    font-size: xx-small;
 }
 

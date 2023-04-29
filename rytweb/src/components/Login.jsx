@@ -33,7 +33,7 @@ export default function Login()
     function doLogin(){
         console.log("fetching");
         let content = JSON.stringify({username, password});
-        fetch('http://localhost:5100/api/login', {
+        fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/login`, {
             method: 'POST',
             body: content,
             headers: {'Content-Length': content.length, 'Content-Type': 'application/json'}

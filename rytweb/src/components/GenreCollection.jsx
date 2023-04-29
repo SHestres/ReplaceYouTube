@@ -8,7 +8,8 @@ export default function GenreCollection({ genre })
 
     useEffect(() => {
         console.log("Fetching genre")
-        fetch(`http://localhost:5100/api/list/${genre.name}`)
+        console.log(window.location.host)
+        fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/list/${genre.name}`)
         .then((res) => res.json())
         .then(data => setContent(data))
         .catch(e => console.log("Error fetching movies in genre"))

@@ -10,12 +10,7 @@ app.set("view engine", "ejs");
 //app.use(express.static("public"));
 app.use(express.json());
 
-var corsOptions = {
-    origin: 'http://localhost:5173',
-    optionsSuccessStatus: 200
-}
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.get("/", (req, res) => {
     res.send("Base api page");
@@ -53,6 +48,9 @@ app.get('/api/genres', (req, res)=>{
     res.json(JSON.parse(getFile))
 })
 
+app.get('/render', (req, res) =>{
+    res.render("../index")
+})
 
 const usersRouter = require("./routes/users.js");
 

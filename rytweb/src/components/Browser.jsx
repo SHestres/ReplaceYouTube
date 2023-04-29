@@ -8,7 +8,7 @@ export default function Browser(){
 
     //Allows things to be run when a sensitivity list changes
     useEffect(()=>{
-        fetch('http://localhost:5100/api/genres')
+        fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/genres`)
         .then((res) => res.json())
         .then((res) => {
             setGenres(res);
