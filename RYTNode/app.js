@@ -7,7 +7,7 @@ const app = express();
 
 app.set("view engine", "ejs");
 
-//app.use(express.static("public"));
+app.use(express.static("public"));
 app.use(express.json());
 
 app.use(cors());
@@ -55,6 +55,11 @@ app.get('/api/video/:id', (req, res) =>{
 app.get('/api/dash/min', (req, res) => {
     res.sendFile("../../assets/dash/dash.all.min.js")
 })
+
+/*
+app.get('/api/success', (req, res) =>{
+    res.sendFile("../../public/output.h264")
+})*/
 
 const usersRouter = require("./routes/users.js");
 
