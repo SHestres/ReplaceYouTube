@@ -48,8 +48,12 @@ app.get('/api/genres', (req, res)=>{
     res.json(JSON.parse(getFile))
 })
 
-app.get('/render', (req, res) =>{
-    res.render("../index")
+app.get('/api/video/:id', (req, res) =>{
+    res.send("https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd");
+})
+
+app.get('/api/dash/min', (req, res) => {
+    res.sendFile("../../assets/dash/dash.all.min.js")
 })
 
 const usersRouter = require("./routes/users.js");
