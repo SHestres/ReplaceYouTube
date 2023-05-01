@@ -3,6 +3,10 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 
+import { BsFullscreen } from 'react-icons/bs'
+
+//import ScriptTag from 'react-script-tag'
+
 import dashjs from 'dashjs'
 import ControlBar from '../../node_modules/dashjs/contrib/akamai/controlbar/ControlBar'
 import "../../node_modules/dashjs/contrib/akamai/controlbar/ControlBar.css"
@@ -12,30 +16,62 @@ export default function Player({videoUrl}){
     // A hosted sample video for testing
     //console.log("https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd")
 
-    const player = dashjs.MediaPlayer().create();
+    //[player, setPlayer] = useState();
+
+    //const player = dashjs.MediaPlayer().create();
     var view;
 
+    /*
     useEffect( ()=>{
+        const player = dashjs.MediaPlayer().create()
         view = document.querySelector("#videoPlayer")
         console.log(view);
         player.initialize(view, "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd", true);
 
         const controlBar = new ControlBar(player);
         controlBar.initialize();
-    }, [view]);
-    
+    }, []);    
+*/
+
+    useEffect(() => {
+        const script = document.createElement('script');
+        script.src = `http://${window.location.host.split(":", 1)[0]}:5100/ControlBar.js`;
+        //script.async = true;
+        document.body.appendChild(script);
+      return () => {
+          document.body.removeChild(script);
+        }
+      }, []);
+
+      useEffect(() => {
+        const script = document.createElement('script');
+        script.textContent = "\
+            function init() {\
+            var url = 'https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd';\
+            var videoElement = document.querySelector('.videoContainer video');\
+            var player = dashjs.MediaPlayer().create();\
+            player.initialize(videoElement, url, true);\
+            var controlbar = new ControlBar(player);\
+            controlbar.initialize();}"
+        //script.async = true;
+        document.body.appendChild(script);
+      return () => {
+          document.body.removeChild(script);
+        }
+      }, []);
 
     return(
         <div>
+            
             <h1>Video Player</h1>
-            <video id='videoPlayer' controls/>
+            <video id='videoPlayer' />
             <div id="videoController" className="video-controller unselectable">
                 <div id="playPauseBtn" className="btn-play-pause" title="Play/Pause">
                     <span id="iconPlayPause" className="icon-play"></span>
                 </div>
                 <span id="videoTime" className="time-display">00:00:00</span>
                 <div id="fullscreenBtn" className="btn-fullscreen control-icon-layout" title="Fullscreen">
-                    <span className="icon-fullscreen-enter"></span>
+                    <BsFullscreen className="icon-fullscreen-enter" />
                 </div>
                 <div id="bitrateListBtn" className="control-icon-layout" title="Bitrate List">
                     <span className="icon-bitrate"></span>
