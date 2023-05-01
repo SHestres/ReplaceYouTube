@@ -12,7 +12,7 @@ export default function Player({videoUrl}){
         const player = dashjs.MediaPlayer().create()
         view = document.querySelector("#videoPlayer")
         console.log(view);
-        player.initialize(view, "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd", true);
+        player.initialize(view, videoUrl, true);
     }, []);    
 
 

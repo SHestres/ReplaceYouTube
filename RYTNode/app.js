@@ -49,7 +49,7 @@ app.get('/api/genres', (req, res)=>{
 })
 
 app.get('/api/video/:id', (req, res) =>{
-    res.send("https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd");
+    res.json({videoUrl : "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"});
 })
 
 app.get('/api/dash/min', (req, res) => {
