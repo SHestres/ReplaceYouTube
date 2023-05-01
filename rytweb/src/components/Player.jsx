@@ -1,70 +1,32 @@
-//import {MediaPlayer, initialize} from 'dashjs'
 import React from 'react';
 import { useEffect } from 'react';
-import { useState } from 'react';
-
-import { BsFullscreen } from 'react-icons/bs'
-
-//import ScriptTag from 'react-script-tag'
-
 import dashjs from 'dashjs'
-import ControlBar from '../../node_modules/dashjs/contrib/akamai/controlbar/ControlBar'
-import "../../node_modules/dashjs/contrib/akamai/controlbar/ControlBar.css"
 
 export default function Player({videoUrl}){
 
     // A hosted sample video for testing
     //console.log("https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd")
-
-    //[player, setPlayer] = useState();
-
-    //const player = dashjs.MediaPlayer().create();
-    var view;
-
-    /*
+    
     useEffect( ()=>{
+        var view;
         const player = dashjs.MediaPlayer().create()
         view = document.querySelector("#videoPlayer")
         console.log(view);
         player.initialize(view, "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd", true);
-
-        const controlBar = new ControlBar(player);
-        controlBar.initialize();
     }, []);    
-*/
 
-    useEffect(() => {
-        const script = document.createElement('script');
-        script.src = `http://${window.location.host.split(":", 1)[0]}:5100/ControlBar.js`;
-        //script.async = true;
-        document.body.appendChild(script);
-      return () => {
-          document.body.removeChild(script);
-        }
-      }, []);
-
-      useEffect(() => {
-        const script = document.createElement('script');
-        script.textContent = "\
-            function init() {\
-            var url = 'https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd';\
-            var videoElement = document.querySelector('.videoContainer video');\
-            var player = dashjs.MediaPlayer().create();\
-            player.initialize(videoElement, url, true);\
-            var controlbar = new ControlBar(player);\
-            controlbar.initialize();}"
-        //script.async = true;
-        document.body.appendChild(script);
-      return () => {
-          document.body.removeChild(script);
-        }
-      }, []);
 
     return(
         <div>
-            
             <h1>Video Player</h1>
-            <video id='videoPlayer' />
+            <video id='videoPlayer' controls/>
+        </div>
+    )
+}
+
+
+
+/*  Controlbar for if I decide to go back to it
             <div id="videoController" className="video-controller unselectable">
                 <div id="playPauseBtn" className="btn-play-pause" title="Play/Pause">
                     <span id="iconPlayPause" className="icon-play"></span>
@@ -91,10 +53,7 @@ export default function Player({videoUrl}){
                     <input type="range" id="seekbar" value="0" className="seekbar" min="0" step="0.01"/>
                 </div>
             </div>
-        </div>
-    )
-}
-
+            */
 
 /*
 import videojs from 'video.js';
