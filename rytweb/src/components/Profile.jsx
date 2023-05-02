@@ -3,7 +3,7 @@ import { useContext } from "react"
 
 export default function Profile()
 {
-    
+
     const {StateContext} = useGlobalState();
     const {state, dispatch} = useContext(StateContext);
 

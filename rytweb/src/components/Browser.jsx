@@ -2,7 +2,7 @@ import GenreCollection from './GenreCollection';
 import Layout from './Layout'
 import {useState, useEffect} from 'react'
 
-export default function Browser(){
+export default function Browser({category}){
     const [genres, setGenres] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -21,7 +21,7 @@ export default function Browser(){
         !isLoading && (
             <Layout>
             {genres.map((genre) => 
-                <GenreCollection key={genre.id} genre={genre} />
+                <GenreCollection key={genre.id} genre={genre} category={category}/>
             )}
             </Layout>
         )

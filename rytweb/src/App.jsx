@@ -22,7 +22,7 @@ function App() {
             <Login/>
           </Route>
           <Protected path="/browse">
-            <Browser/>
+            <Browser category="movies"/>
           </Protected>
           <Route path="/play/:id">
             <FetchVideo>

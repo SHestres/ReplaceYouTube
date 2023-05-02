@@ -19,6 +19,8 @@ let ytVids;
 let ytVidspath = './assets/videos/data/youtube.json';
 let others;
 let otherspath = './assets/videos/data/other.json';
+let favorites;
+let favoritespath = './assets/videos/data/favorites.json';
 
 function loadMovies(){
     console.log("Loading movies");
@@ -33,6 +35,18 @@ function loadYtVids(){
 function loadOthers(){
     console.log("Loading others");
     others = JSON.parse(fs.readFileSync(otherspath));
+}
+
+function loadFavorites(){
+    console.log("Loading Favorites");
+    favorites = JSON.parse(fs.readFileSync(favoritespath));
+}
+
+function requireFiles(){
+    if(!movies) loadMovies();
+    if(!ytVids) loadYtVids();
+    if(!others) loadOthers();
+    if(!favorites) loadFavorites();
 }
 
 app.get("/", (req, res) => {
@@ -54,22 +68,33 @@ app.post('/api/login', (req, res) =>{
     res.send({user});
 })
 
-app.get('/api/list/:genre', (req, res) => {
+app.get('/api/list/:category/:genre', (req, res) => {
     console.log(`Getting list of ${req.params.genre} movies`);
-    let data = require("./assets/videos/data/movies.json")
-    let filtered = data.filter((video) => {
-        return video.Genre.includes(req.params.genre)
-    })
-    //console.log(filtered)
+    requireFiles();
+
+    var filtered;
+    if(req.params.category == "movies"){
+        filtered = movies.filter((video) => {
+            return video.Genre.includes(req.params.genre)
+        })
+    }
+    else if(req.params.category == "youtube"){
+        filtered = ytvids.filter((video) => {
+            return video.Genre.includes(req.params.genre)
+        })
+    }
+    else if(req.params.category == "others"){
+        filtered = others.filter((video) => {
+            return video.Genre.includes(req.params.genre)
+        })
+    }
+
     res.json(filtered)
 })
 
 app.get('/api/video/:id', (req, res) =>{
     let video;
-
-    if(!movies) loadMovies();
-    if(!ytVids) loadYtVids();
-    if(!others) loadOthers();
+    requireFiles();
 
     try{
         if(!(video = movies.find((vid) => vid.id == req.params.id)))
@@ -90,10 +115,8 @@ app.get('/api/video/:id', (req, res) =>{
 
 app.post('/api/fav/:id', (req, res) =>{
     console.log("Trying to update favorites");
-    
-    if(!movies) loadMovies();
-    if(!ytVids) loadYtVids();
-    if(!others) loadOthers();
+    requireFiles();    
+
     let video;
     let set_val = (req.query.fav.toLowerCase() === 'true');
 
