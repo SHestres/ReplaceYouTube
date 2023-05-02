@@ -3,7 +3,7 @@ import { BsPlayFill, BsChevronUp } from 'react-icons/bs';
 import { Link } from "react-router-dom";
 
 
-export default function VideoCard({Title, imdbID, Plot, id, vote_average, poster, Images }) {
+export default function VideoCard({Title, id, Plot, vote_average, poster, Images }) {
 
     const [style, setStyle] = useState({});
     const [backHeight, setBackHeight] = useState();
@@ -38,7 +38,7 @@ export default function VideoCard({Title, imdbID, Plot, id, vote_average, poster
         <div className="video-card" style={style}>
             <div className="video-details">
                 <h4 className="video-title">{Title}</h4>
-                <Link to={`/play/${imdbID}`}>
+                <Link to={`/play/${id}`}>
                     <BsPlayFill className="play-btn"/>
                 </Link>
             </div>

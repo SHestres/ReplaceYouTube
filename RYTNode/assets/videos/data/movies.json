@@ -1,6 +1,7 @@
 [
     {
       "Title": "Avatar",
+      "Favorite": true,
       "Year": "2009",
       "Rated": "PG-13",
       "Released": "18 Dec 2009",
@@ -17,7 +18,7 @@
       "Metascore": "83",
       "imdbRating": "7.9",
       "imdbVotes": "890,617",
-      "imdbID": "tt0499549",
+      "id": "tt0499549",
       "Type": "movie",
       "Response": "True",
       "Images": [
@@ -30,6 +31,7 @@
     },
     {
       "Title": "I Am Legend",
+      "Favorite": false,
       "Year": "2007",
       "Rated": "PG-13",
       "Released": "14 Dec 2007",
@@ -46,7 +48,7 @@
       "Metascore": "65",
       "imdbRating": "7.2",
       "imdbVotes": "533,874",
-      "imdbID": "tt0480249",
+      "id": "tt0480249",
       "Type": "movie",
       "Response": "True",
       "Images": [
@@ -58,6 +60,7 @@
     },
     {
       "Title": "300",
+      "Favorite": false,
       "Year": "2006",
       "Rated": "R",
       "Released": "09 Mar 2007",
@@ -74,7 +77,7 @@
       "Metascore": "52",
       "imdbRating": "7.7",
       "imdbVotes": "611,046",
-      "imdbID": "tt0416449",
+      "id": "tt0416449",
       "Type": "movie",
       "Response": "True",
       "Images": [
@@ -85,6 +88,7 @@
     },
     {
       "Title": "The Avengers",
+      "Favorite": false,
       "Year": "2012",
       "Rated": "PG-13",
       "Released": "04 May 2012",
@@ -101,7 +105,7 @@
       "Metascore": "69",
       "imdbRating": "8.1",
       "imdbVotes": "1,003,301",
-      "imdbID": "tt0848228",
+      "id": "tt0848228",
       "Type": "movie",
       "Response": "True",
        "Images": [
@@ -114,6 +118,7 @@
     },
     {
       "Title": "The Wolf of Wall Street",
+      "Favorite": true,
       "Year": "2013",
       "Rated": "R",
       "Released": "25 Dec 2013",
@@ -130,7 +135,7 @@
       "Metascore": "75",
       "imdbRating": "8.2",
       "imdbVotes": "786,985",
-      "imdbID": "tt0993846",
+      "id": "tt0993846",
       "Type": "movie",
       "Response": "True",
       "Images": [
@@ -143,6 +148,7 @@
     },
     {
       "Title": "Interstellar",
+      "Favorite": false,
       "Year": "2014",
       "Rated": "PG-13",
       "Released": "07 Nov 2014",
@@ -159,7 +165,7 @@
       "Metascore": "74",
       "imdbRating": "8.6",
       "imdbVotes": "937,412",
-      "imdbID": "tt0816692",
+      "id": "tt0816692",
       "Type": "movie",
       "Response": "True",
       "Images": [
@@ -172,6 +178,7 @@
     },
     {
       "Title": "Game of Thrones",
+      "Favorite": false,
       "Year": "2011–",
       "Rated": "TV-MA",
       "Released": "17 Apr 2011",
@@ -188,7 +195,7 @@
       "Metascore": "N/A",
       "imdbRating": "9.5",
       "imdbVotes": "1,046,830",
-      "imdbID": "tt0944947",
+      "id": "tt0944947",
       "Type": "series",
       "totalSeasons": "7",
       "Response": "True",
@@ -202,6 +209,7 @@
     },
     {
       "Title": "Vikings",
+      "Favorite": false,
       "Year": "2013–",
       "Rated": "TV-14",
       "Released": "03 Mar 2013",
@@ -218,7 +226,7 @@
       "Metascore": "N/A",
       "imdbRating": "8.6",
       "imdbVotes": "198,041",
-      "imdbID": "tt2306299",
+      "id": "tt2306299",
       "Type": "series",
       "totalSeasons": "5",
       "Response": "True",
@@ -232,6 +240,7 @@
     },
     {
       "Title": "Gotham",
+      "Favorite": false,
       "Year": "2014–",
       "Rated": "TV-14",
       "Released": "01 Aug 2014",
@@ -248,7 +257,7 @@
       "Metascore": "N/A",
       "imdbRating": "8.0",
       "imdbVotes": "133,375",
-      "imdbID": "tt3749900",
+      "id": "tt3749900",
       "Type": "series",
       "totalSeasons": "3",
       "Response": "True",
@@ -262,6 +271,7 @@
     },
     {
       "Title": "Power",
+      "Favorite": false,
       "Year": "2014–",
       "Rated": "TV-MA",
       "Released": "N/A",
@@ -278,7 +288,7 @@
       "Metascore": "N/A",
       "imdbRating": "8.0",
       "imdbVotes": "14,770",
-      "imdbID": "tt3281796",
+      "id": "tt3281796",
       "Type": "series",
       "totalSeasons": "3",
       "Response": "True",
@@ -292,6 +302,7 @@
     },
     {
       "Title": "Narcos",
+      "Favorite": false,
       "Year": "2015–",
       "Rated": "TV-MA",
       "Released": "28 Aug 2015",
@@ -308,7 +319,7 @@
       "Metascore": "N/A",
       "imdbRating": "8.9",
       "imdbVotes": "118,680",
-      "imdbID": "tt2707408",
+      "id": "tt2707408",
       "Type": "series",
       "totalSeasons": "2",
       "Response": "True",
@@ -322,6 +333,7 @@
     },
     {
       "Title": "Breaking Bad",
+      "Favorite": false,
       "Year": "2008–2013",
       "Rated": "TV-14",
       "Released": "20 Jan 2008",
@@ -338,7 +350,7 @@
       "Metascore": "N/A",
       "imdbRating": "9.5",
       "imdbVotes": "889,883",
-      "imdbID": "tt0903747",
+      "id": "tt0903747",
       "Type": "series",
       "totalSeasons": "5",
       "Response": "True",
@@ -353,6 +365,7 @@
     {
       "ComingSoon": true,
       "Title": "Doctor Strange",
+      "Favorite": false,
       "Year": "2016",
       "Rated": "N/A",
       "Released": "04 Nov 2016",
@@ -369,7 +382,7 @@
       "Metascore": "N/A",
       "imdbRating": "N/A",
       "imdbVotes": "N/A",
-      "imdbID": "tt1211837",
+      "id": "tt1211837",
       "Type": "movie",
       "Response": "True",
       "Images": [
@@ -381,6 +394,7 @@
     {
       "ComingSoon": true,
       "Title": "Rogue One: A Star Wars Story",
+      "Favorite": true,
       "Year": "2016",
       "Rated": "N/A",
       "Released": "16 Dec 2016",
@@ -397,7 +411,7 @@
       "Metascore": "N/A",
       "imdbRating": "N/A",
       "imdbVotes": "N/A",
-      "imdbID": "tt3748528",
+      "id": "tt3748528",
       "Type": "movie",
       "Response": "True",
       "Images": [
@@ -411,6 +425,7 @@
     {
       "ComingSoon": true,
       "Title": "Assassin's Creed",
+      "Favorite": false,
       "Year": "2016",
       "Rated": "N/A",
       "Released": "21 Dec 2016",
@@ -427,7 +442,7 @@
       "Metascore": "N/A",
       "imdbRating": "N/A",
       "imdbVotes": "N/A",
-      "imdbID": "tt2094766",
+      "id": "tt2094766",
       "Type": "movie",
       "Response": "True",
       "Images": [
@@ -440,6 +455,7 @@
     {
       "ComingSoon": true,
       "Title": "Luke Cage",
+      "Favorite": false,
       "Year": "2016–",
       "Rated": "TV-MA",
       "Released": "30 Sep 2016",
@@ -456,7 +472,7 @@
       "Metascore": "N/A",
       "imdbRating": "N/A",
       "imdbVotes": "N/A",
-      "imdbID": "tt3322314",
+      "id": "tt3322314",
       "Type": "series",
       "totalSeasons": "1",
       "Response": "True",

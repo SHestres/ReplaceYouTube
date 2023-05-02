@@ -33,23 +33,31 @@ app.post('/api/login', (req, res) =>{
 
 app.get('/api/list/:genre', (req, res) => {
     console.log(`Getting list of ${req.params.genre} movies`);
-    let data = require("./assets/movies/movies.json")
+    let data = require("./assets/videos/data/movies.json")
     let filtered = data.filter((video) => {
         return video.Genre.includes(req.params.genre)
     })
-    console.log(filtered)
+    //console.log(filtered)
     res.json(filtered)
 })
 
-app.get('/api/genres', (req, res)=>{
-    //console.log("Getting genres internal");
-    const getFile = fs.readFileSync('./assets/genres.json')
-    //console.log(JSON.parse(getFile));
-    res.json(JSON.parse(getFile))
-})
-
 app.get('/api/video/:id', (req, res) =>{
-    res.json({videoUrl : "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"});
+    let movies = require('./assets/videos/data/movies.json');
+    let ytvids;
+    let other;
+    let video;
+    if(!(video = movies.find((vid) => vid.id == req.params.id)))
+    {
+        ytvids = require('./assets/videos/data/youtube.json');
+        if(!(video = ytvids.find((vid) => vid.id == req.params.id))){
+            other = require('./assets/videos/data/other.json');
+            if(!(video = ytvids.find((vid) => vid.id == req.params.id))){
+                res.status(400).send("Unable to find video");
+            }
+        }
+    }
+    video.videoUrl = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
+    res.json(video);
 })
 
 app.get('/api/dash/min', (req, res) => {
@@ -62,8 +70,10 @@ app.get('/api/success', (req, res) =>{
 })*/
 
 const usersRouter = require("./routes/users.js");
+const videoRouter = require("./routes/videos.js");
 
 app.use("/users", usersRouter);
+app.use("/api/videos", videoRouter);
 
 
 app.listen("5100");
