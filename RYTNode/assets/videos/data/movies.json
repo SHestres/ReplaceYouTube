@@ -115,7 +115,8 @@
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMjMwMzM2MTg1M15BMl5BanBnXkFtZTcwNjM4ODY3Nw@@._V1_SX1777_CR0,0,1777,999_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTQ4NzM2Mjc5MV5BMl5BanBnXkFtZTcwMTkwOTY3Nw@@._V1_SX1777_CR0,0,1777,999_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTc3MzQ3NjA5N15BMl5BanBnXkFtZTcwMzY5OTY3Nw@@._V1_SX1777_CR0,0,1777,999_AL_.jpg"
-		]
+		],
+		"videoUrl": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
 	},
 	{
 		"Title": "The Wolf of Wall Street",
@@ -179,7 +180,7 @@
 	},
 	{
 		"Title": "Game of Thrones",
-		"Favorite": false,
+		"Favorite": true,
 		"Year": "2011–",
 		"Rated": "TV-MA",
 		"Released": "17 Apr 2011",
@@ -206,7 +207,8 @@
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMDk4Y2Y1MDAtNGVmMC00ZTlhLTlmMmQtYjcyN2VkNzUzZjg2XkEyXkFqcGdeQXVyNjUxNzgwNTE@._V1_SX1777_CR0,0,1777,999_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BNjZjNWIzMzQtZWZjYy00ZTkwLWJiMTYtOWRkZDBhNWJhY2JmXkEyXkFqcGdeQXVyMjk3NTUyOTc@._V1_SX1777_CR0,0,1777,999_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BNTMyMTRjZWEtM2UxMS00ZjU5LWIxMTYtZDA5YmJhZmRjYTc4XkEyXkFqcGdeQXVyMjk3NTUyOTc@._V1_SX1777_CR0,0,1777,999_AL_.jpg"
-		]
+		],
+		"videoUrl": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
 	},
 	{
 		"Title": "Vikings",
@@ -395,7 +397,7 @@
 	{
 		"ComingSoon": true,
 		"Title": "Rogue One: A Star Wars Story",
-		"Favorite": true,
+		"Favorite": false,
 		"Year": "2016",
 		"Rated": "N/A",
 		"Released": "16 Dec 2016",
@@ -421,7 +423,8 @@
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTUyNjkxOTk5NV5BMl5BanBnXkFtZTgwODAxMTc1ODE@._V1_SX1777_CR0,0,1777,744_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BNjM4MzExNDAyNl5BMl5BanBnXkFtZTgwOTAxMTc1ODE@._V1_SX1777_CR0,0,1777,744_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMjE3NTgxMDcyNV5BMl5BanBnXkFtZTgwMDExMTc1ODE@._V1_SX1777_CR0,0,1777,744_AL_.jpg"
-		]
+		],
+		"videoUrl": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
 	},
 	{
 		"ComingSoon": true,

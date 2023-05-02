@@ -49,6 +49,37 @@ function requireFiles(){
     if(!favorites) loadFavorites();
 }
 
+//Adds or removes the id of a video from the favorites list
+function updateFavorites(category, id, fav){
+    switch(category){
+        case "movies":
+            if(fav) favorites.movies.push(id);
+            else{
+                let ind = favorites.movies.findIndex(item => item==id);
+                if(ind != -1) favorites.movies.splice(ind, 1);
+            }
+            break;
+        case "ytVids":
+            if(fav) favorites.youtube.push(id);
+            else{
+                let ind = favorites.youtube.findIndex(item => item==id);
+                if(ind != -1) favorites.youtube.splice(ind, 1);
+            }
+            break;
+        case "others":
+            if(fav) favorites.other.push(id);
+            else{
+                let ind = favorites.others.findIndex(item => item==id);
+                if(ind != -1) favorites.other.splice(ind, 1);
+            }
+            break;
+    }
+    fs.writeFile(favoritespath, JSON.stringify(favorites, null, '\t'), (err) => {
+        if(err) console.log("Couldn't write to favorites");
+        else console.log("Wrote to favorites");
+    })
+}
+
 app.get("/", (req, res) => {
     res.send("Base api page");
 });
@@ -124,6 +155,7 @@ app.post('/api/fav/:id', (req, res) =>{
     {
         console.log("Found id in movies");
         movies[video].Favorite = set_val;
+        updateFavorites("movies", movies[video].id, set_val);
         fs.writeFile(moviespath, JSON.stringify(movies, null, "\t"), (err) =>{
             console.log("Writing callback");
             if(err){
@@ -138,6 +170,7 @@ app.post('/api/fav/:id', (req, res) =>{
     else{
         if((video = ytVids.findIndex((vid) => vid.id == req.params.id)) != -1){
             ytVids[video].Favorite = set_val;
+            updateFavorites(ytVids, set_val, video);
             fs.writeFile(moviespath, JSON.stringify(ytVids, null, "\t"), (err) =>{
                 if(err){
                     console.log("Couldn't write favoriting changes to youtubeVids")
@@ -151,6 +184,7 @@ app.post('/api/fav/:id', (req, res) =>{
         else{
             if(!(video = ytvids.findIndex((vid) => vid.id == req.params.id)) != -1){
                 others[video].Favorite = set_val;
+                updateFavorites(others, set_val, video);
                 fs.writeFile(moviespath, JSON.stringify(others, null, "\t"), (err) =>{
                     if(err){
                         console.log("Couldn't write favoriting changes to others")
