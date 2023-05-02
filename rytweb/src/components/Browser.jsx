@@ -1,10 +1,12 @@
 import GenreCollection from './GenreCollection';
 import Layout from './Layout'
 import {useState, useEffect} from 'react'
+import { useParams } from 'react-router-dom/';
 
-export default function Browser({category}){
+export default function Browser(){
     const [genres, setGenres] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const {category} = useParams();
 
     //Allows things to be run when a sensitivity list changes
     useEffect(()=>{

@@ -22,8 +22,8 @@ function App() {
           <Route path="/login">
             <Login/>
           </Route>
-          <Route path='/browse/movies'>
-            <Browser category="movies"/>
+          <Route path='/browse/:category'>
+            <Browser />
           </Route>
           <Protected path="/browse">
             <HomeBrowser />
