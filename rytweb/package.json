@@ -18,10 +18,7 @@
     "react-icons": "^4.8.0",
     "react-router": "^6.10.0",
     "react-router-dom": "^5.3.4",
-    "react-router-native": "^6.10.0",
-    "react-script-tag": "^1.1.2",
-    "video.js": "5.8",
-    "videojs-resolution-switcher": "^0.4.2"
+    "react-router-native": "^6.10.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
