@@ -227,5 +227,11 @@ img{
     width: auto;
     padding-left: 15px;
     cursor: pointer;
+}
 
+.no-show-text{
+    background-color: #101010;
+    border-radius: 10px;
+    text-align: center;
+    padding: 50px;
 }

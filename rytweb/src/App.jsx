@@ -5,6 +5,7 @@ import useGlobalState from './services/useGlobalState'
 import Protected from './components/Protected'
 import FetchVideo from './components/FetchVideo'
 import Player from './components/Player'
+import HomeBrowser from './components/HomeBrowser'
 
 import './App.css'
 import DetectAuth from './components/DetectAuth'
@@ -21,8 +22,11 @@ function App() {
           <Route path="/login">
             <Login/>
           </Route>
-          <Protected path="/browse">
+          <Route path='/browse/movies'>
             <Browser category="movies"/>
+          </Route>
+          <Protected path="/browse">
+            <HomeBrowser />
           </Protected>
           <Route path="/play/:id">
             <FetchVideo>

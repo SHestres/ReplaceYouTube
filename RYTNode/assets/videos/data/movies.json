@@ -1,7 +1,7 @@
 [
 	{
 		"Title": "Avatar",
-		"Favorite": true,
+		"Favorite": false,
 		"Year": "2009",
 		"Rated": "PG-13",
 		"Released": "18 Dec 2009",
@@ -27,7 +27,8 @@
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTY2ODQ3NjMyMl5BMl5BanBnXkFtZTcwODg0MTUzNA@@._V1_SX1777_CR0,0,1777,999_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTMxOTEwNDcxN15BMl5BanBnXkFtZTcwOTg0MTUzNA@@._V1_SX1777_CR0,0,1777,999_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTYxMDg1Nzk1MV5BMl5BanBnXkFtZTcwMDk0MTUzNA@@._V1_SX1500_CR0,0,1500,999_AL_.jpg"
-		]
+		],
+		"videoUrl": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
 	},
 	{
 		"Title": "I Am Legend",
@@ -120,7 +121,7 @@
 	},
 	{
 		"Title": "The Wolf of Wall Street",
-		"Favorite": true,
+		"Favorite": false,
 		"Year": "2013",
 		"Rated": "R",
 		"Released": "25 Dec 2013",
@@ -146,7 +147,8 @@
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTExMDk1MDE4NzVeQTJeQWpwZ15BbWU4MDM4NDM0ODAx._V1_SX1500_CR0,0,1500,999_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTg3MTY4NDk4Nl5BMl5BanBnXkFtZTgwNjc0MzQ4MDE@._V1_SX1500_CR0,0,1500,999_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTgzMTg4MDI0Ml5BMl5BanBnXkFtZTgwOTY0MzQ4MDE@._V1_SY1000_CR0,0,1553,1000_AL_.jpg"
-		]
+		],
+		"videoUrl": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
 	},
 	{
 		"Title": "Interstellar",
@@ -180,7 +182,7 @@
 	},
 	{
 		"Title": "Game of Thrones",
-		"Favorite": true,
+		"Favorite": false,
 		"Year": "2011–",
 		"Rated": "TV-MA",
 		"Released": "17 Apr 2011",
@@ -212,7 +214,7 @@
 	},
 	{
 		"Title": "Vikings",
-		"Favorite": false,
+		"Favorite": true,
 		"Year": "2013–",
 		"Rated": "TV-14",
 		"Released": "03 Mar 2013",
@@ -239,7 +241,8 @@
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMjMzMzIzOTU2M15BMl5BanBnXkFtZTgwODMzMTkyODE@._V1_SY1000_SX1500_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTQ2NTQ2MDA3NF5BMl5BanBnXkFtZTgwODkxMDUxODE@._V1_SY1000_SX1500_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTcxOTQ3NTA5N15BMl5BanBnXkFtZTgwMzExMDUxODE@._V1_SY1000_SX1500_AL_.jpg"
-		]
+		],
+		"videoUrl": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
 	},
 	{
 		"Title": "Gotham",
@@ -368,7 +371,7 @@
 	{
 		"ComingSoon": true,
 		"Title": "Doctor Strange",
-		"Favorite": false,
+		"Favorite": true,
 		"Year": "2016",
 		"Rated": "N/A",
 		"Released": "04 Nov 2016",
@@ -392,7 +395,8 @@
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMjM3ODc1ODI5Ml5BMl5BanBnXkFtZTgwODMzMDY3OTE@._V1_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTgxNTAyNTU0NV5BMl5BanBnXkFtZTgwNzMzMDY3OTE@._V1_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMjE5NDc5NzUwNV5BMl5BanBnXkFtZTgwMDM3MDM2NzE@._V1_.jpg"
-		]
+		],
+		"videoUrl": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
 	},
 	{
 		"ComingSoon": true,

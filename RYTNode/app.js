@@ -80,6 +80,11 @@ function updateFavorites(category, id, fav){
     })
 }
 
+function getVidByID(arr, id){
+        let ind = arr.findIndex((video) => video.id == id)
+        return arr[ind];
+}
+
 app.get("/", (req, res) => {
     res.send("Base api page");
 });
@@ -100,24 +105,48 @@ app.post('/api/login', (req, res) =>{
 })
 
 app.get('/api/list/:category/:genre', (req, res) => {
-    console.log(`Getting list of ${req.params.genre} movies`);
+    console.log(`Getting list of ${req.params.genre} from ${req.params.category}`);
     requireFiles();
 
     var filtered;
-    if(req.params.category == "movies"){
-        filtered = movies.filter((video) => {
-            return video.Genre.includes(req.params.genre)
-        })
-    }
-    else if(req.params.category == "youtube"){
-        filtered = ytvids.filter((video) => {
-            return video.Genre.includes(req.params.genre)
-        })
-    }
-    else if(req.params.category == "others"){
-        filtered = others.filter((video) => {
-            return video.Genre.includes(req.params.genre)
-        })
+    switch(req.params.category){
+        case "movies":
+            filtered = movies.filter((video) => {
+                return video.Genre.includes(req.params.genre)
+            })
+        break;
+        case "youtube":
+            filtered = ytVids.filter((video) => {
+                return video.Genre.includes(req.params.genre)
+            })
+        break;
+        case "others":
+            filtered = others.filter((video) => {
+                return video.Genre.includes(req.params.genre)
+            })
+        break;
+        case "favorites":
+            let ids = favorites[req.params.genre];
+            switch (req.params.genre){
+                case "movies":
+                    filtered = ids.map((id) =>{
+                        return getVidByID(movies, id);
+                    })
+                break;
+                case "youtube":
+                    filtered = ids.map((id) =>{
+                        return getVidByID(ytVids, id);
+                    })
+                break;
+                case "others":
+                    filtered = ids.map((id) =>{
+                        return getVidByID(others, id);
+                    })
+                break;
+            }
+        break;
+        default:
+            console.log("Invalid category");
     }
 
     res.json(filtered)
@@ -130,8 +159,8 @@ app.get('/api/video/:id', (req, res) =>{
     try{
         if(!(video = movies.find((vid) => vid.id == req.params.id)))
         {
-            if(!(video = ytvids.find((vid) => vid.id == req.params.id))){
-                if(!(video = ytvids.find((vid) => vid.id == req.params.id))){
+            if(!(video = ytVids.find((vid) => vid.id == req.params.id))){
+                if(!(video = ytVids.find((vid) => vid.id == req.params.id))){
                     console.log("Unable to find video")
                     res.status(400).send("Unable to find video");
                 }
@@ -143,6 +172,7 @@ app.get('/api/video/:id', (req, res) =>{
         video.videoUrl = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
     res.json(video);
 })
+
 
 app.post('/api/fav/:id', (req, res) =>{
     console.log("Trying to update favorites");
@@ -182,7 +212,7 @@ app.post('/api/fav/:id', (req, res) =>{
             })
         }
         else{
-            if(!(video = ytvids.findIndex((vid) => vid.id == req.params.id)) != -1){
+            if(!(video = ytVids.findIndex((vid) => vid.id == req.params.id)) != -1){
                 others[video].Favorite = set_val;
                 updateFavorites(others, set_val, video);
                 fs.writeFile(moviespath, JSON.stringify(others, null, "\t"), (err) =>{
