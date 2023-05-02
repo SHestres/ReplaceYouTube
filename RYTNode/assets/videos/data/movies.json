@@ -178,7 +178,8 @@
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTg4Njk4MzY0Nl5BMl5BanBnXkFtZTgwMzIyODgxMzE@._V1_SX1500_CR0,0,1500,999_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMzE3MTM0MTc3Ml5BMl5BanBnXkFtZTgwMDIyODgxMzE@._V1_SX1500_CR0,0,1500,999_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BNjYzNjE2NDk3N15BMl5BanBnXkFtZTgwNzEyODgxMzE@._V1_SX1500_CR0,0,1500,999_AL_.jpg"
-		]
+		],
+		"videoUrl": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
 	},
 	{
 		"Title": "Game of Thrones",
@@ -246,7 +247,7 @@
 	},
 	{
 		"Title": "Gotham",
-		"Favorite": false,
+		"Favorite": true,
 		"Year": "2014–",
 		"Rated": "TV-14",
 		"Released": "01 Aug 2014",
@@ -273,7 +274,8 @@
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMTA3MDY2NjA3MzBeQTJeQWpwZ15BbWU4MDU0MDkzODgx._V1_SX1499_CR0,0,1499,999_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMjM3MzYzNDgzOV5BMl5BanBnXkFtZTgwMjQwOTM4ODE@._V1_SY1000_CR0,0,1498,1000_AL_.jpg",
 			"https://images-na.ssl-images-amazon.com/images/M/MV5BMjQwODAyNjk0NF5BMl5BanBnXkFtZTgwODU4MzMyODE@._V1_SY1000_CR0,0,1500,1000_AL_.jpg"
-		]
+		],
+		"videoUrl": "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
 	},
 	{
 		"Title": "Power",

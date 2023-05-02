@@ -7,7 +7,7 @@ export default function GenreCollection({ genre, category, title })
     const [content, setContent] = useState([]);
 
     useEffect(() => {
-        console.log(`Fetching genre ${genre.name} from category ${category}`)
+        //console.log(`Fetching genre ${genre.name} from category ${category}`)
         fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/list/${category}/${genre.name}`)
         .then((res) => res.json())
         .then(data => setContent(data))
