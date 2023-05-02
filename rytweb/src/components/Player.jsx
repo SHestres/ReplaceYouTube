@@ -1,12 +1,17 @@
 import React from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import dashjs from 'dashjs'
+import {AiFillHeart, AiOutlineHeart} from "react-icons/ai"
 
-export default function Player({videoUrl}){
+export default function Player({videoUrl, Title, Plot, Favorite, id}){
 
     // A hosted sample video for testing
     //console.log("https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd")
     
+    const [fav, setFav] = useState(Favorite)
+    console.log(id);
+
+
     useEffect( ()=>{
         var view;
         const player = dashjs.MediaPlayer().create()
@@ -16,11 +21,23 @@ export default function Player({videoUrl}){
     }, []);    
 
 
+    const toggleFav = function (){
+        
+        fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/fav/${id}?fav=${!fav}`, {method: "POST"})
+        .then(setFav(!fav))
+        .catch(e => console.log("Error changing fav"))
+    }
+
     return(
-        <div>
-            <h1>Video Player</h1>
+        <>
             <video id='videoPlayer' controls/>
-        </div>
+            <div className='player-title-bar'>
+                <h1 className='player-video-title'>{Title}</h1>
+                {fav ? <AiFillHeart className='fav-icon' onClick={toggleFav}/> : <AiOutlineHeart className='fav-icon' onClick={toggleFav}/>}
+            </div>
+            
+            <p className='player-description-body'>{Plot}</p>
+        </>
     )
 }
 
