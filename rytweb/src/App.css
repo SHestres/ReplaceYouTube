@@ -43,6 +43,8 @@ button{
 }*/
 
 .navbar-btn{
+    position: relative;
+    z-index: 1;
     color:azure;
     align-items: center;
     padding: 15%;
@@ -129,9 +131,9 @@ img{
     gap: 10px;
 
     /*border: 1px dashed yellow;*/
+    /*Padding allows video cards to expand without being cut off*/
     padding: 5%;
     margin-left: -5%;
-
  }
 
  .translate-row::-webkit-scrollbar {
