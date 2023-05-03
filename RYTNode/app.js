@@ -22,9 +22,21 @@ let otherspath = './assets/videos/data/other.json';
 let favorites;
 let favoritespath = './assets/videos/data/favorites.json';
 
-let videoData = {movies: [], ytVids: [], others: []}
+let videoData = {};
+let categories = [];
 
 function requireVideoData(){
+    if(Object.keys(videoData).length == 0 || categories.length == 0){
+        //Categories holds the names of the categories, keyed by their api label
+        console.log("Getting categories")
+        categories = JSON.parse(fs.readFileSync(`./assets/videos/data/categories.json`));
+        for (var cat in categories){
+            videoData[cat] = [];
+        }
+        console.log(videoData);
+        console.log(categories);
+    }
+
     for (var cat in videoData){
         if(videoData[cat].length === 0)
         {
@@ -141,6 +153,13 @@ app.post('/api/login', (req, res) =>{
     }
     //console.log(user);
     res.send({user});
+})
+
+app.get('/api/list/categories', (req, res) =>{
+    requireVideoData();
+    console.log("Listing categories");
+    console.log(categories);
+    res.json(categories);
 })
 
 app.get('/api/list/:category/:genre', (req, res) => {

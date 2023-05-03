@@ -1,11 +1,30 @@
 import {Link} from 'react-router-dom'
+import { useState, useEffect } from 'react';
 
 export default function Navbar()
 {
+    const [cats, setCats] = useState();
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(()=>{
+        fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/list/categories`)
+        .then((res) => res.json())
+        .then((res) => {
+            console.log(res);
+            setCats(res);
+            setIsLoading(false);
+        })
+        .catch(() => console.log("Error getting categories"));
+    }, [])
+
     return(
+        !isLoading &&
         <nav>
             <Link className='navbar-btn' to="/">Home</Link>
-            <Link className='navbar-btn' to="/browse/movies">Movies</Link>
+            {Object.keys(cats).map((cat) => 
+                <Link key={cat} className='navbar-btn' to={`/browse/${cat}`}>{cats[cat]}</Link>
+            )}
+            
         </nav>
     )
 }

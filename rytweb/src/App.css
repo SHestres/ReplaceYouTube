@@ -2,6 +2,7 @@ footer
 {
     text-align: center;
     font-size:small;
+    margin-top: 10px;
 }
 
 #Logo{
@@ -42,10 +43,9 @@ button{
 }*/
 
 .navbar-btn{
-    /*border: 1px solid blue;*/
     color:azure;
     align-items: center;
-    padding: 30%;
+    padding: 15%;
 }
 
 .navbar-btn:visited{

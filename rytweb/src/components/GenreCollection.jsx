@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react'
 import VideoCard from './VideoCard';
 import { uniqueId } from 'lodash';
 
-export default function GenreCollection({ genre, category, title })
+export default function GenreCollection({ genre, category, title, hasGenreCallback })
 {
     const [content, setContent] = useState([]);
 
@@ -10,9 +10,12 @@ export default function GenreCollection({ genre, category, title })
         //console.log(`Fetching genre ${genre.name} from category ${category}`)
         fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/list/${category}/${genre.name}`)
         .then((res) => res.json())
-        .then(data => setContent(data))
+        .then((data) => {
+            setContent(data);
+            if(data.length != 0) hasGenreCallback(true);
+        })
         .catch(e => console.log("Error fetching movies in genre"))
-    }, [genre.name]);
+    }, [category, genre.name]);
 
     return(
         content.length > 0 ? 
@@ -33,6 +36,6 @@ export default function GenreCollection({ genre, category, title })
                     <div className="no-show-text">Mark favorites for them to show up here!</div>
                 </div>
             </div>
-        : null
+        : false
     )
 }

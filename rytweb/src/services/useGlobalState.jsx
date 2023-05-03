@@ -1,7 +1,8 @@
 import {useReducer, createContext} from 'react'
 
 const initialState = {
-    user: null
+    user: null,
+    rendering: false
 }
 
 const GlobalStateContext = createContext();
@@ -14,6 +15,9 @@ function reducer(state, action) {
         }
         case 'logout':{
             return{...state, user: null}
+        }
+        case 'checkRender':{
+            return{...state, rendering: action.rendering}
         }
         default:
             throw new Error('Invalid reducer action');

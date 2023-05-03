@@ -3,10 +3,9 @@ import {FaRegCopyright} from 'react-icons/fa'
 import Navbar from './Navbar'
 import Profile from './Profile'
 
-
 export default function Layout({children})
-{
-    return(<>
+{    return(
+    <>
         <header>
             <div className="App-header">
                 <img id="Logo" src={Logo} width={150} height={150} alt='Welcome to BlueTube'/>
