@@ -2,6 +2,9 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import dashjs from 'dashjs'
 import {AiFillHeart, AiOutlineHeart} from "react-icons/ai"
+import { BsArrowLeft } from 'react-icons/bs';
+import { useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
 export default function Player({videoUrl, Title, Plot, Favorite, id}){
 
@@ -10,6 +13,7 @@ export default function Player({videoUrl, Title, Plot, Favorite, id}){
     
     const [fav, setFav] = useState(Favorite)
     console.log(id);
+    const history = useHistory();
 
 
     useEffect( ()=>{
@@ -28,16 +32,21 @@ export default function Player({videoUrl, Title, Plot, Favorite, id}){
         .catch(e => console.log("Error changing fav"))
     }
 
+    const goback = function(){
+        history.goBack()
+    }
+
     return(
-        <>
-            <video id='videoPlayer' controls/>
+        <div id='playerContainer'>
+            <video id='videoPlayer' controls />
+            <BsArrowLeft className='back-btn' onClick={goback} />
             <div className='player-title-bar'>
                 <h1 className='player-video-title'>{Title}</h1>
                 {fav ? <AiFillHeart className='fav-icon' onClick={toggleFav}/> : <AiOutlineHeart className='fav-icon' onClick={toggleFav}/>}
             </div>
             
             <p className='player-description-body'>{Plot}</p>
-        </>
+        </div>
     )
 }
 

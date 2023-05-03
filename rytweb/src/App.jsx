@@ -13,6 +13,7 @@ import DetectAuth from './components/DetectAuth'
 function App() {
   const {StateProvider} = useGlobalState();
   return (
+    <>
     <StateProvider>
       <div className="App">
         <Switch>
@@ -36,6 +37,7 @@ function App() {
         </Switch>
       </div>
     </StateProvider>
+    </>
   )
 }
 
