@@ -1,18 +1,18 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import dashjs from 'dashjs'
-import {AiFillHeart, AiOutlineHeart} from "react-icons/ai"
 import { BsArrowLeft } from 'react-icons/bs';
 import { useHistory } from 'react-router-dom'
 import { Link } from 'react-router-dom';
+import FavIcon from './FavIcon';
 
-export default function Player({videoUrl, Title, Plot, Favorite, id}){
+export default function Player({videoUrl, Title, Plot, ...rest}){
 
     // A hosted sample video for testing
     //console.log("https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd")
     
-    const [fav, setFav] = useState(Favorite)
-    console.log(id);
+    
+
     const history = useHistory();
 
 
@@ -25,13 +25,6 @@ export default function Player({videoUrl, Title, Plot, Favorite, id}){
     }, []);    
 
 
-    const toggleFav = function (){
-        
-        fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/fav/${id}?fav=${!fav}`, {method: "POST"})
-        .then(setFav(!fav))
-        .catch(e => console.log("Error changing fav"))
-    }
-
     const goback = function(){
         history.goBack()
     }
@@ -42,7 +35,7 @@ export default function Player({videoUrl, Title, Plot, Favorite, id}){
             <BsArrowLeft className='back-btn' onClick={goback} />
             <div className='player-title-bar'>
                 <h1 className='player-video-title'>{Title}</h1>
-                {fav ? <AiFillHeart className='fav-icon' onClick={toggleFav}/> : <AiOutlineHeart className='fav-icon' onClick={toggleFav}/>}
+                <FavIcon className='fav-icon' {...rest}/>
             </div>
             
             <p className='player-description-body'>{Plot}</p>

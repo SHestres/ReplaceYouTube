@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { BsPlayFill, BsChevronUp } from 'react-icons/bs';
 import { Link } from "react-router-dom";
+import FavIcon from "./FavIcon";
 
-
-export default function VideoCard({Title, id, Plot, vote_average, poster, Images }) {
+export default function VideoCard({Title, id, Images, ...rest}) {
 
     const [style, setStyle] = useState({});
     const [backHeight, setBackHeight] = useState();
@@ -38,9 +38,12 @@ export default function VideoCard({Title, id, Plot, vote_average, poster, Images
         <div className="video-card" style={style}>
             <div className="video-details">
                 <h4 className="video-title">{Title}</h4>
+                <div className="video-card-row">
+                <FavIcon className='video-card-btn' id={id} {...rest}/>
                 <Link to={`/play/${id}`}>
-                    <BsPlayFill className="play-btn"/>
+                    <BsPlayFill className="video-card-btn"/>
                 </Link>
+                </div>
             </div>
         </div>)
 }

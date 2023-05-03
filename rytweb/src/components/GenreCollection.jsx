@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react'
 import VideoCard from './VideoCard';
 import { uniqueId } from 'lodash';
+import FavIcon from './FavIcon';
 
 export default function GenreCollection({ genre, category, title, hasGenreCallback })
 {

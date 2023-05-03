@@ -184,7 +184,7 @@
 	},
 	{
 		"Title": "Game of Thrones",
-		"Favorite": false,
+		"Favorite": true,
 		"Year": "2011–",
 		"Rated": "TV-MA",
 		"Released": "17 Apr 2011",
@@ -248,7 +248,7 @@
 	},
 	{
 		"Title": "Gotham",
-		"Favorite": true,
+		"Favorite": false,
 		"Year": "2014–",
 		"Rated": "TV-14",
 		"Released": "01 Aug 2014",
@@ -406,7 +406,7 @@
 	{
 		"ComingSoon": true,
 		"Title": "Rogue One: A Star Wars Story",
-		"Favorite": false,
+		"Favorite": true,
 		"Year": "2016",
 		"Rated": "N/A",
 		"Released": "16 Dec 2016",
