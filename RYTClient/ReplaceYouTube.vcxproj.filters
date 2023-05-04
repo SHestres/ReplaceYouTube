@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\VideoPlayer">
+      <UniqueIdentifier>{45b64be8-c91a-4f87-a928-c27204405d2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VideoPlayer\Rendering">
+      <UniqueIdentifier>{723657e7-746c-49de-a826-5b8a2c881677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VideoPlayer\Window">
+      <UniqueIdentifier>{eb3474a7-37f8-4f30-9903-49a121057b82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RYTClient.cpp">
@@ -21,10 +30,62 @@
     <ClCompile Include="TcpClientNetworking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VideoPlayer.cpp">
+      <Filter>Source Files\VideoPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\RYTServer\glad.c">
+      <Filter>Source Files\VideoPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="EBO.cpp">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="VAO.cpp">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="VBO.cpp">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="shaderClass.cpp">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="AppWindow.cpp">
+      <Filter>Source Files\VideoPlayer\Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TcpClientNetworking.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="VideoPlayer.h">
+      <Filter>Source Files\VideoPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="EBO.h">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="VAO.h">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="VBO.h">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="shaderClass.h">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="AppWindow.h">
+      <Filter>Source Files\VideoPlayer\Window</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="default.frag">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </None>
+    <None Include="default.vert">
+      <Filter>Source Files\VideoPlayer\Rendering</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="backup.txt">
+      <Filter>Source Files\VideoPlayer</Filter>
+    </Text>
   </ItemGroup>
 </Project>

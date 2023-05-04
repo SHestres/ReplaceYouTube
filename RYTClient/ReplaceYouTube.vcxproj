@@ -71,6 +71,11 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>.\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>..\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -107,7 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -128,11 +133,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\RYTServer\glad.c" />
+    <ClCompile Include="AppWindow.cpp" />
+    <ClCompile Include="EBO.cpp" />
     <ClCompile Include="RYTClient.cpp" />
+    <ClCompile Include="shaderClass.cpp" />
     <ClCompile Include="TcpClientNetworking.cpp" />
+    <ClCompile Include="VAO.cpp" />
+    <ClCompile Include="VBO.cpp" />
+    <ClCompile Include="VideoPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AppWindow.h" />
+    <ClInclude Include="EBO.h" />
+    <ClInclude Include="shaderClass.h" />
     <ClInclude Include="TcpClientNetworking.h" />
+    <ClInclude Include="VAO.h" />
+    <ClInclude Include="VBO.h" />
+    <ClInclude Include="VideoPlayer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="default.frag" />
+    <None Include="default.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="backup.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

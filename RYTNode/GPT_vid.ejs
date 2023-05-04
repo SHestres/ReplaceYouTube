@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= videoTitle %></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        #video-player {
+            margin: 20px;
+        }
+
+        #description {
+            background-color: #f2f2f2;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+        }
+
+            #description h2 {
+                margin: 0;
+                font-size: 24px;
+            }
+
+            #description p {
+                margin: 0;
+                font-size: 16px;
+            }
+
+        #description-content {
+            display: none;
+        }
+
+        #description-toggle {
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><%= videoTitle %></h1>
+    </header>
+    <div id="video-player">
+        <video controls>
+            <source src="<%= videoPath %>" type="video/mp4">
+        </video>
+    </div>
+    <div id="description">
+        <h2>Description</h2>
+        <p id="description-summary"><%= videoDescription %></p>
+        <p id="description-toggle">Read more</p>
+        <div id="description-content">
+            <p><%= videoDescription %></p>
+        </div>
+    </div>
+    <script>
+        var descriptionToggle = document.getElementById("description-toggle");
+        var descriptionContent = document.getElementById("description-content");
+
+        descriptionToggle.addEventListener("click", function () {
+            if (descriptionContent.style.display === "none") {
+                descriptionContent.style.display = "block";
+                descriptionToggle.innerHTML = "Read less";
+            } else {
+                descriptionContent.style.display = "none";
+                descriptionToggle.innerHTML = "Read more";
+            }
+        });
+    </script>
+</body>
+</html>
