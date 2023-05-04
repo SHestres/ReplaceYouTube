@@ -11,11 +11,14 @@
 #include "imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 
-#include "VideoImporter.h"
 
 
 #define DEFAULT_FONT_SIZE default_font_size_var
 #define TITLE_FONT_SIZE default_font_size_var * 1.25f
+
+#define MAX_VIDEO_TITLE_LENGTH 40
+#define MAX_VIDEO_GENRE_LENGTH 40
+#define MAX_VIDEO_DESCRIPTION_LENGTH 5000
 
 bool openFileWithExplorer(std::string* SelectedFile, std::string* FilePath);
 void Title(const char* title, float multiplier = 0);
@@ -27,7 +30,7 @@ public:
 	~Window();
 
 	int OpenWindow(const char* WindowTitle);
-	void Run(VideoLibrary* library);
+	void Run();
 
 private:
 	GLFWwindow* m_window;

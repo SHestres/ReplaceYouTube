@@ -11,9 +11,12 @@ void Listener_MessageReceived(CTcpListener* listener, int client, std::string ms
 
 void main()
 {
+	/*
 	VideoLibrary library;
 
 	library.createDemoData();
+	*/
+
 	/*
 	library.StoreDatabase();
 	library.LoadDatabase();
@@ -21,7 +24,7 @@ void main()
 	
 	Window win;
 	if(win.OpenWindow("Video Importer") != 0) return;
-	win.Run(&library);
+	win.Run();
 	
 
 	/*/CTcpListener server("", 54000, Listener_MessageReceived);
@@ -51,10 +54,6 @@ void Listener_MessageReceived(CTcpListener* listener, int client, std::string ms
 {
 	listener->Send(client, msg);
 }
-
-
-
-
 
 
 //The remainder of this file is leftover from the bare-bones server

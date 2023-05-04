@@ -1,7 +1,35 @@
 #include "Window.h"
-#include "VideoImporter.h"
+//#include "VideoImporter.h"
+#include "json.hpp"
+#include "fstream"
+
+using str = std::string;
+using json = nlohmann::json;
+using namespace nlohmann::literals;
 
 float default_font_size_var;
+
+#define tstr to_string
+
+void space(int num) {
+    for (int i = 0; i < num; i++)
+        ImGui::Spacing();
+}
+
+void loadJsonFile(json* newJson, std::string fileName) {
+    *newJson = R"({"isValidJSO": false})"_json;
+
+    try {
+        std::ifstream fIn(fileName);
+        if (fIn) {
+            *newJson = json::parse(fIn);
+            (*newJson)["isValidJSO"] = true;
+        }
+    }
+    catch (std::exception err) {
+        std::cerr << "Error: " << err.what();
+    }
+}
 
 Window::Window()
 {
@@ -25,7 +53,7 @@ int Window::OpenWindow(const char* WindowTitle)
 
 }
 
-void Window::Run(VideoLibrary* library)
+void Window::Run()
 {
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -37,6 +65,11 @@ void Window::Run(VideoLibrary* library)
     char vidName[MAX_VIDEO_TITLE_LENGTH];
     char textEntry[MAX_VIDEO_TITLE_LENGTH];
     ZeroMemory(textEntry, MAX_VIDEO_TITLE_LENGTH);
+
+    char genreList[MAX_VIDEO_GENRE_LENGTH];
+    char description[MAX_VIDEO_DESCRIPTION_LENGTH];
+    ZeroMemory(genreList, MAX_VIDEO_GENRE_LENGTH);
+    ZeroMemory(description, MAX_VIDEO_DESCRIPTION_LENGTH);
 
     //Video Metadata vars
     int numVidsDataShown = 1;
@@ -61,6 +94,10 @@ void Window::Run(VideoLibrary* library)
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        //Load in json files
+        std::ifstream f("test.json");
+        json j = json::parse(f);
 
         //DemoWindows(); continue;
         
@@ -101,7 +138,9 @@ void Window::Run(VideoLibrary* library)
                 }
                 ImGui::PopTabStop();
 
-                Title("Video Title in Player");
+                space(3);
+
+                Title("Video Title");
                 if (ImGui::InputTextWithHint("##VideoTitleInput", "Video Title", textEntry, MAX_VIDEO_TITLE_LENGTH, ImGuiInputTextFlags_EnterReturnsTrue))
                 {
                     textEntered = true;
@@ -109,7 +148,18 @@ void Window::Run(VideoLibrary* library)
                 }
                 if (textEntered)
                     ImGui::Text("Video will take the name \"%s\"", vidName);
+
+                space(3);
+
+                Title("Genre List (Format matters)");
+                ImGui::InputTextWithHint("##GenreList", "Action, Drama, Romance", genreList, MAX_VIDEO_GENRE_LENGTH);
                 
+                space(3);
+                
+                Title("Description");
+                ImGui::InputTextMultiline("##VideoDescription", description, MAX_VIDEO_DESCRIPTION_LENGTH);
+
+
 
                 ImGui::EndTabItem();
             }
@@ -123,19 +173,23 @@ void Window::Run(VideoLibrary* library)
             if (ImGui::BeginTabItem("Library"))
             {
                 
-                ImGui::SliderInt("Number of videos shown", &numVidsDataShown, 1, 15);
-                encVid_t** vidArr = library->getVidPtrsArr();
-                for (int i = 0; i < library->getNumVids() && i < numVidsDataShown; i++)
-                {
-                    
-                    std::string title = vidArr[i]->name;
-                    encVid_t* vid = library->getTrie()->getData(title);
-                    if (ImGui::TreeNode(title.c_str()))
-                    {
-                        ImGui::Text("The title is %s", title);
-                    }
-                }
 
+                Title("Access your Library here");
+
+                
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Testing")) {                
+
+                json test;
+
+                loadJsonFile(&test, "test.json");
+
+                if(test["isValidJSO"] == true){
+                    ImGui::Text(str(test["name"]).c_str());
+                }
+                
                 ImGui::EndTabItem();
             }
 
