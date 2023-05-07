@@ -21,13 +21,15 @@
 #define MAX_VIDEO_DESCRIPTION_LENGTH 5000
 #define MAX_ACTOR_LIST_LENGTH 100
 
+#define MAX_FILEPATH_LENGTH 256
+
 bool openFileWithExplorer(std::string* SelectedFile, std::string* FilePath);
 void Title(const char* title, float multiplier = 0);
 
 class Window
 {
 public:
-	Window();
+	Window(std::string libraryFilename);
 	~Window();
 
 	int OpenWindow(const char* WindowTitle);
@@ -38,6 +40,9 @@ private:
 
 	const char* glsl_version = "#version 130";
 	ImGuiIO* m_pio;
+
+	//Library vars
+	char m_libraryFilepath[MAX_FILEPATH_LENGTH];
 
 	int InitImGui(const char* WindowTitle);
 	void Cleanup();

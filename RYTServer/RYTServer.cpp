@@ -22,7 +22,7 @@ void main()
 	library.LoadDatabase();
 	*/
 	
-	Window win;
+	Window win("dne.json");
 	if(win.OpenWindow("Video Importer") != 0) return;
 	win.Run();
 	

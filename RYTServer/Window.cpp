@@ -32,9 +32,9 @@ bool loadJsonFile(json* newJson, std::string fileName) {
     return false;
 }
 
-Window::Window()
+Window::Window(std::string libraryFilename)
 {
-
+    strcpy_s(m_libraryFilepath, libraryFilename.c_str());
 }
 
 Window::~Window()
@@ -52,6 +52,48 @@ int Window::OpenWindow(const char* WindowTitle)
         return -1;
     }
 
+}
+
+bool findLibraryFilePage(char* filePath, int filePathMaxLength, json* libObj, bool* persistentBool)
+{
+    bool didLoad = false;
+
+    Title("Enter path to Library File");
+
+    space(3);
+
+    ImGui::InputTextWithHint("##LibraryPathInput", "Path to Library File", filePath, 256);
+    ImGui::SameLine();
+    ImGui::PushTabStop(false);  //False skips the elements
+    if (ImGui::Button("Browse"))
+    {
+        std::string fileNameStr, filePathStr;
+        if (openFileWithExplorer(&fileNameStr, &filePathStr))
+        {
+            strcpy_s(filePath, filePathMaxLength, filePathStr.c_str());
+        }
+        else
+        {
+            strcpy_s(filePath, filePathMaxLength, "Error. Couldn't get filename");
+        }
+        *persistentBool = false;
+    }
+    ImGui::PopTabStop();
+
+
+    if (ImGui::Button("Submit")) {
+        didLoad = loadJsonFile(libObj, filePath);
+        *persistentBool = true;
+    }
+
+    if (*persistentBool) {
+        if (!didLoad)
+            ImGui::Text("Current input is not a valid json");
+        else
+            return true;
+    }
+
+    return false;
 }
 
 void Window::Run()
@@ -86,9 +128,13 @@ void Window::Run()
     //Library tab vars
     int numVidsDataShown = 1;
 
+    bool submitLibraryPath = false;
+    char filePath[MAX_FILEPATH_LENGTH];
+    ZeroMemory(filePath, MAX_FILEPATH_LENGTH);
 
-    char filePath[256];
-    ZeroMemory(filePath, 256);
+
+    json videoLibrary;
+    bool didLoadLibraryFile = loadJsonFile(&videoLibrary, m_libraryFilepath);
 
     std::cout << "Display x: " << m_pio->DisplaySize.x << " y: " << m_pio->DisplaySize.y << std::endl;
     default_font_size_var = 2;// (float)m_pio->DisplaySize.y / 1080;
@@ -107,10 +153,6 @@ void Window::Run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        //Load in json files
-        std::ifstream f("test.json");
-        json j = json::parse(f);
-
         //DemoWindows(); continue;
         
         //My Window
@@ -123,12 +165,22 @@ void Window::Run()
 
             //Begin
             ImGui::Begin("Importer", &closeable, flags);
+            
+            //Window Styling
+            ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE);
+            
+            //Double check library file is a valid json
+            if (!didLoadLibraryFile) {
+                didLoadLibraryFile = findLibraryFilePage(m_libraryFilepath, MAX_FILEPATH_LENGTH, &videoLibrary, &submitLibraryPath);
+                goto endWindow;
+            }
             ImGui::BeginTabBar("TabBar");
+
+
 
             if(ImGui::BeginTabItem("Import Videos"))
             {
-                //Window Styling
-                ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE);
+                
 
                 //Window Body
                 ImGui::Text("Video File to import and encode");
@@ -212,16 +264,17 @@ void Window::Run()
 
             if (ImGui::BeginTabItem("Library"))
             {
-                
-
                 Title("Access your Library here");
-
-                
+                if (ImGui::Button("Change library file")) {
+                    submitLibraryPath = false;
+                    didLoadLibraryFile = false;
+                }
                 ImGui::EndTabItem();
             }
 
             if (ImGui::BeginTabItem("Testing")) {                
 
+                /*
                 json test;
 
                 if(loadJsonFile(&test, "test.json"))
@@ -232,19 +285,25 @@ void Window::Run()
 
                     //When creating a json::object, the outer set of brackets creates the object. Each inner pair of brackets becomes a key:value pair.
                     //{ { "name", "fourth"} } is equivalent to {"name: "fourth"} in js.
-                    test.push_back(json::object({ { "name", "fourth"} }));
+                    json obj = json::object({ { "name", "fourth"} });
+                    
+                    test.push_back(obj);
 
                     ImGui::Text(str(test.at(3)["name"]).c_str());
                 }
+                */
                 
                 ImGui::EndTabItem();
             }
 
 
             ImGui::EndTabBar();
+            
+endWindow:            
             ImGui::End();
         }
 
+render:
         // Rendering
         ImGui::Render();
         int display_w, display_h;
