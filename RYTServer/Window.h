@@ -58,7 +58,7 @@ private:
 	void Cleanup();
 	void ChooseGLFWVersionForPlatform();
 
-	bool findLibraryFolderPage(char* folderPath, int folderPathMaxLength, json* libObj, json* categoriesObj, bool* persistentBool);
+	bool findLibraryFolderPage(char* folderPath, int folderPathMaxLength, json* categoriesObj, json* libObj, bool* persistentBool);
 	bool loadLibraryFiles(json* categories, json* library);
 
 	void DemoWindows();

@@ -30,6 +30,33 @@ bool loadJsonFile(json* newJson, std::string fileName) {
     return false;
 }
 
+bool checkLibraries(json* categories, json* videoLibrary, std::string* message) {
+    int broken = 0;
+    std::string brokenString = "";
+
+    for (auto& item : categories->items()) {
+        bool valid = false;
+        try {
+            //Check that the current category has at least one valid video entry in the video library
+            valid = ((*videoLibrary)[str(item.key())].at(0).contains("Title") && (*videoLibrary)[str(item.key())].at(0).contains("Genre")); }
+        catch (std::exception e) {
+            valid = false;
+        }
+        if (!valid) {
+            if (broken >= 1) {
+                brokenString += ", ";
+            }
+            brokenString += str(categories->at(item.key()));
+            broken++;
+        }
+    }
+    (*message) = broken > 1 ? "!!!WARNING!!! Libraries " : "!!!WARNING!!! Library ";
+    (*message) += brokenString;
+    (*message) += broken > 1 ? " are empty or invalid" : " is empty or invalid";
+
+    return broken == 0;
+}
+
 Window::Window(std::string libraryFilename)
 {
     strcpy_s(m_libraryFolderpath, libraryFilename.c_str());
@@ -52,7 +79,7 @@ int Window::OpenWindow(const char* WindowTitle)
 
 }
 
-bool Window::findLibraryFolderPage(char* folderPath, int folderPathMaxLength, json* libObj, json* categoriesObj, bool* persistentBool)
+bool Window::findLibraryFolderPage(char* folderPath, int folderPathMaxLength, json* categoriesObj, json* libObj, bool* persistentBool)
 {
     bool didLoad = false;
 
@@ -79,7 +106,7 @@ bool Window::findLibraryFolderPage(char* folderPath, int folderPathMaxLength, js
     ImGui::PopTabStop();
 
     if (ImGui::Button("Submit")) {
-        didLoad = loadLibraryFiles(libObj, categoriesObj);
+        didLoad = loadLibraryFiles(categoriesObj, libObj);
         *persistentBool = true;
     }
     ImGui::SameLine();
@@ -98,14 +125,13 @@ bool Window::findLibraryFolderPage(char* folderPath, int folderPathMaxLength, js
 bool Window::loadLibraryFiles(json* categories, json* library) 
 {
     std::string filePath;
-
     
     try {
         filePath = str(m_libraryFolderpath) + CATEGORIES_FILEPATH_EXT;
         if (!loadJsonFile(categories, filePath))
             return false;
 
-        for (auto& item : (*categories).items())
+        for (auto& item : categories->items())
         {
             std::cout << "Loading " << str(item.key()) + ".json" << std::endl;
             filePath = str(m_libraryFolderpath) + DATA_FILEPATH_EXT + str(item.key()) + ".json";
@@ -118,8 +144,6 @@ bool Window::loadLibraryFiles(json* categories, json* library)
 
     }
     catch (std::exception e) { return false; }
-    
-    std::cout << "Done loading library" << std::endl;
 
     return true;
     
@@ -200,7 +224,7 @@ void Window::Run()
 
             //Double check library file is a valid json
             if (!didLoadLibraryFiles) {
-                didLoadLibraryFiles = findLibraryFolderPage(m_libraryFolderpath, MAX_FILEPATH_LENGTH, &videoLibrary, &categories, &submitLibraryPath);
+                didLoadLibraryFiles = findLibraryFolderPage(m_libraryFolderpath, MAX_FILEPATH_LENGTH, &categories, &videoLibrary, &submitLibraryPath);
                 goto endWindow;
             }
             ImGui::BeginTabBar("TabBar");
@@ -209,22 +233,24 @@ void Window::Run()
 
             if(ImGui::BeginTabItem("Import Videos"))
             {
+                //Check that library files are valid
                 bool libraryIsValid = false;
+                std::string warningMessage = "";
                 try {
-                    json first = videoLibrary.at(0);
-                    if (first.contains("Title") && first.contains("Genres")) {
-                        libraryIsValid = true;
-                    }
+                    libraryIsValid = checkLibraries(&categories, &videoLibrary, &warningMessage);
                 }
-                catch (std::exception e) { libraryIsValid = false; }
+                catch (std::exception e) { 
+                    libraryIsValid = false; 
+                    warningMessage = "!!!WARNING!!! Unable to check library file validity. Likely invalid";
+                }
 
                 if (!libraryIsValid) {
                     space(10);
-                    ImGui::TextColored(ImVec4(1, 0, 0, 1), "!!!WARNING!!! Selected library file is empty or invalid");
+                    ImGui::TextColored(ImVec4(1, 0, 0, 1), warningMessage.c_str());
                     space(10);
                 }
-                    
-
+                
+                //Rest of GUI
                 ImGui::Text("Video File to import and encode");
 
                 ImGui::InputTextWithHint("##FilePathInput", "Path to Video File", filePath, 256);
