@@ -11,6 +11,10 @@
 #include "imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 
+#include "json.hpp"
+
+using json = nlohmann::json;
+
 
 
 #define DEFAULT_FONT_SIZE default_font_size_var
@@ -23,7 +27,13 @@
 
 #define MAX_FILEPATH_LENGTH 256
 
+#define GENRES_FILEPATH_EXT "/data/genres.json"
+#define FAVORITES_FILEPATH_EXT "/data/genres.json"
+#define CATEGORIES_FILEPATH_EXT "/data/categories.json"
+#define DATA_FILEPATH_EXT "/data/"
+
 bool openFileWithExplorer(std::string* SelectedFile, std::string* FilePath);
+bool openFolderWithExplorer(std::string* SelectedFolder, std::string* FolderPath);
 void Title(const char* title, float multiplier = 0);
 
 class Window
@@ -42,11 +52,14 @@ private:
 	ImGuiIO* m_pio;
 
 	//Library vars
-	char m_libraryFilepath[MAX_FILEPATH_LENGTH];
+	char m_libraryFolderpath[MAX_FILEPATH_LENGTH];
 
 	int InitImGui(const char* WindowTitle);
 	void Cleanup();
 	void ChooseGLFWVersionForPlatform();
+
+	bool findLibraryFolderPage(char* folderPath, int folderPathMaxLength, json* libObj, json* categoriesObj, bool* persistentBool);
+	bool loadLibraryFiles(json* categories, json* library);
 
 	void DemoWindows();
 

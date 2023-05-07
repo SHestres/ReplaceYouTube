@@ -1,10 +1,8 @@
 #include "Window.h"
 //#include "VideoImporter.h"
-#include "json.hpp"
 #include "fstream"
 
 using str = std::string;
-using json = nlohmann::json;
 using namespace nlohmann::literals;
 
 float default_font_size_var;
@@ -34,7 +32,7 @@ bool loadJsonFile(json* newJson, std::string fileName) {
 
 Window::Window(std::string libraryFilename)
 {
-    strcpy_s(m_libraryFilepath, libraryFilename.c_str());
+    strcpy_s(m_libraryFolderpath, libraryFilename.c_str());
 }
 
 Window::~Window()
@@ -54,7 +52,7 @@ int Window::OpenWindow(const char* WindowTitle)
 
 }
 
-bool findLibraryFilePage(char* filePath, int filePathMaxLength, json* libObj, bool* persistentBool)
+bool Window::findLibraryFolderPage(char* folderPath, int folderPathMaxLength, json* libObj, json* categoriesObj, bool* persistentBool)
 {
     bool didLoad = false;
 
@@ -62,38 +60,69 @@ bool findLibraryFilePage(char* filePath, int filePathMaxLength, json* libObj, bo
 
     space(3);
 
-    ImGui::InputTextWithHint("##LibraryPathInput", "Path to Library File", filePath, 256);
+    ImGui::InputTextWithHint("##LibraryPathInput", "Path to Library File", folderPath, 256);
     ImGui::SameLine();
     ImGui::PushTabStop(false);  //False skips the elements
     if (ImGui::Button("Browse"))
     {
-        std::string fileNameStr, filePathStr;
-        if (openFileWithExplorer(&fileNameStr, &filePathStr))
+        std::string folderNameStr, folderPathStr;
+        if (openFolderWithExplorer(&folderNameStr, &folderPathStr))
         {
-            strcpy_s(filePath, filePathMaxLength, filePathStr.c_str());
+            strcpy_s(folderPath, folderPathMaxLength, folderPathStr.c_str());
         }
         else
         {
-            strcpy_s(filePath, filePathMaxLength, "Error. Couldn't get filename");
+            strcpy_s(folderPath, folderPathMaxLength, "Error. Couldn't get filename");
         }
         *persistentBool = false;
     }
     ImGui::PopTabStop();
 
-
     if (ImGui::Button("Submit")) {
-        didLoad = loadJsonFile(libObj, filePath);
+        didLoad = loadLibraryFiles(libObj, categoriesObj);
         *persistentBool = true;
     }
+    ImGui::SameLine();
+    ImGui::Text("Window will freeze while loading. May take up to 60s for large libraries");
 
     if (*persistentBool) {
         if (!didLoad)
-            ImGui::Text("Current input is not a valid json");
+            ImGui::Text("Unable to load library... (check that there is a valid json for each category, and all are located in the data folder)");
         else
             return true;
     }
 
     return false;
+}
+
+bool Window::loadLibraryFiles(json* categories, json* library) 
+{
+    std::string filePath;
+
+    
+    try {
+        filePath = str(m_libraryFolderpath) + CATEGORIES_FILEPATH_EXT;
+        if (!loadJsonFile(categories, filePath))
+            return false;
+
+        for (auto& item : (*categories).items())
+        {
+            std::cout << "Loading " << str(item.key()) + ".json" << std::endl;
+            filePath = str(m_libraryFolderpath) + DATA_FILEPATH_EXT + str(item.key()) + ".json";
+            json lib;
+            if (!loadJsonFile(&lib, filePath)) {
+                return false;
+            }
+            (*library)[str(item.key())] = lib;
+        }
+
+    }
+    catch (std::exception e) { return false; }
+    
+    std::cout << "Done loading library" << std::endl;
+
+    return true;
+    
 }
 
 void Window::Run()
@@ -132,9 +161,9 @@ void Window::Run()
     char filePath[MAX_FILEPATH_LENGTH];
     ZeroMemory(filePath, MAX_FILEPATH_LENGTH);
 
-
     json videoLibrary;
-    bool didLoadLibraryFile = loadJsonFile(&videoLibrary, m_libraryFilepath);
+    json categories;
+    bool didLoadLibraryFiles = loadLibraryFiles(&categories, &videoLibrary);//loadJsonFile(&videoLibrary, m_libraryFilepath);
 
     std::cout << "Display x: " << m_pio->DisplaySize.x << " y: " << m_pio->DisplaySize.y << std::endl;
     default_font_size_var = 2;// (float)m_pio->DisplaySize.y / 1080;
@@ -168,10 +197,10 @@ void Window::Run()
             
             //Window Styling
             ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE);
-            
+
             //Double check library file is a valid json
-            if (!didLoadLibraryFile) {
-                didLoadLibraryFile = findLibraryFilePage(m_libraryFilepath, MAX_FILEPATH_LENGTH, &videoLibrary, &submitLibraryPath);
+            if (!didLoadLibraryFiles) {
+                didLoadLibraryFiles = findLibraryFolderPage(m_libraryFolderpath, MAX_FILEPATH_LENGTH, &videoLibrary, &categories, &submitLibraryPath);
                 goto endWindow;
             }
             ImGui::BeginTabBar("TabBar");
@@ -280,14 +309,15 @@ void Window::Run()
                 Title("Access your Library here");
                 if (ImGui::Button("Change library file")) {
                     submitLibraryPath = false;
-                    didLoadLibraryFile = false;
+                    didLoadLibraryFiles = false;
                 }
                 ImGui::EndTabItem();
             }
 
             if (ImGui::BeginTabItem("Testing")) {                
 
-                /*
+                /* 
+                //Testing loading json files with nlohmann
                 json test;
 
                 if(loadJsonFile(&test, "test.json"))
@@ -305,7 +335,25 @@ void Window::Run()
                     ImGui::Text(str(test.at(3)["name"]).c_str());
                 }
                 */
+
                 
+                json test = json::object({
+                    {"first", "number 1"},
+                    {"second", "number 2"},
+                    {"third", "number 3"}
+                    });
+
+                //Allows for iterating over items with key and value
+                for (auto& item : test.items()) {
+                    ImGui::Text(str(test[item.key()]).c_str());
+                }
+
+                //Allows for iterating over just the values
+                for (auto item : test) {
+                    ImGui::Text(str(item).c_str());
+                }
+                
+
                 ImGui::EndTabItem();
             }
 
@@ -528,3 +576,68 @@ bool openFileWithExplorer(std::string* SelectedFile, std::string* FilePath)
     CoUninitialize();
     return TRUE;
 }
+
+
+bool openFolderWithExplorer(std::string* SelectedFolder, std::string* FolderPath)
+{
+    // CREATE FileOpenDialog OBJECT
+    HRESULT f_SysHr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    if (FAILED(f_SysHr))
+        return FALSE;
+
+    IFileOpenDialog* f_FileSystem;
+    f_SysHr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&f_FileSystem));
+    if (FAILED(f_SysHr)) {
+        CoUninitialize();
+        return FALSE;
+    }
+
+    // SET OPTIONS TO ALLOW FOLDERS ONLY
+    DWORD dwOptions;
+    f_FileSystem->GetOptions(&dwOptions);
+    f_FileSystem->SetOptions(dwOptions | FOS_PICKFOLDERS);
+
+    // SHOW THE DIALOG
+    f_SysHr = f_FileSystem->Show(NULL);
+    if (FAILED(f_SysHr)) {
+        f_FileSystem->Release();
+        CoUninitialize();
+        return FALSE;
+    }
+
+    // GET THE SELECTED FOLDER
+    IShellItem* f_Folder;
+    f_SysHr = f_FileSystem->GetResult(&f_Folder);
+    if (FAILED(f_SysHr)) {
+        f_FileSystem->Release();
+        CoUninitialize();
+        return FALSE;
+    }
+
+    // RETRIEVE THE FOLDER PATH
+    PWSTR f_Path;
+    f_SysHr = f_Folder->GetDisplayName(SIGDN_FILESYSPATH, &f_Path);
+    if (FAILED(f_SysHr)) {
+        f_Folder->Release();
+        f_FileSystem->Release();
+        CoUninitialize();
+        return FALSE;
+    }
+
+    // STORE THE FOLDER PATH
+    std::wstring path(f_Path);
+    std::string c(path.begin(), path.end());
+    *FolderPath = c;
+
+    // FORMAT STRING FOR FOLDER NAME
+    const size_t slash = FolderPath->find_last_of("/\\");
+    *SelectedFolder = FolderPath->substr(slash + 1);
+
+    // SUCCESS, CLEAN UP
+    CoTaskMemFree(f_Path);
+    f_Folder->Release();
+    f_FileSystem->Release();
+    CoUninitialize();
+    return TRUE;
+}
+
