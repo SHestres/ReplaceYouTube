@@ -180,9 +180,22 @@ void Window::Run()
 
             if(ImGui::BeginTabItem("Import Videos"))
             {
-                
+                bool libraryIsValid = false;
+                try {
+                    json first = videoLibrary.at(0);
+                    if (first.contains("Title") && first.contains("Genres")) {
+                        libraryIsValid = true;
+                    }
+                }
+                catch (std::exception e) { libraryIsValid = false; }
 
-                //Window Body
+                if (!libraryIsValid) {
+                    space(10);
+                    ImGui::TextColored(ImVec4(1, 0, 0, 1), "!!!WARNING!!! Selected library file is empty or invalid");
+                    space(10);
+                }
+                    
+
                 ImGui::Text("Video File to import and encode");
 
                 ImGui::InputTextWithHint("##FilePathInput", "Path to Video File", filePath, 256);
