@@ -16,19 +16,20 @@ void space(int num) {
         ImGui::Spacing();
 }
 
-void loadJsonFile(json* newJson, std::string fileName) {
-    *newJson = R"({"isValidJSO": false})"_json;
+bool loadJsonFile(json* newJson, std::string fileName) {
 
     try {
         std::ifstream fIn(fileName);
         if (fIn) {
             *newJson = json::parse(fIn);
-            (*newJson)["isValidJSO"] = true;
+            return true;
         }
     }
     catch (std::exception err) {
-        std::cerr << "Error: " << err.what();
+        std::cerr << "Error loading/parsing json file: " << err.what();
+        return false;
     }
+    return false;
 }
 
 Window::Window()
@@ -62,6 +63,7 @@ void Window::Run()
     bool showInput = false;
     bool textEntered = false;
 
+    //Video input vars
     char vidName[MAX_VIDEO_TITLE_LENGTH];
     char textEntry[MAX_VIDEO_TITLE_LENGTH];
     ZeroMemory(textEntry, MAX_VIDEO_TITLE_LENGTH);
@@ -71,7 +73,17 @@ void Window::Run()
     ZeroMemory(genreList, MAX_VIDEO_GENRE_LENGTH);
     ZeroMemory(description, MAX_VIDEO_DESCRIPTION_LENGTH);
 
-    //Video Metadata vars
+    bool isFavorite = false;
+
+    //Optional input vars
+    float vidRating = 0;
+    char actorList[MAX_ACTOR_LIST_LENGTH];
+    ZeroMemory(actorList, MAX_ACTOR_LIST_LENGTH);
+    int releaseYear = 2000;
+    char ageRating[20];
+    ZeroMemory(ageRating, 20);
+
+    //Library tab vars
     int numVidsDataShown = 1;
 
 
@@ -119,7 +131,7 @@ void Window::Run()
                 ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE);
 
                 //Window Body
-                Title("Video File to import and encode");
+                ImGui::Text("Video File to import and encode");
 
                 ImGui::InputTextWithHint("##FilePathInput", "Path to Video File", filePath, 256);
                 ImGui::SameLine();
@@ -140,7 +152,7 @@ void Window::Run()
 
                 space(3);
 
-                Title("Video Title");
+                ImGui::Text("Video Title");
                 if (ImGui::InputTextWithHint("##VideoTitleInput", "Video Title", textEntry, MAX_VIDEO_TITLE_LENGTH, ImGuiInputTextFlags_EnterReturnsTrue))
                 {
                     textEntered = true;
@@ -151,15 +163,43 @@ void Window::Run()
 
                 space(3);
 
-                Title("Genre List (Format matters)");
-                ImGui::InputTextWithHint("##GenreList", "Action, Drama, Romance", genreList, MAX_VIDEO_GENRE_LENGTH);
-                
+                ImGui::Checkbox("Favorite?", &isFavorite);
+
+
+
                 space(3);
-                
-                Title("Description");
+
+                ImGui::Text("Genre List (Format matters)");
+                ImGui::InputTextWithHint("##GenreList", "Action, Drama, Romance", genreList, MAX_VIDEO_GENRE_LENGTH);
+
+                space(10);
+
+                Title("Optional Parameters");
+
+                space(3);
+
+                ImGui::Text("Video Rating");
+                ImGui::SetNextItemWidth(200);
+                ImGui::SliderFloat("(0.0 saves as unrated)", &vidRating, 0, 5, "%.1f");
+
+                space(3);
+
+                ImGui::Text("Actor List");
+                ImGui::InputTextWithHint("##ActorList", "Gal Gadot, Ryan Reynolds, Dwayne Johnson", actorList, MAX_ACTOR_LIST_LENGTH);
+
+                space(3);
+
+                ImGui::Text("Release Year");
+
+                ImGui::SetNextItemWidth(200);
+                ImGui::InputInt("##ReleaseYear", &releaseYear, 1, 10);
+                ImGui::SameLine();
+                ImGui::Text("Ctrl click to step by 10");
+
+                space(3);
+
+                ImGui::Text("Description / Plot");
                 ImGui::InputTextMultiline("##VideoDescription", description, MAX_VIDEO_DESCRIPTION_LENGTH);
-
-
 
                 ImGui::EndTabItem();
             }
@@ -184,10 +224,17 @@ void Window::Run()
 
                 json test;
 
-                loadJsonFile(&test, "test.json");
+                if(loadJsonFile(&test, "test.json"))
+                {
+                    ImGui::Text(str(test.at(0)["name"]).c_str());
+                    ImGui::Text(str(test.at(1)["name"]).c_str());
+                    ImGui::Text(str(test.at(2)["name"]).c_str());
 
-                if(test["isValidJSO"] == true){
-                    ImGui::Text(str(test["name"]).c_str());
+                    //When creating a json::object, the outer set of brackets creates the object. Each inner pair of brackets becomes a key:value pair.
+                    //{ { "name", "fourth"} } is equivalent to {"name: "fourth"} in js.
+                    test.push_back(json::object({ { "name", "fourth"} }));
+
+                    ImGui::Text(str(test.at(3)["name"]).c_str());
                 }
                 
                 ImGui::EndTabItem();

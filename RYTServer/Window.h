@@ -19,6 +19,7 @@
 #define MAX_VIDEO_TITLE_LENGTH 40
 #define MAX_VIDEO_GENRE_LENGTH 40
 #define MAX_VIDEO_DESCRIPTION_LENGTH 5000
+#define MAX_ACTOR_LIST_LENGTH 100
 
 bool openFileWithExplorer(std::string* SelectedFile, std::string* FilePath);
 void Title(const char* title, float multiplier = 0);
