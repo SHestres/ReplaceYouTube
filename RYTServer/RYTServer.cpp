@@ -28,10 +28,16 @@ void main()
 	packager.Run();
 	*/
 
-	std::string command = "dashProgs\\mp4fragment \"../Life Untouched 4K Demo.mp4\" ../GravityTrailer-frag.mp4";
-	system(command.c_str());
+	DashPackager packager;
+	packager.Init("../sample_960x540.m4v", "C:\\Users\\sidne\\source\\repos\\SHestres\\ReplaceYouTube\\VideoFiles\\Packaged", "6969");
+	bool isDone = false;
+	auto f = packager.Run(&isDone);
 
-	system("dashProgs\\mp4-dash ../GravityTrailer-frag.mp4");
+	while (!isDone) {
+		;
+	}
+
+	std::cout << "Done!" << std::endl;
 
 	//system()
 	/*

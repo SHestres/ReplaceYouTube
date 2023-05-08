@@ -5,25 +5,67 @@ DashPackager::DashPackager() {}
 
 DashPackager::~DashPackager() {}
 
-bool DashPackager::Init(std::string fileName, std::string videoTitle, bool resolutions[MAX_NUM_OF_RESOLUTIONS])
+bool DashPackager::Init(std::string fileName, std::string libPath, std::string videoID)
 {
 	m_fileName = fileName;
-	m_videoTitle = videoTitle;
-
-	for (int i = 0; i < MAX_NUM_OF_RESOLUTIONS; i++)
-	{
-		m_resolutions[i] = resolutions[i];
-	}
+	m_videoID = videoID;
+	m_libPath = libPath;
 
 	return true;
 }
 
-void DashPackager::Run() {
+//Title should have no whitespaces
+void runPackagingAsync(std::string inFile, std::string libPath, std::string videoID, bool* isDone) {
+
+	*isDone = false;
+
+	//Create filename for temp file
+	std::string outFile = "temp" + videoID + ".mp4";
+
+	//Fragment process
+	std::string command = "dashProgs\\mp4fragment " + inFile + " " + outFile;
+	system(command.c_str());
+	
+	//Dash package process
+	command = "dashProgs\\mp4-dash " + outFile;
+	system(command.c_str());
+
+	std::cout << "Done packaging" << std::endl;
+
+	//Rename output folder
+	command = "REN output " + videoID;
+	system(command.c_str());
+
+	//Move dir with mpd to be accessable by api
+	command = "MOVE " + videoID + " " + libPath + VIDEO_DIR_EXT + videoID;
+	system(command.c_str());
+
+	//Clean temp files
+	try {
+		DeleteFile(std::wstring(outFile.begin(), outFile.end()).c_str());
+	}
+	catch (std::exception e) { std::cerr << "Couldn't delete file" << std::endl; }
+
+	*isDone = true;
+}
+
+
+void doNothing(int i) {
+	return;
+}
+
+std::future<void> DashPackager::Run(bool* isDone) {
+	
+	std::future<void> f = std::async(std::launch::async, runPackagingAsync, m_fileName, m_libPath, m_videoID, isDone);
+
+	return f;
+
+	//Execute processes 
+	
+
 	/* Media foundation doesn't correctly process files bigger than a few MB
 	Encoder encoder;
-	std::string s = m_videoTitle;
-	s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
-	std::string outputFile = "../" + s + "_480" + ".mp4";
+	
 	
 	bool isRunning = true;
 
@@ -38,7 +80,7 @@ void DashPackager::Run() {
 	*/
 
 
-	std::cout << "Done encoding" << std::endl;
+
 
 	/*
 	std::string fragFileName = "../" + s + "-frag.mp4";

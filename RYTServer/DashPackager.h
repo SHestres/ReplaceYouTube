@@ -1,10 +1,15 @@
 #pragma once
 
 #include <string>
+#include <Windows.h>
 
 #include "Encoder.h"
+#include <thread>
+#include <chrono>
+#include <future>
+#include <algorithm>
 
-#define MAX_NUM_OF_RESOLUTIONS 4
+#define VIDEO_DIR_EXT "/videos/"
 
 class DashPackager {
 
@@ -13,13 +18,14 @@ public:
 	DashPackager();
 	~DashPackager();
 
-	bool Init(std::string fileName, std::string videoTitle, bool resolutions[MAX_NUM_OF_RESOLUTIONS]);
-	void Run();
+	bool Init(std::string fileName, std::string libPath, std::string videoID);
+	std::future<void> Run(bool* isDone);
 
 private:
 
 	std::string m_fileName;
 	std::string m_videoTitle;
-	bool m_resolutions[MAX_NUM_OF_RESOLUTIONS];
+	std::string m_videoID;
+	std::string m_libPath;
 
 };
