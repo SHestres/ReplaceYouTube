@@ -11,6 +11,13 @@ void Listener_MessageReceived(CTcpListener* listener, int client, std::string ms
 
 void main()
 {
+	//Files are relative to calling dir
+	//Backslash needed to exec from different dir
+	system("dashProgs\\bin\\win32\\mp4fragment ../success.mp4 ../success-frag.mp4");
+
+	system("python3 dashProgs\\mp4-dash.py ../success.mp4");
+
+	//system()
 	/*
 	VideoLibrary library;
 
@@ -22,10 +29,11 @@ void main()
 	library.LoadDatabase();
 	*/
 	
+	/*
 	Window win("dne.json");
 	if(win.OpenWindow("Video Importer") != 0) return;
 	win.Run();
-	
+	*/
 
 	/*/CTcpListener server("", 54000, Listener_MessageReceived);
 

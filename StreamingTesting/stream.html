@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>Dash.js test</title>
+    <style>
+        video {
+            width: 640px;
+            height: 360px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <video id="videoPlayer" controls></video>
+    </div>
+    <script src="http://cdn.dashjs.org/latest/dash.all.min.js"></script>
+    <script>
+        (function () {
+            var url = "/test_video.mpd";
+            var player = dashjs.MediaPlayer().create();
+            player.initialize(document.querySelector("#videoPlayer"), url, true);
+        })();
+    </script>
+</body>
+</html>
