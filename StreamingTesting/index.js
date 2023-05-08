@@ -3,7 +3,7 @@ const path = require('path');
 
 const app = express();
 
-app.use(express.static("C:/Users/sidne/source/repos/SHestres/ReplaceYouTube/RYTServer/dashProgs/output"))
+app.use(express.static("C:\\Users\\sidne\\source\\repos\\SHestres\\ReplaceYouTube\\RYTServer\\output"))
 
 app.get('/', (req, res) =>{
     const options = {

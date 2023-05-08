@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CTcpListener.cpp" />
+    <ClCompile Include="DashPackager.cpp" />
     <ClCompile Include="Encoder.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CTcpListener.h" />
+    <ClInclude Include="DashPackager.h" />
     <ClInclude Include="Encoder.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />

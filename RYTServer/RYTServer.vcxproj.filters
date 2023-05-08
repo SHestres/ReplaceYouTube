@@ -72,6 +72,9 @@
     <ClCompile Include="Trie.cpp">
       <Filter>Source Files\VideoLibrary</Filter>
     </ClCompile>
+    <ClCompile Include="DashPackager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CTcpListener.h">
@@ -121,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="json.hpp">
       <Filter>Source Files\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="DashPackager.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

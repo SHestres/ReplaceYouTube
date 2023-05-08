@@ -5,6 +5,7 @@
 
 #include"CTcpListener.h"
 #include "Encoder.h"
+#include "DashPackager.h"
 #include "Window.h" //Has Video importer already
 
 void Listener_MessageReceived(CTcpListener* listener, int client, std::string msg);
@@ -13,9 +14,24 @@ void main()
 {
 	//Files are relative to calling dir
 	//Backslash needed to exec from different dir
-	system("dashProgs\\bin\\win32\\mp4fragment ../success.mp4 ../success-frag.mp4");
+	
 
-	system("python3 dashProgs\\mp4-dash.py ../success.mp4");
+	//system("python3 dashProgs\\mp4-dash.py ../success.mp4");
+
+	/*
+
+	DashPackager packager;
+	bool resolutions[4] = { false, false, false, false };
+	//packager.Init("C:\\Users\\sidne\\Downloads\\Gravity - 2K Trailer.mp4", "Gravity Trailer", resolutions);
+	packager.Init("C:\\Users\\sidne\\Downloads\\Big_Buck_Bunny_1080_10s_30MB.mp4", "Bunny", resolutions);
+	//packager.Init("../sample_960x540.m4v", "The Great Success Pls", resolutions);
+	packager.Run();
+	*/
+
+	std::string command = "dashProgs\\mp4fragment \"../Life Untouched 4K Demo.mp4\" ../GravityTrailer-frag.mp4";
+	system(command.c_str());
+
+	system("dashProgs\\mp4-dash ../GravityTrailer-frag.mp4");
 
 	//system()
 	/*

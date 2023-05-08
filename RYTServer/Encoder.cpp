@@ -21,7 +21,7 @@ HRESULT Encoder::CreateOutputStream()
 	return hr;
 }
 
-int Encoder::Init(std::string fileName, std::string outputFilename)
+int Encoder::Init(std::string fileName, bool* isRunning, std::string outputFilename, int width, int height)
 {
 	filename = fileName;
 
@@ -34,6 +34,9 @@ int Encoder::Init(std::string fileName, std::string outputFilename)
 	std::wstring filename_w(filename.begin(), filename.end());
 	LPCWSTR fileUrl(filename_w.c_str());
 
+	std::wstring outputFilename_w(outputFilename.begin(), outputFilename.end());
+	LPCWSTR outputFileUrl(outputFilename_w.c_str());
+
 	std::clog << "Opening File..." << std::endl;
 	hr = OpenFileAndCreateSession(fileUrl);
 	if (FAILED(hr)) { std::cerr << "Couldn't open file. Error " << hr << std::endl; return -1; }
@@ -44,9 +47,12 @@ int Encoder::Init(std::string fileName, std::string outputFilename)
 
 	std::clog << "Configuring Video Output..." << std::endl;
 	try {
-		hr = ConfigureVideoOutput();
+		hr = ConfigureVideoOutput(fileUrl, outputFileUrl, width, height);
 	}
-	catch (std::runtime_error excpt) { std::cerr << excpt.what() << std::endl; return 2; }
+	catch (std::runtime_error excpt) { 
+		std::cerr << excpt.what() << std::endl; 
+		
+		return 2; }
 	if (FAILED(hr)) { std::cerr << "Couldn't configure Video. Error " << hr << std::endl; return -1; }
 
 	std::clog << "Configuring Container Output..." << std::endl;
@@ -58,7 +64,7 @@ int Encoder::Init(std::string fileName, std::string outputFilename)
 	if (FAILED(hr)) { std::cerr << "Couldn't create output stream. Error " << hr << std::endl; return -1; }
 
 	std::clog << "Finalizing Media Session..." << std::endl;
-	hr = FinalizeMediaSession(m_outNetStream, outputFilename);
+	hr = FinalizeMediaSession(m_outNetStream, outputFilename, isRunning);
 	if (FAILED(hr)) { std::cerr << "Couldn't finalize media session. Error " << hr << std::endl; return -1; }
 
 
@@ -202,7 +208,7 @@ HRESULT Encoder::ConfigureAudioOutput()
 	return hr;
 }
 
-HRESULT Encoder::ConfigureVideoOutput()
+HRESULT Encoder::ConfigureVideoOutput(LPCWSTR inFileName, LPCWSTR outFileName, int width, int height)
 {
 	assert(m_pProfile);
 
@@ -233,11 +239,29 @@ HRESULT Encoder::ConfigureVideoOutput()
 	hr = reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, MF_SOURCE_READER_CURRENT_TYPE_INDEX, &fileType);
 	hr = MFGetAttributeSize(fileType, MF_MT_FRAME_SIZE, &frameWidth, &frameHeight);
 	if (FAILED(hr)) { std::cerr << "GettingAttribute failed" << std::endl; return hr; }
+	if (height > frameHeight) { throw std::runtime_error("Requested resolution unavailable"); }
+	else { width = height * (float)frameWidth / (float)frameHeight; }
 	hr = MFGetAttributeRatio(fileType, MF_MT_FRAME_RATE, &frameRateNum, &frameRateDenom);
 	if (FAILED(hr)) { std::cerr << "GettingAttribute failed" << std::endl; return hr; }
 	GUID subtype;
 	hr = fileType->GetGUID(MF_MT_SUBTYPE, &subtype);
-	if (subtype == m_mediaSubtype) { throw std::runtime_error("Video already in requested format"); }
+	/*if (subtype == m_mediaSubtype) {
+		if (height == 0 || height == frameHeight) {
+			std::cout << "Copying original video into library at" << std::endl;
+			std::wstring outputName = outFileName;
+			std::wcout << outputName << std::endl;
+			CopyFile(inFileName, outputName.c_str(), false);
+			throw std::runtime_error("Video already in requested format");
+		}
+	}*/
+
+	std::clog << "Frame size: " << frameWidth << "x" << frameHeight << std::endl;
+	std::clog << "FrameRate: " << frameRateNum << "/" << frameRateDenom << std::endl;
+
+	if (height != 0) {
+		frameWidth = width;
+		frameHeight = height;
+	}
 
 	std::clog << "Frame size: " << frameWidth << "x" << frameHeight << std::endl;
 	std::clog << "FrameRate: " << frameRateNum << "/" << frameRateDenom << std::endl;
@@ -263,10 +287,13 @@ HRESULT Encoder::ConfigureVideoOutput()
 		hr = MFSetAttributeRatio(pVideoAttrs, MF_MT_PIXEL_ASPECT_RATIO, 1, 1);
 	}
 
+	//0.2 bits per pixel per second
+	UINT32 bitRate = frameWidth * frameHeight * frameRateNum / frameRateDenom / 5;
+
 	// Set the bit rate.
 	if (SUCCEEDED(hr))
 	{
-		hr = pVideoAttrs->SetUINT32(MF_MT_AVG_BITRATE, 3000000);
+		hr = pVideoAttrs->SetUINT32(MF_MT_AVG_BITRATE, bitRate);
 	}
 
 	// Set the attribute store on the transcode profile.
@@ -339,7 +366,7 @@ HRESULT Encoder::ConfigureContainer()
 	return hr;
 }
 
-HRESULT Encoder::FinalizeMediaSession(IMFByteStream* pByteStream, std::string outFileName)
+HRESULT Encoder::FinalizeMediaSession(IMFByteStream* pByteStream, std::string outFileName, bool* isRunning)
 {
 	assert(m_pSession);
 	assert(m_pSource);
@@ -363,14 +390,14 @@ HRESULT Encoder::FinalizeMediaSession(IMFByteStream* pByteStream, std::string ou
 	hr = m_pSession->SetTopology(0, m_pTopology);
 	if (FAILED(hr)) { std::cerr << "Couldn't set Topology" << std::endl; }
 
-	std::async([&] {Encoder::ProcessMediaSessionEvents(); }); //Lambda function for async
+	std::async([&] {Encoder::ProcessMediaSessionEvents(isRunning); }); //Lambda function for async
 	std::clog << "Processing Media Session Events..." << std::endl;
 	//hr = ProcessMediaSessionEvents();
 
 	return hr;
 }
 
-HRESULT Encoder::ProcessMediaSessionEvents()
+HRESULT Encoder::ProcessMediaSessionEvents(bool* isRunning)
 {
 	assert(m_pSession);
 
@@ -386,21 +413,22 @@ HRESULT Encoder::ProcessMediaSessionEvents()
 	{
 		hr = m_pSession->GetEvent(0, &pEvent);
 
-		if (FAILED(hr)) { break; }
+		if (FAILED(hr)) { (*isRunning) = false; break; }
 
 		// Get the event type.
 		hr = pEvent->GetType(&meType);
 
-		if (FAILED(hr)) { break; }
+		if (FAILED(hr)) { (*isRunning) = false; break; }
 
 		hr = pEvent->GetStatus(&hrStatus);
 
-		if (FAILED(hr)) { break; }
+		if (FAILED(hr)) { (*isRunning) = false; break; }
 
 		if (FAILED(hrStatus))
 		{
 			wprintf_s(L"Failed. 0x%X error condition triggered this event.\n", hrStatus);
 			hr = hrStatus;
+			(*isRunning) = false;
 			break;
 		}
 
@@ -424,9 +452,11 @@ HRESULT Encoder::ProcessMediaSessionEvents()
 			{
 				std::clog << "Finished encoding." << std::endl;
 			}
+			(*isRunning) = false;
 			break;
 
 		case MESessionClosed:
+			(*isRunning) = false;
 			std::clog << "Stream Ended." << std::endl;
 			break;
 		}
