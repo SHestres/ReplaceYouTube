@@ -8,7 +8,7 @@ footer
 #Logo{
     /*border: 1px solid blue;*/
     padding-left: 5%;
-    padding-right: 8%;
+    padding-right: calc(5% - 20px);
 }
 
 .App-header{
@@ -34,6 +34,20 @@ button{
     border-radius: 5px;
     margin: 0px;
 }
+
+.search-icon{
+    cursor: pointer;
+    padding: 10px;
+    font-size: 20px;
+   /* background: radial-gradient(#8885, 80%, #8880);
+    border-radius: 50%;*/
+    color: white;
+}
+
+.search-icon:visited{
+    text-decoration: none;
+}
+
 /*
 .logout-btn{
     background-color: red;
@@ -42,12 +56,23 @@ button{
     border-radius: 5px;
 }*/
 
+.navbar{
+    flex-grow: 1;
+    display: flex;
+    overflow: scroll;
+}
+
+.navbar::-webkit-scrollbar {
+    display: none;
+  }
+
 .navbar-btn{
     position: relative;
     z-index: 1;
     color:azure;
     align-items: center;
-    padding: 15%;
+    height: auto;
+    padding: 25px;
 }
 
 .navbar-btn:visited{

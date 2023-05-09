@@ -19,12 +19,11 @@ export default function Navbar()
 
     return(
         !isLoading &&
-        <nav>
+        <div className="navbar">
             <Link className='navbar-btn' to="/">Home</Link>
             {Object.keys(cats).map((cat) => 
-                <Link key={cat} className='navbar-btn' to={`/browse/${cat}`}>{cats[cat]}</Link>
+                (<Link key={cat} className='navbar-btn' to={`/browse/${cat}`}>{cats[cat]}</Link>)
             )}
-            
-        </nav>
+        </div>
     )
 }

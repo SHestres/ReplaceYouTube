@@ -6,9 +6,11 @@ import Protected from './components/Protected'
 import FetchVideo from './components/FetchVideo'
 import Player from './components/Player'
 import HomeBrowser from './components/HomeBrowser'
+import Search from './components/Search'
 
 import './App.css'
 import DetectAuth from './components/DetectAuth'
+
 
 function App() {
   const {StateProvider} = useGlobalState();
@@ -33,6 +35,9 @@ function App() {
             <FetchVideo>
               {video => <Player {...video} />}
             </FetchVideo>
+          </Route>
+          <Route path="/search">
+            <Search />
           </Route>
         </Switch>
       </div>
