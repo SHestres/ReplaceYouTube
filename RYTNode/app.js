@@ -162,6 +162,20 @@ app.get('/api/list/categories', (req, res) =>{
     res.json(categories);
 })
 
+app.get('/api/search/:category/:key', (req, res) => {
+    var category = req.params.category;
+    var key = req.params.key;
+
+    requireVideoData();
+
+    console.log("Searching");
+
+    let filtered = videoData[category].filter( video => video.Title.toLowerCase().includes(key.toLowerCase()));
+
+    res.json(filtered);
+
+})
+
 app.get('/api/list/:category/:genre', (req, res) => {
     //console.log(`Getting list of ${req.params.genre} from ${req.params.category}`);
     requireVideoData();
