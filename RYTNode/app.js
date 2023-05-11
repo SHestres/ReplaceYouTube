@@ -162,6 +162,12 @@ app.get('/api/list/categories', (req, res) =>{
     res.json(categories);
 })
 
+app.get('/api/search/:category', (req, res) => {
+    var category = req.params.category;
+    requireVideoData();
+    res.json(videoData[category]);
+})
+
 app.get('/api/search/:category/:key', (req, res) => {
     var category = req.params.category;
     var key = req.params.key;

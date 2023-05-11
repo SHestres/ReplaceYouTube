@@ -39,13 +39,17 @@ button{
     cursor: pointer;
     padding: 10px;
     font-size: 20px;
-   /* background: radial-gradient(#8885, 80%, #8880);
-    border-radius: 50%;*/
+   
     color: white;
 }
 
 .search-icon:visited{
     text-decoration: none;
+}
+
+.search-icon:hover{
+    background: radial-gradient(#8885, 60%, #8880);
+    border-radius: 50%;
 }
 
 /*
@@ -75,6 +79,10 @@ button{
     padding: 25px;
 }
 
+.navbar-btn:hover{
+    background: radial-gradient(#8885, 40%, #8880);
+}
+
 .navbar-btn:visited{
     text-decoration: none;
 }
@@ -101,7 +109,7 @@ button{
     /*border: 1px solid blue;*/
 }
 
-input[type=text]{
+.loginInput{
     height: 40px;
     width: 100%;
     align-self: center;
@@ -119,6 +127,34 @@ input[type=text]{
 
 img{
     object-fit: cover;
+}
+
+.search-wrapper{
+    width: 100;
+    display: grid;
+    align-items: center;
+}
+
+.search-bar{
+    border: 0px;
+    border-radius: 0px;
+    transition: 300ms;
+
+    height: 30px;
+    width: 200px;
+    margin: auto;
+}
+
+.search-bar:focus{
+    transform: scale(1.2);
+    outline-width: 0px;
+}
+
+.search-grid{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 2%;
+    gap: 10px;
 }
 
 .movie-row{

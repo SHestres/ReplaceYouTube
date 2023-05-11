@@ -10,7 +10,6 @@ export default function Navbar()
         fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/list/categories`)
         .then((res) => res.json())
         .then((res) => {
-            console.log(res);
             setCats(res);
             setIsLoading(false);
         })

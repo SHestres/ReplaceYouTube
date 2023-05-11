@@ -59,8 +59,8 @@ export default function Login()
         <Layout>
             <div className="login-panel">
                 <h1>Sign In</h1>
-                <input type='text' placeholder='Username' onChange={setUsernameHandler} value={username} onKeyDown={keyPressHandler}></input>
-                <input type='text' placeholder='Password' onChange={setPasswordHandler} value={password} onKeyDown={keyPressHandler}></input>
+                <input className='loginInput' type='text' placeholder='Username' onChange={setUsernameHandler} value={username} onKeyDown={keyPressHandler}></input>
+                <input className='loginInput' type='text' placeholder='Password' onChange={setPasswordHandler} value={password} onKeyDown={keyPressHandler}></input>
                 <button id='signInButton' onClick={doLogin}>Sign In</button>
             </div>
             <img className="login-bg" src={bgImg} alt="Login"></img>
