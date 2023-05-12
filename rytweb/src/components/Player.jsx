@@ -5,8 +5,9 @@ import { BsArrowLeft } from 'react-icons/bs';
 import { useHistory } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import FavIcon from './FavIcon';
+import './Player.css'
 
-export default function Player({videoUrl, Title, Plot, ...rest}){
+export default function Player({videoUrl, Title, Plot, Actors, imdbRating, Year, ...rest}){
 
     // A hosted sample video for testing
     //console.log("https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd")
@@ -36,9 +37,26 @@ export default function Player({videoUrl, Title, Plot, ...rest}){
             <div className='player-title-bar'>
                 <h1 className='player-video-title'>{Title}</h1>
                 <FavIcon className='fav-icon' {...rest}/>
+                <div className='player-year' >{Year}</div>
             </div>
-            
-            <p className='player-description-body'>{Plot}</p>
+            {Actors ? 
+            <>
+                <h3 className='player-description-title'>Actors</h3>
+                <p className='player-description-body'>{Actors}</p>
+            </> : null}
+            {imdbRating ? 
+            <>
+                <h3 className='player-description-title'>Rating</h3>
+                <p className='player-description-body'>{imdbRating} stars</p>
+            </> : null
+            }
+            {Plot ? 
+            <>
+                <h3 className='player-description-title'>Plot</h3>
+                <p className='player-description-body'>{Plot}</p>
+            </> : null
+            }
+                
         </div>
     )
 }

@@ -1,0 +1,70 @@
+#videoPlayer:hover ~ .back-btn{
+    transition: 200ms;
+    opacity: 100;
+}
+
+#playerContainer{
+    position:relative;
+}
+
+#videoPlayer{
+    width: 80%;
+    /*max-width: 100%;*/
+    max-height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.player-title-bar{
+    border-bottom: 2px solid white;
+    display: flex;
+    padding: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+}
+
+.player-video-title{
+    margin: 0;
+    padding: 0;
+    margin-bottom: -8px;
+}
+
+.player-year{
+    flex-basis: 100%;
+    flex-shrink: 0;
+    padding: 0px;
+}
+
+.player-description-title{
+    border-bottom: 1px solid white;
+    text-align: center;
+    width: 100px;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.player-description-body{
+    margin-left: 5px;
+    
+}
+
+
+.back-btn{
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 40px;
+    padding: 12px 20px 20px 12px;
+    /*background: radial-gradient(circle at 0% 0%, #000000C0, 30%, #00000020 100%);*/
+    background: radial-gradient(circle at 0% 0%, #00000060, 80%, #00000010 100%);
+    z-index: 1;
+    border-radius: 0%;
+    border-bottom-right-radius: 80%;
+    opacity: 0;
+    transition: 500ms;
+}
+
+.back-btn:hover {
+    opacity: 100;
+}

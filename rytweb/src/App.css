@@ -275,48 +275,6 @@ img{
     font-size: xx-small;
 }
 
-.back-btn{
-    position: absolute;
-    top: 0;
-    left: 0;
-    font-size: 40px;
-    padding: 12px 20px 20px 12px;
-    background: radial-gradient(circle at 0% 0%, #000000C0, #00000020 100%);
-    z-index: 1;
-    border-radius: 0%;
-    border-bottom-right-radius: 80%;
-    opacity: 0;
-    transition: 500ms;
-}
-
-.back-btn:hover {
-    opacity: 100;
-}
-
-#videoPlayer:hover ~ .back-btn{
-    transition: 200ms;
-    opacity: 100;
-}
-
-#playerContainer{
-    position:relative;
-}
-
-#videoPlayer{
-    width: 80%;
-    /*max-width: 100%;*/
-    max-height: 100%;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-
-
-.player-title-bar{
-    border-bottom: 2px solid white;
-    display: flex;
-    align-items: baseline;
-}
 
 .fav-icon{
     height: 20px;
