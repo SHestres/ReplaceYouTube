@@ -179,8 +179,11 @@ void Window::Run()
     ZeroMemory(ageRating, 20);
 
     //Library tab vars
-    int numVidsDataShown = 1;
-
+    json loadingVids;
+    /*loadingVids = json::object({
+        {}
+        });
+        */
     bool submitLibraryPath = false;
     char filePath[MAX_FILEPATH_LENGTH];
     ZeroMemory(filePath, MAX_FILEPATH_LENGTH);
@@ -362,7 +365,7 @@ void Window::Run()
                 }
                 */
 
-                
+                /*
                 json test = json::object({
                     {"first", "number 1"},
                     {"second", "number 2"},
@@ -378,7 +381,12 @@ void Window::Run()
                 for (auto item : test) {
                     ImGui::Text(str(item).c_str());
                 }
-                
+                */
+
+                json test;
+                test["first"] = "Testing";
+
+                ImGui::Text(str(test["first"]).c_str());
 
                 ImGui::EndTabItem();
             }

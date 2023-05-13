@@ -30,11 +30,26 @@ void main()
 
 	DashPackager packager;
 	packager.Init("../sample_960x540.m4v", "C:\\Users\\sidne\\source\\repos\\SHestres\\ReplaceYouTube\\VideoFiles\\Packaged", "6969");
-	bool isDone = false;
-	auto f = packager.Run(&isDone);
+	vidStat videoStats = IDLE;
+	auto f = packager.Run(&videoStats);
 
+	bool isDone = false;
 	while (!isDone) {
-		;
+		switch (videoStats)
+		{
+		case (SUCCEEDED):
+			std::cout << "Success!" << std::endl;
+			isDone = true;
+			break;
+		case (BAD_ID):
+			std::cout << "Bad ID" << std::endl;
+			isDone = true;
+			break;
+		case (FAILED):
+			std::cout << "Failed" << std::endl;
+			isDone = true;
+			break;
+		}
 	}
 
 	std::cout << "Done!" << std::endl;

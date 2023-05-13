@@ -153,6 +153,7 @@
     <ClInclude Include="CTcpListener.h" />
     <ClInclude Include="DashPackager.h" />
     <ClInclude Include="Encoder.h" />
+    <ClInclude Include="httplib.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_glfw.h" />

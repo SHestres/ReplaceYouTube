@@ -11,6 +11,17 @@
 
 #define VIDEO_DIR_EXT "/videos/"
 
+typedef enum packageStatusEnum_t {
+	IDLE,
+	STARTING,
+	FRAGMENTING,
+	PROCESSING,
+	FINISHING,
+	SUCCEEDED,
+	BAD_ID,
+	FAILED
+} vidStat;
+
 class DashPackager {
 
 public:
@@ -19,7 +30,7 @@ public:
 	~DashPackager();
 
 	bool Init(std::string fileName, std::string libPath, std::string videoID);
-	std::future<void> Run(bool* isDone);
+	std::future<void> Run(vidStat* packagingStatus);
 
 private:
 
