@@ -12,6 +12,7 @@
 #include "GLFW/glfw3.h"
 
 #include "json.hpp"
+#include "DashPackager.h"
 
 using json = nlohmann::json;
 

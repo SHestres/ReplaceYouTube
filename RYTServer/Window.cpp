@@ -7,7 +7,7 @@ using namespace nlohmann::literals;
 
 float default_font_size_var;
 
-#define tstr to_string
+#define tstr std::to_string
 
 void space(int num) {
     for (int i = 0; i < num; i++)
@@ -52,7 +52,7 @@ bool checkLibraries(json* categories, json* videoLibrary, std::string* message) 
     }
     (*message) = broken > 1 ? "!!!WARNING!!! Libraries " : "!!!WARNING!!! Library ";
     (*message) += brokenString;
-    (*message) += broken > 1 ? " are empty or invalid" : " is empty or invalid";
+    (*message) += broken > 1 ? " are empty or invalid or DNE" : " is empty or invalid or DNE";
 
     return broken == 0;
 }
@@ -159,6 +159,12 @@ void Window::Run()
     bool textEntered = false;
 
     //Video input vars
+    vidStat videoStats = IDLE;
+
+    bool submitLibraryPath = false;
+    char filePath[MAX_FILEPATH_LENGTH];
+    ZeroMemory(filePath, MAX_FILEPATH_LENGTH);
+
     char vidName[MAX_VIDEO_TITLE_LENGTH];
     char textEntry[MAX_VIDEO_TITLE_LENGTH];
     ZeroMemory(textEntry, MAX_VIDEO_TITLE_LENGTH);
@@ -178,15 +184,19 @@ void Window::Run()
     char ageRating[20];
     ZeroMemory(ageRating, 20);
 
+
+    DashPackager packager;
+
     //Library tab vars
+    int packageStep = 0;
+    std::string errorMsg;
+    std::future<void> packageFuture;
+    bool goToLibrary = false;
     json loadingVids;
     /*loadingVids = json::object({
         {}
         });
         */
-    bool submitLibraryPath = false;
-    char filePath[MAX_FILEPATH_LENGTH];
-    ZeroMemory(filePath, MAX_FILEPATH_LENGTH);
 
     json videoLibrary;
     json categories;
@@ -324,6 +334,13 @@ void Window::Run()
                 ImGui::Text("Description / Plot");
                 ImGui::InputTextMultiline("##VideoDescription", description, MAX_VIDEO_DESCRIPTION_LENGTH);
 
+                if (ImGui::Button("Import")) {
+                    std::cout << "Testing: " << tstr(1234) << std::endl;
+                    packager.Init(filePath, m_libraryFolderpath, tstr(1234));
+                    packageFuture = packager.Run(&videoStats, &packageStep, &errorMsg);
+                    goToLibrary = true;
+                }
+
                 ImGui::EndTabItem();
             }
 
@@ -333,13 +350,24 @@ void Window::Run()
                 ImGui::EndTabItem();
             }
 
-            if (ImGui::BeginTabItem("Library"))
+            if (ImGui::BeginTabItem("Library", 0, goToLibrary ? ImGuiTabItemFlags_SetSelected : 0))
             {
+                goToLibrary = false;
                 Title("Access your Library here");
                 if (ImGui::Button("Change library file")) {
                     submitLibraryPath = false;
                     didLoadLibraryFiles = false;
                 }
+                space(10);
+                if (ImGui::Button("Next Step")) {
+                    packageStep += 1;
+                }
+                ImGui::Text("Step %d", packageStep);
+                space(10);
+                std::string text = "Video Status: " + str(EnumStrings[videoStats]);
+                ImGui::Text(text.c_str());
+                std::string err = "Error Message: " + errorMsg;
+                ImGui::Text(err.c_str());
                 ImGui::EndTabItem();
             }
 
@@ -383,10 +411,17 @@ void Window::Run()
                 }
                 */
 
+                /*
                 json test;
-                test["first"] = "Testing";
-
-                ImGui::Text(str(test["first"]).c_str());
+                std::string testString = "First Test";
+                test["Test"] = testString;
+                ImGui::Text(str(test["Test"]).c_str());
+                testString = "Second Test";
+                ImGui::Text(str(test["Test"]).c_str());
+                test["Test"] = testString;
+                ImGui::Text(str(test["Test"]).c_str());
+                //Should produce First Test, First Test, Second Test
+                */
 
                 ImGui::EndTabItem();
             }

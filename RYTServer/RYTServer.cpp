@@ -28,10 +28,12 @@ void main()
 	packager.Run();
 	*/
 
+	/*
 	DashPackager packager;
 	packager.Init("../sample_960x540.m4v", "C:\\Users\\sidne\\source\\repos\\SHestres\\ReplaceYouTube\\VideoFiles\\Packaged", "6969");
 	vidStat videoStats = IDLE;
-	auto f = packager.Run(&videoStats);
+	int step = 5;
+	auto f = packager.Run(&videoStats, &step);
 
 	bool isDone = false;
 	while (!isDone) {
@@ -49,10 +51,16 @@ void main()
 			std::cout << "Failed" << std::endl;
 			isDone = true;
 			break;
+		//default:
+			//std::cout << "Working" << std::endl;
 		}
+		
 	}
 
 	std::cout << "Done!" << std::endl;
+	*/
+
+
 
 	//system()
 	/*
@@ -66,11 +74,11 @@ void main()
 	library.LoadDatabase();
 	*/
 	
-	/*
+	
 	Window win("dne.json");
 	if(win.OpenWindow("Video Importer") != 0) return;
 	win.Run();
-	*/
+	
 
 	/*/CTcpListener server("", 54000, Listener_MessageReceived);
 

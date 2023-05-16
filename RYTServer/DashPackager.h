@@ -2,6 +2,8 @@
 
 #include <string>
 #include <Windows.h>
+#include <fstream>
+#include <sstream>
 
 #include "Encoder.h"
 #include <thread>
@@ -22,6 +24,26 @@ typedef enum packageStatusEnum_t {
 	FAILED
 } vidStat;
 
+static const char* EnumStrings[] = {
+	"IDLE",
+	"STARTING",
+	"FRAGMENTING",
+	"PROCESSING",
+	"FINISHING",
+	"SUCCEEDED",
+	"BAD_ID",
+	"FAILED"
+};
+
+enum stepCounter {
+	ZERO,
+	ONE,
+	TWO,
+	THREE,
+	FOUR,
+	FIVE
+};
+
 class DashPackager {
 
 public:
@@ -30,7 +52,7 @@ public:
 	~DashPackager();
 
 	bool Init(std::string fileName, std::string libPath, std::string videoID);
-	std::future<void> Run(vidStat* packagingStatus);
+	std::future<void> Run(vidStat* packagingStatus, int* step, std::string* errorMsg);
 
 private:
 
