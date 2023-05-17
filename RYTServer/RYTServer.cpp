@@ -75,7 +75,7 @@ void main()
 	*/
 	
 	
-	Window win("dne.json");
+	Window win("");
 	if(win.OpenWindow("Video Importer") != 0) return;
 	win.Run();
 	

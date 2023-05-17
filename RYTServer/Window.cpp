@@ -122,15 +122,17 @@ bool Window::findLibraryFolderPage(char* folderPath, int folderPathMaxLength, js
     return false;
 }
 
-bool Window::loadLibraryFiles(json* categories, json* library) 
+bool Window::loadLibraryFiles(json* categories, json* library)
 {
     std::string filePath;
     
     try {
+        //Load categories file
         filePath = str(m_libraryFolderpath) + CATEGORIES_FILEPATH_EXT;
         if (!loadJsonFile(categories, filePath))
             return false;
 
+        //Validate library folder by loading metedata
         for (auto& item : categories->items())
         {
             std::cout << "Loading " << str(item.key()) + ".json" << std::endl;
@@ -144,6 +146,14 @@ bool Window::loadLibraryFiles(json* categories, json* library)
 
     }
     catch (std::exception e) { return false; }
+
+    //Load info from library, but override lib path
+    try {
+        std::string path = str(m_libraryFolderpath) + IMP_INFO_FILEPATH_EXT;
+        loadJsonFile(m_pImpInfo, path);
+    }
+    catch (std::exception e) {}
+    (* m_pImpInfo)["libFolderPath"] = m_libraryFolderpath;
 
     return true;
     
@@ -197,6 +207,16 @@ void Window::Run()
         {}
         });
         */
+
+    //Try to load previous library info (all but lib path will be overridden by info file in lib
+    json importerInfo;
+    m_pImpInfo = &importerInfo;
+    if (loadJsonFile(&importerInfo, "importerInfo.json")) {
+        try {
+            strcpy_s(m_libraryFolderpath, str(importerInfo["libFolderPath"]).c_str());
+        }
+        catch (std::exception e) {};
+    }
 
     json videoLibrary;
     json categories;
@@ -446,6 +466,17 @@ render:
         glfwSwapBuffers(m_window);
 
     }
+
+    std::ofstream infoSave("importerInfo.json");
+    infoSave << importerInfo;
+    infoSave.flush();
+    infoSave.close();
+
+    std::string infoPath = str(m_libraryFolderpath) + IMP_INFO_FILEPATH_EXT;
+    std::ofstream libInfoBackup(infoPath);
+    libInfoBackup << importerInfo;
+    libInfoBackup.flush();
+    infoSave.close();
 }
 
 void Window::DemoWindows()

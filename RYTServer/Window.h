@@ -31,6 +31,7 @@ using json = nlohmann::json;
 #define GENRES_FILEPATH_EXT "/data/genres.json"
 #define FAVORITES_FILEPATH_EXT "/data/genres.json"
 #define CATEGORIES_FILEPATH_EXT "/data/categories.json"
+#define IMP_INFO_FILEPATH_EXT "/data/importerInfo.json"
 #define DATA_FILEPATH_EXT "/data/"
 
 bool openFileWithExplorer(std::string* SelectedFile, std::string* FilePath);
@@ -54,6 +55,7 @@ private:
 
 	//Library vars
 	char m_libraryFolderpath[MAX_FILEPATH_LENGTH];
+	json* m_pImpInfo;
 
 	int InitImGui(const char* WindowTitle);
 	void Cleanup();
