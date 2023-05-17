@@ -1,9 +1,24 @@
 #pragma once
 
+
+//#define CPPHTTPLIB_OPENSSL_SUPPORT
+//httplib must be included before Windows.h
+//This means before DashPackager.h which also includes Windows.h
+#include "httplib.h"
+#include <Windows.h>
+
+#include "json.hpp"
+#include "DashPackager.h"
+
+
+
+
+
+
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#include <Windows.h>
+
 #include <shobjidl.h>
 
 #include "imgui.h"
@@ -11,8 +26,7 @@
 #include "imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 
-#include "json.hpp"
-#include "DashPackager.h"
+
 
 using json = nlohmann::json;
 
@@ -63,6 +77,8 @@ private:
 
 	bool findLibraryFolderPage(char* folderPath, int folderPathMaxLength, json* categoriesObj, json* libObj, bool* persistentBool);
 	bool loadLibraryFiles(json* categories, json* library);
+
+	//bool chooseFromDb(std::string Title, json* resp, int* choice);
 
 	void DemoWindows();
 

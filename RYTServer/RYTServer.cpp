@@ -3,12 +3,14 @@
 
 #include <iostream>
 
-#include"CTcpListener.h"
-#include "Encoder.h"
-#include "DashPackager.h"
 #include "Window.h" //Has Video importer already
+//#include"CTcpListener.h"
+//#include "Encoder.h"
+//#include "DashPackager.h"
 
-void Listener_MessageReceived(CTcpListener* listener, int client, std::string msg);
+
+
+//void Listener_MessageReceived(CTcpListener* listener, int client, std::string msg);
 
 void main()
 {
@@ -103,11 +105,11 @@ void main()
 	*/
 }
 
+/*
 void Listener_MessageReceived(CTcpListener* listener, int client, std::string msg)
 {
 	listener->Send(client, msg);
-}
-
+}*/
 
 //The remainder of this file is leftover from the bare-bones server
 

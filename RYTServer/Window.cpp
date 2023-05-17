@@ -159,6 +159,70 @@ bool Window::loadLibraryFiles(json* categories, json* library)
     
 }
 
+bool chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing) {
+    Title("Movie Metadata Selector");
+
+    if (ImGui::Button("Return")) {
+        *choosing = false;
+    }
+    
+    return false;
+}
+
+void searchDb(std::string vidTitle, json* resp) {
+    
+    std::cout << "Searching" << std::endl;
+
+    std::string url = "https://moviesdatabase.p.rapidapi.com";
+    std::string ext = "/titles/search/title/";
+
+    //Format title
+    std::regex space("[[:space:]]");
+    vidTitle = std::regex_replace(vidTitle, space, "%20");
+    
+    //Set Headers
+    httplib::Headers headers = {
+        {"X-RapidAPI-Key", "ed3bbaa9dbmsh30e8daf3fd5321ap1c95b5jsna49beedcf77c"},
+        {"X - RapidAPI - Host", "moviesdatabase.p.rapidapi.com"}
+    };
+    
+    //Set Params
+    ext += vidTitle;
+    ext += "?exact=true";
+    ext += "&titleType=movie";
+    ext += "&info=custom_info";
+    
+    //Get
+    std::cout << "Getting" << std::endl;
+    httplib::Client db(url, 80);
+    db.set_connection_timeout(3, 0);
+    if (auto res = db.Get(ext, headers)) {
+        if (res->status == 200) {
+            std::cout << res->body << std::endl;
+        }
+        std::cout << "Got response" << std::endl;
+        std::cout << "Status: " << res->status << std::endl;
+    }
+    else {
+        auto err = res.error();
+            std::cout << "HTTP error: " << httplib::to_string(err) << std::endl;
+    }
+        
+        /*
+        , [](uint64_t len, uint64_t total) {
+        printf("%lld / %lld bytes => %d%% complete\n",
+            len, total,
+            (int)(len * 100 / total));
+        return true; // return 'false' if you want to cancel the request.
+        });*/
+    
+    //Handle response
+    //std::cout << res->body << std::endl;
+
+    std::cout << "Done Searching" << std::endl;
+    
+}
+
 void Window::Run()
 {
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -186,6 +250,12 @@ void Window::Run()
 
     bool isFavorite = false;
 
+    //Database loading vars
+    bool choosingFromDb = false;
+    json dbResp;
+    int chosen = -1;
+    std::future<void> dbFuture;
+
     //Optional input vars
     float vidRating = 0;
     char actorList[MAX_ACTOR_LIST_LENGTH];
@@ -193,7 +263,6 @@ void Window::Run()
     int releaseYear = 2000;
     char ageRating[20];
     ZeroMemory(ageRating, 20);
-
 
     DashPackager packager;
 
@@ -260,9 +329,14 @@ void Window::Run()
                 didLoadLibraryFiles = findLibraryFolderPage(m_libraryFolderpath, MAX_FILEPATH_LENGTH, &categories, &videoLibrary, &submitLibraryPath);
                 goto endWindow;
             }
+
+            if (choosingFromDb) {
+                chooseFromDb(vidName, &dbResp, &chosen, &choosingFromDb);
+                goto endWindow;
+            }
+
+            //Main Program
             ImGui::BeginTabBar("TabBar");
-
-
 
             if(ImGui::BeginTabItem("Import Videos"))
             {
@@ -315,6 +389,11 @@ void Window::Run()
                     ImGui::Text("Video will take the name \"%s\"", vidName);
 
                 space(3);
+
+                if (ImGui::Button("Browse Database Metadata")) {
+                    choosingFromDb = true;
+                    dbFuture = std::async(std::launch::async, searchDb, vidName, &dbResp);
+                }
 
                 ImGui::Checkbox("Favorite?", &isFavorite);
 
@@ -676,7 +755,6 @@ bool openFileWithExplorer(std::string* SelectedFile, std::string* FilePath)
     CoUninitialize();
     return TRUE;
 }
-
 
 bool openFolderWithExplorer(std::string* SelectedFolder, std::string* FolderPath)
 {
