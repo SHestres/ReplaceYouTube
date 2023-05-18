@@ -1,10 +1,11 @@
-import {BsCaretLeftFill, BsCaretRightFill} from 'react-icons/bs'
+import {BsChevronCompactLeft, BsChevronCompactRight, BsCaretLeftFill, BsCaretRightFill} from 'react-icons/bs'
 
-export default function ScrollButton(onClick, direction){
+export default function ScrollButton({direction, onClick}){
 
-    return direction === 'left' ? 
-    <BsCaretLeftFill id="left-scroll" className='scroll-btns' onClick={onClick}/> 
+    return (
+    (direction == "left") ? 
+    (<BsChevronCompactLeft id="left-scroll" className='scroll-btns' onClick={onClick}/>)
     : 
-    <BsCaretRightFill id='right-scroll' className='scroll-btns' onClick={onClick}/>
-
+    (<BsChevronCompactRight id='right-scroll' className='scroll-btns' onClick={onClick}/>)
+    )
 }

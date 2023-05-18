@@ -194,12 +194,39 @@ img{
     /*border: 1px dashed yellow;*/
     /*Padding allows video cards to expand without being cut off*/
     padding: 5%;
-    margin-left: -5%;
+    margin-left: calc(-5% + 30px);
+ }
+
+ .translate-row > div{
+    display: flex;
+    gap: 10px;
  }
 
  .translate-row::-webkit-scrollbar {
     display: none;
   }
+
+.scroll-btns {
+    flex-shrink: 0;
+    height: 150px;
+    width: 30px;
+    background: #6660;
+    position: absolute;
+    z-index: 11;
+    border-radius: 2px;
+}
+
+.scroll-btns:hover {
+    background: #333F
+}
+
+#left-scroll{
+    left: 0;
+}
+
+#right-scroll{
+    right: 0;
+}
 
   @keyframes hoverGrow{
     from{height: 100%}
@@ -229,7 +256,7 @@ img{
   
   .video-card:hover{
         transform: scale(1.25);
-        z-index: 1;
+        z-index: 10;
   }
 
   .video-card:hover .video-details{
