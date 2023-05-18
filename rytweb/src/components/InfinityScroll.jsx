@@ -4,7 +4,7 @@ import {useSpring, animated, config, useSpringRef} from 'react-spring'
 import {useState, useRef, useEffect, useCallback} from 'react'
 import ScrollButton from './ScrollButton'
 
-const offset = 800;
+const offset = window.innerWidth * 0.9;
 
 export default function InfinityScroll({ children}){
 
@@ -17,20 +17,17 @@ export default function InfinityScroll({ children}){
     const [{scrollVal}, setSpring] = useSpring(() => ({
         from: {scrollVal: 0},
         config: config.default,
-        onResolve: (() => console.log("Resolved")),
     }))
 
     const onRowChange = useCallback((mutationList) => {
         let wid = contentRef.current.offsetWidth;
         setWidth(wid);
-        console.log("Setting width in cb to: ", wid);
     }, [setWidth])
 
     useMutationObservable(contentRef.current, onRowChange);
 
     useEffect(() => {
         if(contentRef.current){
-            console.log("Width: ", contentRef.current.offsetWidth)
             setWidth(contentRef.current.offsetWidth);
             setSpring.set({scrollVal: contentRef.current.offsetWidth});
         }
@@ -43,7 +40,7 @@ export default function InfinityScroll({ children}){
         let computedScrollVal = (val % width) + width;
         await setSpring.set({scrollVal: computedScrollVal});
         await setSpring.start({ scrollVal: dir ? computedScrollVal - offset : computedScrollVal + offset, 
-                                onRest(){console.log("Resolved");setAnimating(false)}})
+                                onRest(){setAnimating(false)}})
     };
 
     const handleManualScroll = (event) => {

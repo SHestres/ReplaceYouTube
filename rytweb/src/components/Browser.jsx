@@ -27,7 +27,6 @@ export default function Browser(){
         fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/list/categories`)
         .then((res) => res.json())
         .then((res) => {
-            console.log(res);
             setCats(res);
             setIsLoading(false);
         })
@@ -48,7 +47,6 @@ export default function Browser(){
             {genres.map((genre) => 
                 <GenreCollection key={genre.id} genre={genre} category={category} hasGenreCallback={hasGenreCb}/>
             )}
-            {console.log(hasGenre)}
             {
                 hasGenre ? null: (
                     <>

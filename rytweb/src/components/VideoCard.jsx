@@ -19,7 +19,7 @@ export default function VideoCard({Title, id, Images, ...rest}) {
     useEffect(() => {
         getMeta(`${Images[0]}`, (err, img) =>
         {
-        console.log("Updating image ratio");
+        //console.log("Updating image ratio");
         setBackWidth(img.naturalWidth);
         setBackHeight(img.naturalHeight);
         })
