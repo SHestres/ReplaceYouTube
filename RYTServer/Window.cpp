@@ -173,28 +173,32 @@ void searchDb(std::string vidTitle, json* resp) {
     
     std::cout << "Searching" << std::endl;
 
+    std::cout << "VidTitle: " << vidTitle << std::endl;
+
     std::string url = "https://moviesdatabase.p.rapidapi.com";
     std::string ext = "/titles/search/title/";
 
     //Format title
     std::regex space("[[:space:]]");
-    vidTitle = std::regex_replace(vidTitle, space, "%20");
+    std::string vidTitleFormatted = std::regex_replace(vidTitle, space, "%20");
     
     //Set Headers
     httplib::Headers headers = {
         {"X-RapidAPI-Key", "ed3bbaa9dbmsh30e8daf3fd5321ap1c95b5jsna49beedcf77c"},
-        {"X - RapidAPI - Host", "moviesdatabase.p.rapidapi.com"}
+        {"Host", "moviesdatabase.p.rapidapi.com"}
     };
     
     //Set Params
-    ext += vidTitle;
+    ext += vidTitleFormatted;
     ext += "?exact=true";
     ext += "&titleType=movie";
     ext += "&info=custom_info";
     
+    std::cout << "Ext: " << ext << std::endl;
+
     //Get
     std::cout << "Getting" << std::endl;
-    httplib::Client db(url, 80);
+    httplib::Client db(url);
     db.set_connection_timeout(3, 0);
     if (auto res = db.Get(ext, headers)) {
         if (res->status == 200) {
@@ -242,6 +246,7 @@ void Window::Run()
     char vidName[MAX_VIDEO_TITLE_LENGTH];
     char textEntry[MAX_VIDEO_TITLE_LENGTH];
     ZeroMemory(textEntry, MAX_VIDEO_TITLE_LENGTH);
+    ZeroMemory(vidName, MAX_VIDEO_TITLE_LENGTH);
 
     char genreList[MAX_VIDEO_GENRE_LENGTH];
     char description[MAX_VIDEO_DESCRIPTION_LENGTH];
@@ -392,7 +397,8 @@ void Window::Run()
 
                 if (ImGui::Button("Browse Database Metadata")) {
                     choosingFromDb = true;
-                    dbFuture = std::async(std::launch::async, searchDb, vidName, &dbResp);
+                    std::cout << "VidName: " << textEntry << std::endl;
+                    dbFuture = std::async(std::launch::async, searchDb, textEntry, &dbResp);
                 }
 
                 ImGui::Checkbox("Favorite?", &isFavorite);
