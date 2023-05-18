@@ -162,6 +162,34 @@ bool Window::loadLibraryFiles(json* categories, json* library)
 bool chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing) {
     Title("Movie Metadata Selector");
 
+    bool foundMovies = false;
+
+    std::cout << "Resp: " << *resp << std::endl;
+
+    try {
+        foundMovies = (*resp)["Response"];
+    }
+    catch (std::exception e) {
+        ImGui::Text("Loading...");
+    }
+
+    if (foundMovies) {
+        for (auto item : (*resp)["Search"]) {
+            try {
+                space(10);
+                Title(str(item["Title"]).c_str());
+                space(3);
+                ImGui::Text(str(item["Year"]).c_str());
+            }
+            catch (std::exception e) {
+                std::cout << "Skipped an element" << std::endl;
+            }
+        }
+    }
+    else {
+        Title("Didn't find movies");
+    }
+
     if (ImGui::Button("Return")) {
         *choosing = false;
     }
@@ -169,6 +197,8 @@ bool chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing)
     return false;
 }
 
+//Old searchDb
+/*
 void searchDb(std::string vidTitle, json* resp) {
     
     std::cout << "Searching" << std::endl;
@@ -212,19 +242,67 @@ void searchDb(std::string vidTitle, json* resp) {
             std::cout << "HTTP error: " << httplib::to_string(err) << std::endl;
     }
         
-        /*
-        , [](uint64_t len, uint64_t total) {
-        printf("%lld / %lld bytes => %d%% complete\n",
-            len, total,
-            (int)(len * 100 / total));
-        return true; // return 'false' if you want to cancel the request.
-        });*/
     
     //Handle response
     //std::cout << res->body << std::endl;
 
     std::cout << "Done Searching" << std::endl;
     
+}
+*/  
+
+void searchDb(std::string vidTitle, json* resp) {
+
+    std::string apiKey = "f16097b7";
+
+    std::cout << "Searching" << std::endl;
+
+    std::cout << "VidTitle: " << vidTitle << std::endl;
+
+    std::string url = "http://www.omdbapi.com";
+    std::string ext = "/";
+
+    //Format title
+    std::regex space("[[:space:]]");
+    std::string vidTitleFormatted = std::regex_replace(vidTitle, space, "%20");
+
+    //Set Headers
+    httplib::Headers headers = {
+        //{"X-RapidAPI-Key", "ed3bbaa9dbmsh30e8daf3fd5321ap1c95b5jsna49beedcf77c"},
+        {"Host", "www.omdbapi.com"}
+    };
+
+    //Set Params
+    ext += "?s=" + vidTitleFormatted;
+    ext += "&type=movie";
+    ext += "&apikey=" + apiKey;
+
+    std::cout << "Ext: " << ext << std::endl;
+
+    //Get
+    std::cout << "Getting" << std::endl;
+    httplib::Client db(url);
+    db.set_connection_timeout(3, 0);
+    if (auto res = db.Get(ext, headers)) {
+        if (res->status == 200) {
+            resp->parse(res->body);
+        }
+        std::cout << "Got response" << std::endl;
+        std::cout << "Status: " << res->status << std::endl;
+    }
+    else {
+        auto err = res.error();
+        std::cout << "HTTP error: " << httplib::to_string(err) << std::endl;
+    }
+
+    
+
+    //Handle response
+    //std::cout << res->body << std::endl;
+
+    std::cout << "Done Searching" << std::endl;
+
+    return;
 }
 
 void Window::Run()
