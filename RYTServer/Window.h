@@ -10,11 +10,6 @@
 #include "json.hpp"
 #include "DashPackager.h"
 
-
-
-
-
-
 #include <iostream>
 #include <stdio.h>
 #include <string>
@@ -30,7 +25,7 @@
 
 using json = nlohmann::json;
 
-
+typedef unsigned char stbi_uc;
 
 #define DEFAULT_FONT_SIZE default_font_size_var
 #define TITLE_FONT_SIZE default_font_size_var * 1.25f
@@ -48,9 +43,12 @@ using json = nlohmann::json;
 #define IMP_INFO_FILEPATH_EXT "/data/importerInfo.json"
 #define DATA_FILEPATH_EXT "/data/"
 
+//Forward Declarations
 bool openFileWithExplorer(std::string* SelectedFile, std::string* FilePath);
 bool openFolderWithExplorer(std::string* SelectedFolder, std::string* FolderPath);
 void Title(const char* title, float multiplier = 0);
+bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height);
+bool LoadTextureFromMemory(stbi_uc* buffer, int bufLen, GLuint* out_texture, int* out_width, int* out_height);
 
 class Window
 {

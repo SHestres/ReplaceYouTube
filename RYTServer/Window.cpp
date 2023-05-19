@@ -2,6 +2,10 @@
 //#include "VideoImporter.h"
 #include "fstream"
 
+//For image loading
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 using str = std::string;
 using namespace nlohmann::literals;
 
@@ -159,21 +163,48 @@ bool Window::loadLibraryFiles(json* categories, json* library)
     
 }
 
-bool chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing) {
+void chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing) {
     Title("Movie Metadata Selector");
 
     bool foundMovies = false;
-
-    std::cout << "Resp: " << *resp << std::endl;
+    
+    if (ImGui::Button("Return")) {
+        *choosing = false;
+        *choice = -1;
+        return;
+    }
 
     try {
-        foundMovies = (*resp)["Response"];
+        foundMovies = str((*resp)["Response"]).find("True") != -1;
     }
     catch (std::exception e) {
         ImGui::Text("Loading...");
     }
 
     if (foundMovies) {
+
+        json vids = (*resp)["Search"];
+
+        for (int i = 0; i < vids.size(); i++) {
+            try {
+                space(5);
+                Title(str(vids.at(i)["Title"]).c_str());
+                ImGui::SameLine();
+                if (ImGui::Button("Select")) {
+                    *choosing = false;
+                    *choice = i;
+                    return;
+                }
+                space(2);
+                ImGui::Text(str(vids.at(i)["Year"]).c_str());
+                
+            }
+            catch (std::exception e) {
+                std::cout << "Skipped an element" << std::endl;
+            }
+        }
+        
+        /*
         for (auto item : (*resp)["Search"]) {
             try {
                 space(10);
@@ -185,16 +216,15 @@ bool chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing)
                 std::cout << "Skipped an element" << std::endl;
             }
         }
+        */
     }
     else {
         Title("Didn't find movies");
     }
 
-    if (ImGui::Button("Return")) {
-        *choosing = false;
-    }
     
-    return false;
+    
+    return;
 }
 
 //Old searchDb
@@ -285,7 +315,9 @@ void searchDb(std::string vidTitle, json* resp) {
     db.set_connection_timeout(3, 0);
     if (auto res = db.Get(ext, headers)) {
         if (res->status == 200) {
-            resp->parse(res->body);
+            std::cout << "Parsing" << std::endl;
+            std::cout << res->body << std::endl;
+            *resp = json::parse(res->body);
         }
         std::cout << "Got response" << std::endl;
         std::cout << "Status: " << res->status << std::endl;
@@ -304,6 +336,41 @@ void searchDb(std::string vidTitle, json* resp) {
 
     return;
 }
+
+GLuint getMoviePosterAsImage(std::string id, float* ratio, std::string apiKey) {
+    
+    
+    httplib::Client db("http://img.omdbapi.com");
+    
+    std::string ext = "/";
+    ext += "?apikey=" + apiKey;
+    ext += "&i=" + id;
+    auto res = db.Get(ext);
+    
+
+    if (res->status == 200) {
+        int cLength = stoi(res->headers.find("Content-Length")->second);
+        std::cout << cLength << std::endl;
+        
+        std::vector<unsigned char> buffer;
+        buffer.reserve(cLength);
+        buffer.assign(res->body.begin(), res->body.end());
+
+        GLuint myImg = 0;
+        int imgWidth = 1;
+        int imgHeight = 1;
+        bool loaded = LoadTextureFromMemory(buffer.data(), cLength, &myImg, &imgWidth, &imgHeight);
+        *ratio = (float)imgHeight / (float)imgWidth;
+        
+        if (!loaded) std::cout << "Couldn't load" << std::endl;
+        else std::cout << "Loaded" << std::endl;
+        return myImg;
+    }
+
+
+    return NULL;
+}
+
 
 void Window::Run()
 {
@@ -360,7 +427,7 @@ void Window::Run()
         });
         */
 
-    //Try to load previous library info (all but lib path will be overridden by info file in lib
+    //Try to load previous library info (all but lib path will be overridden by info file in lib)
     json importerInfo;
     m_pImpInfo = &importerInfo;
     if (loadJsonFile(&importerInfo, "importerInfo.json")) {
@@ -373,6 +440,19 @@ void Window::Run()
     json videoLibrary;
     json categories;
     bool didLoadLibraryFiles = loadLibraryFiles(&categories, &videoLibrary);//loadJsonFile(&videoLibrary, m_libraryFilepath);
+
+
+    //Testing
+    int my_image_width = 0;
+    int my_image_height = 0;
+    GLuint my_image_texture = 0;
+    bool ret = LoadTextureFromFile("./testImg.jpg", &my_image_texture, &my_image_width, &my_image_height);
+    //IM_ASSERT(ret);
+    std::cout << "ret: " << ret << std::endl;
+
+    GLuint testImg = 0;
+    float testRatio = 1;
+
 
     std::cout << "Display x: " << m_pio->DisplaySize.x << " y: " << m_pio->DisplaySize.y << std::endl;
     default_font_size_var = 2;// (float)m_pio->DisplaySize.y / 1080;
@@ -417,12 +497,18 @@ void Window::Run()
                 chooseFromDb(vidName, &dbResp, &chosen, &choosingFromDb);
                 goto endWindow;
             }
-
+            
             //Main Program
             ImGui::BeginTabBar("TabBar");
 
             if(ImGui::BeginTabItem("Import Videos"))
             {
+                if (ImGui::Button("GetPoster")) {
+                    testImg = getMoviePosterAsImage("tt0499549", &testRatio, "f16097b7");
+                }
+                //testImg = 1;
+                ImGui::Image((void*)(intptr_t)testImg, ImVec2(300, 300*testRatio));
+
                 //Check that library files are valid
                 bool libraryIsValid = false;
                 std::string warningMessage = "";
@@ -606,6 +692,11 @@ void Window::Run()
                 //Should produce First Test, First Test, Second Test
                 */
 
+                //Image loading test
+                ImGui::Text("size = %d x %d", my_image_width, my_image_height);
+                ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(200, 200));
+
+
                 ImGui::EndTabItem();
             }
 
@@ -776,6 +867,75 @@ void Title(const char* title, float multiplier)
     else ImGui::SetWindowFontScale(TITLE_FONT_SIZE);
     ImGui::Text(title);
     ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE);
+}
+
+// Simple helper function to load an image into a OpenGL texture with common settings
+bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
+{
+    // Load from file
+    int image_width = 0;
+    int image_height = 0;
+    unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
+    if (image_data == NULL)
+        return false;
+
+    // Create a OpenGL texture identifier
+    GLuint image_texture;
+    glGenTextures(1, &image_texture);
+    glBindTexture(GL_TEXTURE_2D, image_texture);
+
+    // Setup filtering parameters for display
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
+
+    // Upload pixels into texture
+#if defined(GL_UNPACK_ROW_LENGTH) && !defined(__EMSCRIPTEN__)
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+#endif
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+    stbi_image_free(image_data);
+
+    *out_texture = image_texture;
+    *out_width = image_width;
+    *out_height = image_height;
+
+    return true;
+}
+
+bool LoadTextureFromMemory(stbi_uc *buffer, int bufLen, GLuint* out_texture, int* out_width, int* out_height)
+{
+    // Load from file
+    int image_width = 0;
+    int image_height = 0;
+    unsigned char* image_data = stbi_load_from_memory(buffer,bufLen, &image_width, &image_height, NULL, 4);
+    if (image_data == NULL)
+        return false;
+
+    // Create a OpenGL texture identifier
+    GLuint image_texture;
+    glGenTextures(1, &image_texture);
+    glBindTexture(GL_TEXTURE_2D, image_texture);
+
+    // Setup filtering parameters for display
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
+
+    // Upload pixels into texture
+#if defined(GL_UNPACK_ROW_LENGTH) && !defined(__EMSCRIPTEN__)
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+#endif
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+    stbi_image_free(image_data);
+
+    *out_texture = image_texture;
+    *out_width = image_width;
+    *out_height = image_height;
+
+    return true;
 }
 
 //Get File with Explorer

@@ -165,6 +165,7 @@
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="Trie.h" />
     <ClInclude Include="VideoImporter.h" />
     <ClInclude Include="Window.h" />
