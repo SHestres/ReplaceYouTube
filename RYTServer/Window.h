@@ -69,6 +69,8 @@ private:
 	char m_libraryFolderpath[MAX_FILEPATH_LENGTH];
 	json* m_pImpInfo;
 
+	std::string m_apiKey = "f16097b7";
+
 	int InitImGui(const char* WindowTitle);
 	void Cleanup();
 	void ChooseGLFWVersionForPlatform();
@@ -76,6 +78,8 @@ private:
 	bool findLibraryFolderPage(char* folderPath, int folderPathMaxLength, json* categoriesObj, json* libObj, bool* persistentBool);
 	bool loadLibraryFiles(json* categories, json* library);
 
+	//GLuint getMoviePosterAsImage(std::string id, float* ratio);
+	//void searchDb(std::string vidTitle, json* resp);
 	//bool chooseFromDb(std::string Title, json* resp, int* choice);
 
 	void DemoWindows();

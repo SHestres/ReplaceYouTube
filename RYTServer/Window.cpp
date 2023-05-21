@@ -281,9 +281,7 @@ void searchDb(std::string vidTitle, json* resp) {
 }
 */  
 
-void searchDb(std::string vidTitle, json* resp) {
-
-    std::string apiKey = "f16097b7";
+void searchDb(std::string vidTitle, json* resp, std::string apiKey) {
 
     std::cout << "Searching" << std::endl;
 
@@ -337,7 +335,7 @@ void searchDb(std::string vidTitle, json* resp) {
     return;
 }
 
-GLuint getMoviePosterAsImage(std::string id, float* ratio, std::string apiKey) {
+void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::string apiKey) {
     
     
     httplib::Client db("http://img.omdbapi.com");
@@ -360,15 +358,16 @@ GLuint getMoviePosterAsImage(std::string id, float* ratio, std::string apiKey) {
         int imgWidth = 1;
         int imgHeight = 1;
         bool loaded = LoadTextureFromMemory(buffer.data(), cLength, &myImg, &imgWidth, &imgHeight);
-        *ratio = (float)imgHeight / (float)imgWidth;
+        *ratio = (float)imgWidth / (float)imgHeight;
         
         if (!loaded) std::cout << "Couldn't load" << std::endl;
         else std::cout << "Loaded" << std::endl;
-        return myImg;
+        *texRef = myImg;
+        return;
     }
 
-
-    return NULL;
+    *texRef = 0;
+    return;
 }
 
 
@@ -442,6 +441,8 @@ void Window::Run()
     bool didLoadLibraryFiles = loadLibraryFiles(&categories, &videoLibrary);//loadJsonFile(&videoLibrary, m_libraryFilepath);
 
 
+
+
     //Testing
     int my_image_width = 0;
     int my_image_height = 0;
@@ -452,6 +453,10 @@ void Window::Run()
 
     GLuint testImg = 0;
     float testRatio = 1;
+
+    bool testSelected = false;
+
+
 
 
     std::cout << "Display x: " << m_pio->DisplaySize.x << " y: " << m_pio->DisplaySize.y << std::endl;
@@ -504,10 +509,21 @@ void Window::Run()
             if(ImGui::BeginTabItem("Import Videos"))
             {
                 if (ImGui::Button("GetPoster")) {
-                    testImg = getMoviePosterAsImage("tt0499549", &testRatio, "f16097b7");
+                    //Should be implemented async when actually being used
+                    getMoviePosterAsImage(&testImg, "tt0499549", &testRatio, m_apiKey);
                 }
-                //testImg = 1;
-                ImGui::Image((void*)(intptr_t)testImg, ImVec2(300, 300*testRatio));
+                
+                
+                ImGui::Columns(2, "MovieSelecting");
+                ImGui::SetColumnWidth(0, 300 * testRatio + 20);
+                //ImGui::Button("Test Ratio", ImVec2(300 * testRatio, 10));
+                //ImGui::Button("300Width", ImVec2(300, 10));
+                ImGui::Image((void*)(intptr_t)testImg, ImVec2(300 * testRatio, 300));
+                ImGui::NextColumn();
+                Title("Select");
+                ImGui::Text("Please Select");
+                ImGui::Button("Selection Button");
+                ImGui::Columns();
 
                 //Check that library files are valid
                 bool libraryIsValid = false;
@@ -562,7 +578,7 @@ void Window::Run()
                 if (ImGui::Button("Browse Database Metadata")) {
                     choosingFromDb = true;
                     std::cout << "VidName: " << textEntry << std::endl;
-                    dbFuture = std::async(std::launch::async, searchDb, textEntry, &dbResp);
+                    dbFuture = std::async(std::launch::async, searchDb, textEntry, &dbResp, m_apiKey);
                 }
 
                 ImGui::Checkbox("Favorite?", &isFavorite);
@@ -720,6 +736,10 @@ render:
         glfwSwapBuffers(m_window);
 
     }
+
+    //Uneeded, but here as a reminder
+    glDeleteTextures(1, &testImg);
+    glDeleteTextures(1, &my_image_texture);
 
     std::ofstream infoSave("importerInfo.json");
     infoSave << importerInfo;
