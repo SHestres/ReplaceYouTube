@@ -49,7 +49,7 @@ bool openFolderWithExplorer(std::string* SelectedFolder, std::string* FolderPath
 void Title(const char* title, float multiplier = 0);
 bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height);
 bool LoadTextureFromMemory(stbi_uc* buffer, int bufLen, GLuint* out_texture, int* out_width, int* out_height);
-void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::string apiKey);
+void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::string apiKey, std::vector<GLuint>* posterIDs);
 
 class Window
 {
@@ -82,7 +82,7 @@ private:
 
 	//GLuint getMoviePosterAsImage(std::string id, float* ratio);
 	//void searchDb(std::string vidTitle, json* resp);
-	void chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing, bool* postersLoaded);
+	void chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* choosing, bool* madeSelection, bool* postersLoaded);
 
 	void DemoWindows();
 

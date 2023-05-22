@@ -163,17 +163,17 @@ bool Window::loadLibraryFiles(json* categories, json* library)
     
 }
 
-void freeTempPosterImages(std::vector<GLuint>* ids) {
-    for (int i = 0; i < ids->size(); i++) {
-        GLuint id = (*ids)[i];
-        if (id > 0) {
+void freeTempPosterImages(json list) {
+    for (int i = 0; i < list.size(); i++) {
+        try {
+            GLuint id = list.at(i)["GLuint"];
             glDeleteTextures(1, &id);
         }
+        catch (std::exception e) {}
     }
-    ids->clear();
 }
 
-void Window::chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing, bool* postersLoaded) {
+void Window::chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* choosing, bool* madeSelection, bool* postersLoaded) {
     Title("Movie Metadata Selector");
 
     //Load Posters
@@ -187,7 +187,7 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* c
                         float ratio = 1;
                         std::string id = (*resp)["Search"].at(i)["imdbID"];
                         std::cout << "Loading from id: " << id << std::endl;
-                        getMoviePosterAsImage(&imgRef, id, &ratio, m_apiKey);
+                        getMoviePosterAsImage(&imgRef, id, &ratio, m_apiKey, m_pPosterIDs);
                         std::cout << "ImgRef for ind " << i << " is " << imgRef << std::endl;
                         (*resp)["Search"].at(i)["ImgGLuint"] = (int)imgRef;
                         (*resp)["Search"].at(i)["ImgRatio"] = ratio;
@@ -202,12 +202,14 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* c
         
     }
 
+    json selected;
+
     bool foundMovies = false;
     
     if (ImGui::Button("Return")) {
         *choosing = false;
         *choice = -1;
-        freeTempPosterImages(m_pPosterIDs);
+        freeTempPosterImages((*resp)["Search"]);
         return;
     }
 
@@ -251,9 +253,17 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* c
                 }
                 Title(str(vids.at(i)["Title"]).c_str());
                 ImGui::Text(str(vids.at(i)["Year"]).c_str());
-                if (ImGui::Button("Select")) {
+                std::string buttonName = "Select##" + std::to_string(i);
+                if (ImGui::Button(buttonName.c_str())) {
+                    std::cout << "Selecting" << std::endl;
                     *choosing = false;
                     *choice = i;
+                    
+                    *madeSelection = true;
+                    freeTempPosterImages(vids);
+                    selected = vids.at(i);
+                    (*choice) = selected;
+                    
                     return;
                 }
                 ImGui::Columns();
@@ -279,10 +289,9 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* c
         */
     }
     else {
-        Title("No Matches Found");
+        std::string err = str((*resp)["Error"]);
+        Title(err.c_str());
     }
-
-    
     
     return;
 }
@@ -376,11 +385,6 @@ void searchDb(std::string vidTitle, json* resp, std::string apiKey) {
             //std::cout << "Parsing" << std::endl;
             std::cout << res->body << std::endl;
             *resp = json::parse(res->body);
-
-
-
-
-
         }
         std::cout << "Got response" << std::endl;
         std::cout << "Status: " << res->status << std::endl;
@@ -400,7 +404,7 @@ void searchDb(std::string vidTitle, json* resp, std::string apiKey) {
     return;
 }
 
-void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::string apiKey) {
+void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::string apiKey, std::vector<GLuint>* posterIDs) {
     
     
     httplib::Client db("http://img.omdbapi.com");
@@ -429,7 +433,10 @@ void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::st
             std::cout << "Couldn't load" << std::endl;
             myImg = 0;
         }
-        else std::cout << "Loaded" << std::endl;
+        else {
+            std::cout << "Loaded" << std::endl;
+            posterIDs->push_back(myImg);
+        }
         *texRef = myImg;
         std::cout << "myImg: " << myImg << std::endl;
         return;
@@ -471,8 +478,9 @@ void Window::Run()
     //Database loading vars
     bool choosingFromDb = false;
     bool postersLoaded = false;
+    bool hasMadeSelection = false;
     json dbResp;
-    int chosen = -1;
+    json selectedMovie;
     std::future<void> dbFuture;
     std::vector<GLuint> posters;
     m_pPosterIDs = &posters;
@@ -571,7 +579,7 @@ void Window::Run()
             }
 
             if (choosingFromDb) {
-                chooseFromDb(vidName, &dbResp, &chosen, &choosingFromDb, &postersLoaded);
+                chooseFromDb(vidName, &dbResp, &selectedMovie, &choosingFromDb, &hasMadeSelection, &postersLoaded);
                 goto endWindow;
             }
             
@@ -582,7 +590,7 @@ void Window::Run()
             {
                 if (ImGui::Button("GetPoster")) {
                     //Should be implemented async when actually being used
-                    getMoviePosterAsImage(&testImg, "tt0093779", &testRatio, m_apiKey);
+                    getMoviePosterAsImage(&testImg, "tt0093779", &testRatio, m_apiKey, m_pPosterIDs);
                 }
                 
                 
@@ -647,17 +655,19 @@ void Window::Run()
 
                 space(3);
 
-                if (ImGui::Button("Browse Database Metadata")) {
+                if (ImGui::Button("Search for Metadata")) {
                     choosingFromDb = true;
                     postersLoaded = false;
+                    hasMadeSelection = false;
                     std::cout << "VidName: " << textEntry << std::endl;
+                    dbResp["Response"] = NULL;
                     dbFuture = std::async(std::launch::async, searchDb, textEntry, &dbResp, m_apiKey);
                 }
-                else if (chosen >= 0) {
-                    
-                    freeTempPosterImages(&posters);
+                else if (hasMadeSelection) {
+
                     //TODO: Load and save data for selected movie
-                    chosen = -1;
+                    std::cout << selectedMovie << std::endl;
+                    hasMadeSelection = false;
                 }
 
                 ImGui::Checkbox("Favorite?", &isFavorite);
