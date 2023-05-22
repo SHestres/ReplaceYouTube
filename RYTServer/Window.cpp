@@ -182,23 +182,19 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* 
             if (str((*resp)["Response"]).find("True") != -1) { //Response found movies
                 for (int i = 0; i < (*resp)["Search"].size(); i++) {
                     if (str((*resp)["Search"].at(i)["Poster"]).find("N/A") == -1) { //Has poster
-                        std::cout << "Getting poster for ind " << i << std::endl;
                         GLuint imgRef = 0;
                         float ratio = 1;
                         std::string id = (*resp)["Search"].at(i)["imdbID"];
-                        std::cout << "Loading from id: " << id << std::endl;
                         getMoviePosterAsImage(&imgRef, id, &ratio, m_apiKey, m_pPosterIDs);
-                        std::cout << "ImgRef for ind " << i << " is " << imgRef << std::endl;
                         (*resp)["Search"].at(i)["ImgGLuint"] = (int)imgRef;
                         (*resp)["Search"].at(i)["ImgRatio"] = ratio;
                     }
                 }
-                //std::cout << resp->dump(2) << std::endl;
                 *postersLoaded = true;
             }
             
         }
-        catch (std::exception e) { std::cout << "Getting posters errored" << std::endl; }
+        catch (std::exception e) {  }
         
     }
 
@@ -255,7 +251,6 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* 
                 ImGui::Text(str(vids.at(i)["Year"]).c_str());
                 std::string buttonName = "Select##" + std::to_string(i);
                 if (ImGui::Button(buttonName.c_str())) {
-                    std::cout << "Selecting" << std::endl;
                     *choosing = false;
                     *choice = i;
                     
@@ -269,24 +264,9 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* 
                 ImGui::Columns();
             }
             catch (std::exception e) {
-                //std::cout << "Skipped an element" << std::endl;
                 Title("Skipped an element");
             }
         }
-        
-        /*
-        for (auto item : (*resp)["Search"]) {
-            try {
-                space(10);
-                Title(str(item["Title"]).c_str());
-                space(3);
-                ImGui::Text(str(item["Year"]).c_str());
-            }
-            catch (std::exception e) {
-                std::cout << "Skipped an element" << std::endl;
-            }
-        }
-        */
     }
     else {
         std::string err = str((*resp)["Error"]);
@@ -296,65 +276,8 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* 
     return;
 }
 
-//Old searchDb
-/*
-void searchDb(std::string vidTitle, json* resp) {
-    
-    std::cout << "Searching" << std::endl;
-
-    std::cout << "VidTitle: " << vidTitle << std::endl;
-
-    std::string url = "https://moviesdatabase.p.rapidapi.com";
-    std::string ext = "/titles/search/title/";
-
-    //Format title
-    std::regex space("[[:space:]]");
-    std::string vidTitleFormatted = std::regex_replace(vidTitle, space, "%20");
-    
-    //Set Headers
-    httplib::Headers headers = {
-        {"X-RapidAPI-Key", "ed3bbaa9dbmsh30e8daf3fd5321ap1c95b5jsna49beedcf77c"},
-        {"Host", "moviesdatabase.p.rapidapi.com"}
-    };
-    
-    //Set Params
-    ext += vidTitleFormatted;
-    ext += "?exact=true";
-    ext += "&titleType=movie";
-    ext += "&info=custom_info";
-    
-    std::cout << "Ext: " << ext << std::endl;
-
-    //Get
-    std::cout << "Getting" << std::endl;
-    httplib::Client db(url);
-    db.set_connection_timeout(3, 0);
-    if (auto res = db.Get(ext, headers)) {
-        if (res->status == 200) {
-            std::cout << res->body << std::endl;
-        }
-        std::cout << "Got response" << std::endl;
-        std::cout << "Status: " << res->status << std::endl;
-    }
-    else {
-        auto err = res.error();
-            std::cout << "HTTP error: " << httplib::to_string(err) << std::endl;
-    }
-        
-    
-    //Handle response
-    //std::cout << res->body << std::endl;
-
-    std::cout << "Done Searching" << std::endl;
-    
-}
-*/  
 
 void searchDb(std::string vidTitle, json* resp, std::string apiKey) {
-
-    std::cout << "Searching" << std::endl;
-
-    std::cout << "VidTitle: " << vidTitle << std::endl;
 
     std::string url = "http://www.omdbapi.com";
     std::string ext = "/";
@@ -374,32 +297,21 @@ void searchDb(std::string vidTitle, json* resp, std::string apiKey) {
     ext += "&type=movie";
     ext += "&apikey=" + apiKey;
 
-    //std::cout << "Ext: " << ext << std::endl;
-
     //Get
-    //std::cout << "Getting" << std::endl;
     httplib::Client db(url);
     db.set_connection_timeout(3, 0);
     if (auto res = db.Get(ext, headers)) {
         if (res->status == 200) {
-            //std::cout << "Parsing" << std::endl;
-            std::cout << res->body << std::endl;
+            //std::cout << res->body << std::endl;
             *resp = json::parse(res->body);
         }
-        std::cout << "Got response" << std::endl;
-        std::cout << "Status: " << res->status << std::endl;
+        //std::cout << "Got response" << std::endl;
+        //std::cout << "Status: " << res->status << std::endl;
     }
     else {
         auto err = res.error();
         std::cout << "HTTP error: " << httplib::to_string(err) << std::endl;
     }
-
-    
-
-    //Handle response
-    //std::cout << res->body << std::endl;
-
-    std::cout << "Done Searching" << std::endl;
 
     return;
 }
@@ -417,7 +329,6 @@ void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::st
 
     if (res->status == 200) {
         int cLength = stoi(res->headers.find("Content-Length")->second);
-        std::cout << cLength << std::endl;
         
         std::vector<unsigned char> buffer;
         buffer.reserve(cLength);
@@ -430,15 +341,14 @@ void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::st
         *ratio = (float)imgWidth / (float)imgHeight;
         
         if (!loaded) {
-            std::cout << "Couldn't load" << std::endl;
+            //std::cout << "Couldn't load" << std::endl;
             myImg = 0;
         }
         else {
-            std::cout << "Loaded" << std::endl;
+            //std::cout << "Loaded" << std::endl;
             posterIDs->push_back(myImg);
         }
         *texRef = myImg;
-        std::cout << "myImg: " << myImg << std::endl;
         return;
     }
 
@@ -521,24 +431,10 @@ void Window::Run()
     bool didLoadLibraryFiles = loadLibraryFiles(&categories, &videoLibrary);//loadJsonFile(&videoLibrary, m_libraryFilepath);
 
 
-
-
     //Testing
-    int my_image_width = 0;
-    int my_image_height = 0;
-    GLuint my_image_texture = 0;
-    bool ret = LoadTextureFromFile("./testImg.jpg", &my_image_texture, &my_image_width, &my_image_height);
-    //IM_ASSERT(ret);
-    std::cout << "ret: " << ret << std::endl;
-
-    GLuint testImg = 0;
-    float testRatio = 1;
-
-    bool testSelected = false;
 
 
-
-
+    //Set font size
     std::cout << "Display x: " << m_pio->DisplaySize.x << " y: " << m_pio->DisplaySize.y << std::endl;
     default_font_size_var = 2;// (float)m_pio->DisplaySize.y / 1080;
 
@@ -588,22 +484,6 @@ void Window::Run()
 
             if(ImGui::BeginTabItem("Import Videos"))
             {
-                if (ImGui::Button("GetPoster")) {
-                    //Should be implemented async when actually being used
-                    getMoviePosterAsImage(&testImg, "tt0093779", &testRatio, m_apiKey, m_pPosterIDs);
-                }
-                
-                
-                ImGui::Columns(2, "MovieSelecting");
-                ImGui::SetColumnWidth(0, 300 * testRatio + 20);
-                //ImGui::Button("Test Ratio", ImVec2(300 * testRatio, 10));
-                //ImGui::Button("300Width", ImVec2(300, 10));
-                ImGui::Image((void*)(intptr_t)testImg, ImVec2(300 * testRatio, 300));
-                ImGui::NextColumn();
-                Title("Select");
-                ImGui::Text("Please Select");
-                ImGui::Button("Selection Button");
-                ImGui::Columns();
 
                 //Check that library files are valid
                 bool libraryIsValid = false;
@@ -798,8 +678,8 @@ void Window::Run()
                 */
 
                 //Image loading test
-                ImGui::Text("size = %d x %d", my_image_width, my_image_height);
-                ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(200, 200));
+                //ImGui::Text("size = %d x %d", my_image_width, my_image_height);
+                //ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(200, 200));
 
 
                 ImGui::EndTabItem();
@@ -825,10 +705,6 @@ render:
         glfwSwapBuffers(m_window);
 
     }
-
-    //Uneeded, but here as a reminder
-    glDeleteTextures(1, &testImg);
-    glDeleteTextures(1, &my_image_texture);
 
     std::ofstream infoSave("importerInfo.json");
     infoSave << importerInfo;
@@ -970,6 +846,7 @@ void Window::ChooseGLFWVersionForPlatform()
 #endif
 }
 
+
 void Title(const char* title, float multiplier)
 {
     if (multiplier > 0) ImGui::SetWindowFontScale(default_font_size_var * multiplier);
@@ -1026,8 +903,6 @@ bool LoadTextureFromMemory(stbi_uc *buffer, int bufLen, GLuint* out_texture, int
     GLuint image_texture = 0;
     glGenTextures(1, &image_texture);
     glBindTexture(GL_TEXTURE_2D, image_texture);
-
-    std::cout << "TexID here: " << image_texture << std::endl;
 
     // Setup filtering parameters for display
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
