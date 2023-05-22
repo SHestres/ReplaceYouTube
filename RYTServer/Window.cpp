@@ -234,7 +234,7 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* 
                 if (hasPoster) { //Display poster
                     GLuint img = vids.at(i)["ImgGLuint"];
                     float ratio = vids.at(i)["ImgRatio"];
-                    int height = 200;
+                    int height = 100 * DEFAULT_FONT_SIZE;
                     ImGui::SetColumnWidth(0, height * ratio + 20);
                     ImGui::Image((void*)(intptr_t)img, ImVec2(height * ratio, height));
                     ImGui::NextColumn();
@@ -243,7 +243,7 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* 
                 else { //Display no poster message
                     ImGui::SetColumnWidth(0, 300);
                     space(10);
-                    Title("No Poster Found");
+                    Title("No Poster Found", true);
                     space(10);
                     ImGui::NextColumn();
                 }
@@ -435,8 +435,9 @@ void Window::Run()
 
 
     //Set font size
-    std::cout << "Display x: " << m_pio->DisplaySize.x << " y: " << m_pio->DisplaySize.y << std::endl;
-    default_font_size_var = 2;// (float)m_pio->DisplaySize.y / 1080;
+    int displayX, displayY;
+    GetMaxMonitorResolution(&displayX, &displayY);
+    DEFAULT_FONT_SIZE = (float)displayY / 800;
 
     while (!glfwWindowShouldClose(m_window))
     {
@@ -846,12 +847,33 @@ void Window::ChooseGLFWVersionForPlatform()
 #endif
 }
 
-
-void Title(const char* title, float multiplier)
+void GetMaxMonitorResolution(int* w, int* h)
 {
-    if (multiplier > 0) ImGui::SetWindowFontScale(default_font_size_var * multiplier);
+    int count;
+    const GLFWvidmode* modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
+
+    int maxWidth = 0;
+    int maxHeight = 0;
+    for (int i = 0; i < count; i++)
+    {
+        if (modes[i].width > maxWidth)
+            maxWidth = modes[i].width;
+        if (modes[i].height > maxHeight)
+            maxHeight = modes[i].height;
+    }
+
+    *w = maxWidth;
+    *h = maxHeight;
+}
+
+void Title(const char* title, bool wrap, float multiplier)
+{
+    if (multiplier > 0) ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE * multiplier);
     else ImGui::SetWindowFontScale(TITLE_FONT_SIZE);
-    ImGui::Text(title);
+    if (wrap)
+        ImGui::TextWrapped(title);
+    else
+        ImGui::Text(title);
     ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE);
 }
 
