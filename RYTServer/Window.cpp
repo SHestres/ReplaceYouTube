@@ -163,22 +163,64 @@ bool Window::loadLibraryFiles(json* categories, json* library)
     
 }
 
-void chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing) {
+void freeTempPosterImages(std::vector<GLuint>* ids) {
+    for (int i = 0; i < ids->size(); i++) {
+        GLuint id = (*ids)[i];
+        if (id > 0) {
+            glDeleteTextures(1, &id);
+        }
+    }
+    ids->clear();
+}
+
+void Window::chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing, bool* postersLoaded) {
     Title("Movie Metadata Selector");
+
+    //Load Posters
+    if (!*postersLoaded) {
+        try {
+            if (str((*resp)["Response"]).find("True") != -1) { //Response found movies
+                for (int i = 0; i < (*resp)["Search"].size(); i++) {
+                    if (str((*resp)["Search"].at(i)["Poster"]).find("N/A") == -1) { //Has poster
+                        std::cout << "Getting poster for ind " << i << std::endl;
+                        GLuint imgRef = 0;
+                        float ratio = 1;
+                        std::string id = (*resp)["Search"].at(i)["imdbID"];
+                        std::cout << "Loading from id: " << id << std::endl;
+                        getMoviePosterAsImage(&imgRef, id, &ratio, m_apiKey);
+                        std::cout << "ImgRef for ind " << i << " is " << imgRef << std::endl;
+                        (*resp)["Search"].at(i)["ImgGLuint"] = (int)imgRef;
+                        (*resp)["Search"].at(i)["ImgRatio"] = ratio;
+                    }
+                }
+                //std::cout << resp->dump(2) << std::endl;
+                *postersLoaded = true;
+            }
+            
+        }
+        catch (std::exception e) { std::cout << "Getting posters errored" << std::endl; }
+        
+    }
 
     bool foundMovies = false;
     
     if (ImGui::Button("Return")) {
         *choosing = false;
         *choice = -1;
+        freeTempPosterImages(m_pPosterIDs);
         return;
     }
 
     try {
+        if (str((*resp)["Response"]).find("null") != -1) {
+            Title("Loading...");
+            return;
+        }
         foundMovies = str((*resp)["Response"]).find("True") != -1;
     }
     catch (std::exception e) {
-        ImGui::Text("Loading...");
+        Title("Loading...");
+        return;
     }
 
     if (foundMovies) {
@@ -188,19 +230,37 @@ void chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing)
         for (int i = 0; i < vids.size(); i++) {
             try {
                 space(5);
+                bool hasPoster = vids.at(i)["ImgGLuint"] > 0;                
+                std::string columnKey = "##MovieSelecting" + i;
+                ImGui::Columns(2, columnKey.c_str());
+                if (hasPoster) { //Display poster
+                    GLuint img = vids.at(i)["ImgGLuint"];
+                    float ratio = vids.at(i)["ImgRatio"];
+                    int height = 200;
+                    ImGui::SetColumnWidth(0, height * ratio + 20);
+                    ImGui::Image((void*)(intptr_t)img, ImVec2(height * ratio, height));
+                    ImGui::NextColumn();
+                    //ImGui::Text(str(vids.at(i)["ImgGLuint"]).c_str());
+                }
+                else { //Display no poster message
+                    ImGui::SetColumnWidth(0, 300);
+                    space(10);
+                    Title("No Poster Found");
+                    space(10);
+                    ImGui::NextColumn();
+                }
                 Title(str(vids.at(i)["Title"]).c_str());
-                ImGui::SameLine();
+                ImGui::Text(str(vids.at(i)["Year"]).c_str());
                 if (ImGui::Button("Select")) {
                     *choosing = false;
                     *choice = i;
                     return;
                 }
-                space(2);
-                ImGui::Text(str(vids.at(i)["Year"]).c_str());
-                
+                ImGui::Columns();
             }
             catch (std::exception e) {
-                std::cout << "Skipped an element" << std::endl;
+                //std::cout << "Skipped an element" << std::endl;
+                Title("Skipped an element");
             }
         }
         
@@ -219,7 +279,7 @@ void chooseFromDb(std::string vidTitle, json* resp, int* choice, bool* choosing)
         */
     }
     else {
-        Title("Didn't find movies");
+        Title("No Matches Found");
     }
 
     
@@ -305,17 +365,22 @@ void searchDb(std::string vidTitle, json* resp, std::string apiKey) {
     ext += "&type=movie";
     ext += "&apikey=" + apiKey;
 
-    std::cout << "Ext: " << ext << std::endl;
+    //std::cout << "Ext: " << ext << std::endl;
 
     //Get
-    std::cout << "Getting" << std::endl;
+    //std::cout << "Getting" << std::endl;
     httplib::Client db(url);
     db.set_connection_timeout(3, 0);
     if (auto res = db.Get(ext, headers)) {
         if (res->status == 200) {
-            std::cout << "Parsing" << std::endl;
+            //std::cout << "Parsing" << std::endl;
             std::cout << res->body << std::endl;
             *resp = json::parse(res->body);
+
+
+
+
+
         }
         std::cout << "Got response" << std::endl;
         std::cout << "Status: " << res->status << std::endl;
@@ -360,9 +425,13 @@ void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::st
         bool loaded = LoadTextureFromMemory(buffer.data(), cLength, &myImg, &imgWidth, &imgHeight);
         *ratio = (float)imgWidth / (float)imgHeight;
         
-        if (!loaded) std::cout << "Couldn't load" << std::endl;
+        if (!loaded) {
+            std::cout << "Couldn't load" << std::endl;
+            myImg = 0;
+        }
         else std::cout << "Loaded" << std::endl;
         *texRef = myImg;
+        std::cout << "myImg: " << myImg << std::endl;
         return;
     }
 
@@ -401,9 +470,12 @@ void Window::Run()
 
     //Database loading vars
     bool choosingFromDb = false;
+    bool postersLoaded = false;
     json dbResp;
     int chosen = -1;
     std::future<void> dbFuture;
+    std::vector<GLuint> posters;
+    m_pPosterIDs = &posters;
 
     //Optional input vars
     float vidRating = 0;
@@ -499,7 +571,7 @@ void Window::Run()
             }
 
             if (choosingFromDb) {
-                chooseFromDb(vidName, &dbResp, &chosen, &choosingFromDb);
+                chooseFromDb(vidName, &dbResp, &chosen, &choosingFromDb, &postersLoaded);
                 goto endWindow;
             }
             
@@ -510,7 +582,7 @@ void Window::Run()
             {
                 if (ImGui::Button("GetPoster")) {
                     //Should be implemented async when actually being used
-                    getMoviePosterAsImage(&testImg, "tt0499549", &testRatio, m_apiKey);
+                    getMoviePosterAsImage(&testImg, "tt0093779", &testRatio, m_apiKey);
                 }
                 
                 
@@ -577,8 +649,15 @@ void Window::Run()
 
                 if (ImGui::Button("Browse Database Metadata")) {
                     choosingFromDb = true;
+                    postersLoaded = false;
                     std::cout << "VidName: " << textEntry << std::endl;
                     dbFuture = std::async(std::launch::async, searchDb, textEntry, &dbResp, m_apiKey);
+                }
+                else if (chosen >= 0) {
+                    
+                    freeTempPosterImages(&posters);
+                    //TODO: Load and save data for selected movie
+                    chosen = -1;
                 }
 
                 ImGui::Checkbox("Favorite?", &isFavorite);
@@ -934,9 +1013,11 @@ bool LoadTextureFromMemory(stbi_uc *buffer, int bufLen, GLuint* out_texture, int
         return false;
 
     // Create a OpenGL texture identifier
-    GLuint image_texture;
+    GLuint image_texture = 0;
     glGenTextures(1, &image_texture);
     glBindTexture(GL_TEXTURE_2D, image_texture);
+
+    std::cout << "TexID here: " << image_texture << std::endl;
 
     // Setup filtering parameters for display
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
