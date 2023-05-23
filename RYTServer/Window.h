@@ -50,7 +50,7 @@ bool openFolderWithExplorer(std::string* SelectedFolder, std::string* FolderPath
 void Title(const char* title, bool wrap = false, float multiplier = 0);
 bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height);
 bool LoadTextureFromMemory(stbi_uc* buffer, int bufLen, GLuint* out_texture, int* out_width, int* out_height);
-void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::string apiKey, std::vector<GLuint>* posterIDs);
+void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::string apiKey, bool saveToFile = false);
 
 class Window
 {

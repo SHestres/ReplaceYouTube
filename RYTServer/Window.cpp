@@ -163,11 +163,13 @@ bool Window::loadLibraryFiles(json* categories, json* library)
     
 }
 
-void freeTempPosterImages(json list) {
+void freeTempPosterImages(json list, int skip = -1) {
     for (int i = 0; i < list.size(); i++) {
         try {
-            GLuint id = list.at(i)["GLuint"];
-            glDeleteTextures(1, &id);
+            if (i != skip) {
+                GLuint id = list.at(i)["GLuint"];
+                glDeleteTextures(1, &id);
+            }
         }
         catch (std::exception e) {}
     }
@@ -185,7 +187,7 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* 
                         GLuint imgRef = 0;
                         float ratio = 1;
                         std::string id = (*resp)["Search"].at(i)["imdbID"];
-                        getMoviePosterAsImage(&imgRef, id, &ratio, m_apiKey, m_pPosterIDs);
+                        getMoviePosterAsImage(&imgRef, id, &ratio, m_apiKey);
                         (*resp)["Search"].at(i)["ImgGLuint"] = (int)imgRef;
                         (*resp)["Search"].at(i)["ImgRatio"] = ratio;
                     }
@@ -255,7 +257,7 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* 
                     *choice = i;
                     
                     *madeSelection = true;
-                    freeTempPosterImages(vids);
+                    freeTempPosterImages(vids, i);
                     selected = vids.at(i);
                     (*choice) = selected;
                     
@@ -316,7 +318,7 @@ void searchDb(std::string vidTitle, json* resp, std::string apiKey) {
     return;
 }
 
-void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::string apiKey, std::vector<GLuint>* posterIDs) {
+void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::string apiKey, bool saveToFile) {
     
     
     httplib::Client db("http://img.omdbapi.com");
@@ -337,6 +339,11 @@ void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::st
         GLuint myImg = 0;
         int imgWidth = 1;
         int imgHeight = 1;
+
+        if (saveToFile) {
+            //std::ofstream outfile = 
+        }
+
         bool loaded = LoadTextureFromMemory(buffer.data(), cLength, &myImg, &imgWidth, &imgHeight);
         *ratio = (float)imgWidth / (float)imgHeight;
         
@@ -346,8 +353,8 @@ void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::st
         }
         else {
             //std::cout << "Loaded" << std::endl;
-            posterIDs->push_back(myImg);
         }
+
         *texRef = myImg;
         return;
     }
@@ -408,6 +415,20 @@ void Window::Run()
     bool showInput = false;
     bool textEntered = false;
 
+    //Database loading vars
+    bool choosingFromDb = false;
+    bool postersLoaded = false;
+    bool hasMadeSelection = false;
+    json dbResp;
+    json selectedMovie;
+    std::future<void> dbFuture;
+    std::vector<GLuint> posters;
+    m_pPosterIDs = &posters;
+
+    int fetchInfoDelay = 0;
+    json selectedMovieData;
+
+
     //Video input vars
     vidStat videoStats = IDLE;
 
@@ -427,18 +448,11 @@ void Window::Run()
 
     bool isFavorite = false;
 
-    //Database loading vars
-    bool choosingFromDb = false;
-    bool postersLoaded = false;
-    bool hasMadeSelection = false;
-    json dbResp;
-    json selectedMovie;
-    std::future<void> dbFuture;
-    std::vector<GLuint> posters;
-    m_pPosterIDs = &posters;
-
-    int fetchInfoDelay = 0;
-    json selectedMovieData;
+    GLuint videoImage = 0;
+    float videoImageRatio = 1;
+    bool imageFailedToLoad = false;
+    char imageFilePath[MAX_FILEPATH_LENGTH];
+    ZeroMemory(imageFilePath, MAX_FILEPATH_LENGTH);
 
     //Optional input vars
     float vidRating = 0;
@@ -507,7 +521,7 @@ void Window::Run()
             const ImGuiViewport* viewport = ImGui::GetMainViewport();
             ImGui::SetNextWindowPos(viewport->Pos);
             ImGui::SetNextWindowSize(viewport->Size);
-
+             
             //Begin
             ImGui::Begin("Importer", &closeable, flags);
             
@@ -537,8 +551,9 @@ void Window::Run()
                                 strcpy_s(actorList, str(selectedMovieData["Actors"]).c_str());
                                 releaseYear = stoi(str(selectedMovieData["Year"]));
                                 vidRating = stoi(str(selectedMovieData["imdbRating"]));
-                            }
-                            catch (std::exception e) {}
+                                videoImage = selectedMovie["ImgGLuint"];
+                                videoImageRatio = selectedMovie["ImgRatio"];
+                            } catch (std::exception e) { std::cout << "Errored" << std::endl; }
                         }
                     }
                     else{
@@ -595,7 +610,7 @@ void Window::Run()
                     }
                 }
                 ImGui::PopTabStop();
-
+                
                 space(5);
 
                 ImGui::Text("Video Title");
@@ -622,6 +637,44 @@ void Window::Run()
                     //TODO: Load and save data for selected movie
                     fetchInfoDelay = 2;
                     hasMadeSelection = false;
+                }
+
+                space(5);
+
+                ImGui::Text("Poster Image");
+                if (videoImage > 0) {
+                    int height = 100 * DEFAULT_FONT_SIZE;
+                    ImGui::Image((void*)(intptr_t)videoImage, ImVec2(height* videoImageRatio, height));
+                    ImGui::Text(tstr(videoImage).c_str());
+                    if (ImGui::Button("Remove Image")) {
+                        glDeleteTextures(1, &videoImage);
+                        videoImage = 0;
+                    }
+                }
+                else {
+                    ImGui::InputTextWithHint("##ImageFilePath", "Path to video", imageFilePath, MAX_FILEPATH_LENGTH);
+                    ImGui::SameLine();
+                    if (ImGui::Button("Browse##Poster")) {
+                        std::string fileNameStr, filePathStr;
+                        if (openFileWithExplorer(&fileNameStr, &filePathStr))
+                        {
+                            strcpy_s(imageFilePath, filePathStr.c_str());
+                        }
+                        else
+                        {
+                            strcpy_s(imageFilePath, "Error. Couldn't get filename");
+                        }
+                        imageFailedToLoad = false;
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Submit Image")) {
+                        int width, height;
+                        imageFailedToLoad = !LoadTextureFromFile(imageFilePath, &videoImage, &width, &height);
+                        videoImageRatio = (float)width / (float)height;
+                    }
+                    if (imageFailedToLoad) {
+                        ImGui::TextColored(ImVec4(1, 0, 0, 1), "Couldn't load image");
+                    }
                 }
 
 
@@ -672,7 +725,6 @@ void Window::Run()
 
                 ImGui::SetWindowFontScale(TITLE_FONT_SIZE);
                 if (ImGui::Button("Import")) {
-                    std::cout << "Testing: " << tstr(1234) << std::endl;
                     packager.Init(filePath, m_libraryFolderpath, tstr(1234));
                     packageFuture = packager.Run(&videoStats, &packageStep, &errorMsg);
                     goToLibrary = true;
