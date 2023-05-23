@@ -356,6 +356,48 @@ void getMoviePosterAsImage(GLuint* texRef, std::string id, float* ratio, std::st
     return;
 }
 
+json Window::fetchMovieData(json movie) {
+
+    json out;
+
+    std::string url = "http://www.omdbapi.com";
+    std::string ext = "/";
+    std::string id = "";
+    try {
+        id = movie["imdbID"];
+    }
+    catch (std::exception e) {}
+
+    //Set Headers
+    httplib::Headers headers = {
+        //{"X-RapidAPI-Key", "ed3bbaa9dbmsh30e8daf3fd5321ap1c95b5jsna49beedcf77c"},
+        {"Host", "www.omdbapi.com"}
+    };
+
+    //Set Params
+    ext += "?i=" + id;
+    ext += "&type=movie";
+    ext += "&apikey=" + m_apiKey;
+
+    //Get
+    httplib::Client db(url);
+    db.set_connection_timeout(3, 0);
+    if (auto res = db.Get(ext, headers)) {
+        if (res->status == 200) {
+            std::cout << res->body << std::endl;
+            out = json::parse(res->body);
+        }
+        //std::cout << "Got response" << std::endl;
+        //std::cout << "Status: " << res->status << std::endl;
+    }
+    else {
+        auto err = res.error();
+        std::cout << "HTTP error: " << httplib::to_string(err) << std::endl;
+    }
+
+    return out;
+
+}
 
 void Window::Run()
 {
@@ -374,8 +416,8 @@ void Window::Run()
     ZeroMemory(filePath, MAX_FILEPATH_LENGTH);
 
     char vidName[MAX_VIDEO_TITLE_LENGTH];
-    char textEntry[MAX_VIDEO_TITLE_LENGTH];
-    ZeroMemory(textEntry, MAX_VIDEO_TITLE_LENGTH);
+    //char textEntry[MAX_VIDEO_TITLE_LENGTH];
+    //ZeroMemory(textEntry, MAX_VIDEO_TITLE_LENGTH);
     ZeroMemory(vidName, MAX_VIDEO_TITLE_LENGTH);
 
     char genreList[MAX_VIDEO_GENRE_LENGTH];
@@ -394,6 +436,9 @@ void Window::Run()
     std::future<void> dbFuture;
     std::vector<GLuint> posters;
     m_pPosterIDs = &posters;
+
+    int fetchInfoDelay = 0;
+    json selectedMovieData;
 
     //Optional input vars
     float vidRating = 0;
@@ -469,16 +514,44 @@ void Window::Run()
             //Window Styling
             ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE);
 
-            //Double check library file is a valid json
-            if (!didLoadLibraryFiles) {
-                didLoadLibraryFiles = findLibraryFolderPage(m_libraryFolderpath, MAX_FILEPATH_LENGTH, &categories, &videoLibrary, &submitLibraryPath);
-                goto endWindow;
+            //Possible other screens
+            {
+                if (!didLoadLibraryFiles) {
+                    didLoadLibraryFiles = findLibraryFolderPage(m_libraryFolderpath, MAX_FILEPATH_LENGTH, &categories, &videoLibrary, &submitLibraryPath);
+                    goto endWindow;
+                }
+
+                if (choosingFromDb) {
+                    chooseFromDb(vidName, &dbResp, &selectedMovie, &choosingFromDb, &hasMadeSelection, &postersLoaded);
+                    goto endWindow;
+                }
+
+                if (fetchInfoDelay > 0) {
+                    if (fetchInfoDelay == 1) {
+                        selectedMovieData = fetchMovieData(selectedMovie);
+                        if (!selectedMovieData.is_null()) {
+                            try {
+                                strcpy_s(vidName, str(selectedMovieData["Title"]).c_str());
+                                strcpy_s(description, str(selectedMovieData["Plot"]).c_str());
+                                strcpy_s(genreList, str(selectedMovieData["Genre"]).c_str());
+                                strcpy_s(actorList, str(selectedMovieData["Actors"]).c_str());
+                                releaseYear = stoi(str(selectedMovieData["Year"]));
+                                vidRating = stoi(str(selectedMovieData["imdbRating"]));
+                            }
+                            catch (std::exception e) {}
+                        }
+                    }
+                    else{
+                        space(20);
+                        Title("Loading Movie Data...");
+                        space(20);
+                    }
+                    fetchInfoDelay--;
+                    goto endWindow;
+                }
             }
 
-            if (choosingFromDb) {
-                chooseFromDb(vidName, &dbResp, &selectedMovie, &choosingFromDb, &hasMadeSelection, &postersLoaded);
-                goto endWindow;
-            }
+
             
             //Main Program
             ImGui::BeginTabBar("TabBar");
@@ -523,16 +596,16 @@ void Window::Run()
                 }
                 ImGui::PopTabStop();
 
-                space(3);
+                space(5);
 
                 ImGui::Text("Video Title");
-                if (ImGui::InputTextWithHint("##VideoTitleInput", "Video Title", textEntry, MAX_VIDEO_TITLE_LENGTH, ImGuiInputTextFlags_EnterReturnsTrue))
+                if (ImGui::InputTextWithHint("##VideoTitleInput", "Video Title", vidName, MAX_VIDEO_TITLE_LENGTH, ImGuiInputTextFlags_EnterReturnsTrue))
                 {
-                    textEntered = true;
-                    strcpy_s(vidName, textEntry);
+                    //textEntered = true;
+                    //strcpy_s(vidName, textEntry);
                 }
-                if (textEntered)
-                    ImGui::Text("Video will take the name \"%s\"", vidName);
+                //if (textEntered)
+                    //ImGui::Text("Video will take the name \"%s\"", vidName);
 
                 space(3);
 
@@ -540,22 +613,24 @@ void Window::Run()
                     choosingFromDb = true;
                     postersLoaded = false;
                     hasMadeSelection = false;
-                    std::cout << "VidName: " << textEntry << std::endl;
+                    //std::cout << "VidName: " << vidName << std::endl;
                     dbResp["Response"] = NULL;
-                    dbFuture = std::async(std::launch::async, searchDb, textEntry, &dbResp, m_apiKey);
+                    dbFuture = std::async(std::launch::async, searchDb, vidName, &dbResp, m_apiKey);
                 }
                 else if (hasMadeSelection) {
 
                     //TODO: Load and save data for selected movie
-                    std::cout << selectedMovie << std::endl;
+                    fetchInfoDelay = 2;
                     hasMadeSelection = false;
                 }
 
+
+                space(5);
                 ImGui::Checkbox("Favorite?", &isFavorite);
 
 
 
-                space(3);
+                space(5);
 
                 ImGui::Text("Genre List (Format matters)");
                 ImGui::InputTextWithHint("##GenreList", "Action, Drama, Romance", genreList, MAX_VIDEO_GENRE_LENGTH);
@@ -564,18 +639,18 @@ void Window::Run()
 
                 Title("Optional Parameters");
 
-                space(3);
+                space(5);
 
                 ImGui::Text("Video Rating");
                 ImGui::SetNextItemWidth(200);
-                ImGui::SliderFloat("(0.0 saves as unrated)", &vidRating, 0, 5, "%.1f");
+                ImGui::SliderFloat("(0.0 saves as unrated)", &vidRating, 0, 10, "%.1f");
 
-                space(3);
+                space(5);
 
                 ImGui::Text("Actor List");
                 ImGui::InputTextWithHint("##ActorList", "Gal Gadot, Ryan Reynolds, Dwayne Johnson", actorList, MAX_ACTOR_LIST_LENGTH);
 
-                space(3);
+                space(5);
 
                 ImGui::Text("Release Year");
 
@@ -584,17 +659,25 @@ void Window::Run()
                 ImGui::SameLine();
                 ImGui::Text("Ctrl click to step by 10");
 
-                space(3);
+                space(5);
 
                 ImGui::Text("Description / Plot");
-                ImGui::InputTextMultiline("##VideoDescription", description, MAX_VIDEO_DESCRIPTION_LENGTH);
+                ImGui::InputText("##VideoDescription", description, MAX_VIDEO_DESCRIPTION_LENGTH);
+                space(3);
+                ImGui::Text("(Readable Version)");
+                space(2);
+                ImGui::TextWrapped(description);
 
+                space(3);
+
+                ImGui::SetWindowFontScale(TITLE_FONT_SIZE);
                 if (ImGui::Button("Import")) {
                     std::cout << "Testing: " << tstr(1234) << std::endl;
                     packager.Init(filePath, m_libraryFolderpath, tstr(1234));
                     packageFuture = packager.Run(&videoStats, &packageStep, &errorMsg);
                     goToLibrary = true;
                 }
+                ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE);
 
                 ImGui::EndTabItem();
             }

@@ -85,6 +85,8 @@ private:
 	//void searchDb(std::string vidTitle, json* resp);
 	void chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* choosing, bool* madeSelection, bool* postersLoaded);
 
+	json fetchMovieData(json movie);
+
 	void DemoWindows();
 
 };
