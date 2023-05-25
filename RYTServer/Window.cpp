@@ -278,7 +278,6 @@ void Window::chooseFromDb(std::string vidTitle, json* resp, json* choice, bool* 
     return;
 }
 
-
 void searchDb(std::string vidTitle, json* resp, std::string apiKey) {
 
     std::string url = "http://www.omdbapi.com";
@@ -391,7 +390,7 @@ json Window::fetchMovieData(json movie) {
     db.set_connection_timeout(3, 0);
     if (auto res = db.Get(ext, headers)) {
         if (res->status == 200) {
-            std::cout << res->body << std::endl;
+            //std::cout << res->body << std::endl;
             out = json::parse(res->body);
         }
         //std::cout << "Got response" << std::endl;
@@ -431,7 +430,6 @@ void Window::Run()
 
     //Video input vars
     vidStat videoStats = IDLE;
-
     bool submitLibraryPath = false;
     char filePath[MAX_FILEPATH_LENGTH];
     ZeroMemory(filePath, MAX_FILEPATH_LENGTH);
@@ -440,6 +438,8 @@ void Window::Run()
     //char textEntry[MAX_VIDEO_TITLE_LENGTH];
     //ZeroMemory(textEntry, MAX_VIDEO_TITLE_LENGTH);
     ZeroMemory(vidName, MAX_VIDEO_TITLE_LENGTH);
+
+    std::string categoryKey = "";
 
     char genreList[MAX_VIDEO_GENRE_LENGTH];
     char description[MAX_VIDEO_DESCRIPTION_LENGTH];
@@ -470,10 +470,9 @@ void Window::Run()
     std::future<void> packageFuture;
     bool goToLibrary = false;
     json loadingVids;
-    /*loadingVids = json::object({
-        {}
-        });
-        */
+
+    json vidsToImport;
+    m_pImpData = &vidsToImport;
 
     //Try to load previous library info (all but lib path will be overridden by info file in lib)
     json importerInfo;
@@ -565,13 +564,11 @@ void Window::Run()
                     goto endWindow;
                 }
             }
-
-
             
             //Main Program
             ImGui::BeginTabBar("TabBar");
 
-            if(ImGui::BeginTabItem("Import Videos"))
+            if (ImGui::BeginTabItem("Import Videos"))
             {
 
                 //Check that library files are valid
@@ -580,8 +577,8 @@ void Window::Run()
                 try {
                     libraryIsValid = checkLibraries(&categories, &videoLibrary, &warningMessage);
                 }
-                catch (std::exception e) { 
-                    libraryIsValid = false; 
+                catch (std::exception e) {
+                    libraryIsValid = false;
                     warningMessage = "!!!WARNING!!! Unable to check library file validity. Likely invalid";
                 }
 
@@ -590,8 +587,59 @@ void Window::Run()
                     ImGui::TextColored(ImVec4(1, 0, 0, 1), warningMessage.c_str());
                     space(10);
                 }
-                
+
                 //Rest of GUI
+
+                ImGui::Text("Video Title");
+                ImGui::InputTextWithHint("##VideoTitleInput", "Video Title", vidName, MAX_VIDEO_TITLE_LENGTH);
+
+                space(3);
+
+                if (ImGui::Button("Search for Metadata")) {
+                    choosingFromDb = true;
+                    postersLoaded = false;
+                    hasMadeSelection = false;
+                    //std::cout << "VidName: " << vidName << std::endl;
+                    dbResp["Response"] = NULL;
+                    dbFuture = std::async(std::launch::async, searchDb, vidName, &dbResp, m_apiKey);
+                }
+                else if (hasMadeSelection) {
+                    fetchInfoDelay = 2;
+                    hasMadeSelection = false;
+                }
+
+                space(5);
+
+                std::string dropDisplay;
+                //try {
+                    if (categories.contains(categoryKey))
+                        dropDisplay = categories[categoryKey];
+                    else
+                        dropDisplay = "Select a Category";
+                //}
+                /*catch (std::exception e) {
+                    dropDisplay = "Select a Category";
+                }*/
+
+                ImGui::Text("Video Category");
+
+                if (ImGui::BeginCombo("##CategorySelect", dropDisplay.c_str())) {
+                    for (auto& item : categories.items()) {
+                        bool selected = (categoryKey.find(item.key()) != -1);
+                        std::string key = item.key();
+                        std::string val = item.value();
+                        if(ImGui::Selectable(str(item.value()).c_str(), &selected)) {
+                            categoryKey = item.key();
+                        }
+                        if (selected) {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+
+                space(5);
+
                 ImGui::Text("Video File to import and encode");
 
                 ImGui::InputTextWithHint("##FilePathInput", "Path to Video File", filePath, 256);
@@ -610,34 +658,6 @@ void Window::Run()
                     }
                 }
                 ImGui::PopTabStop();
-                
-                space(5);
-
-                ImGui::Text("Video Title");
-                if (ImGui::InputTextWithHint("##VideoTitleInput", "Video Title", vidName, MAX_VIDEO_TITLE_LENGTH, ImGuiInputTextFlags_EnterReturnsTrue))
-                {
-                    //textEntered = true;
-                    //strcpy_s(vidName, textEntry);
-                }
-                //if (textEntered)
-                    //ImGui::Text("Video will take the name \"%s\"", vidName);
-
-                space(3);
-
-                if (ImGui::Button("Search for Metadata")) {
-                    choosingFromDb = true;
-                    postersLoaded = false;
-                    hasMadeSelection = false;
-                    //std::cout << "VidName: " << vidName << std::endl;
-                    dbResp["Response"] = NULL;
-                    dbFuture = std::async(std::launch::async, searchDb, vidName, &dbResp, m_apiKey);
-                }
-                else if (hasMadeSelection) {
-
-                    //TODO: Load and save data for selected movie
-                    fetchInfoDelay = 2;
-                    hasMadeSelection = false;
-                }
 
                 space(5);
 
@@ -676,6 +696,7 @@ void Window::Run()
                         ImGui::TextColored(ImVec4(1, 0, 0, 1), "Couldn't load image");
                     }
                 }
+
 
 
                 space(5);
@@ -725,8 +746,24 @@ void Window::Run()
 
                 ImGui::SetWindowFontScale(TITLE_FONT_SIZE);
                 if (ImGui::Button("Import")) {
+                    /*
                     packager.Init(filePath, m_libraryFolderpath, tstr(1234));
                     packageFuture = packager.Run(&videoStats, &packageStep, &errorMsg);
+                    */
+
+                    std::string id = selectedMovie["imdbID"];
+
+                    loadingVids[id] = {
+                        {"imdbID", id},
+                        {"Title", vidName},
+                        {"ImgID", videoImage},
+                        {"ImgRatio", videoImageRatio}
+                    };
+
+
+
+                    std::cout << loadingVids;
+
                     goToLibrary = true;
                 }
                 ImGui::SetWindowFontScale(DEFAULT_FONT_SIZE);

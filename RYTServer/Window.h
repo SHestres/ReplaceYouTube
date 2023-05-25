@@ -69,7 +69,8 @@ private:
 
 	//Library vars
 	char m_libraryFolderpath[MAX_FILEPATH_LENGTH];
-	json* m_pImpInfo;
+	json* m_pImpInfo; //Pointer to info about the importer and library
+	json* m_pImpData; //Pointer to data for videos that are being imported
 	std::vector<GLuint>* m_pPosterIDs;
 
 	std::string m_apiKey = "f16097b7";
