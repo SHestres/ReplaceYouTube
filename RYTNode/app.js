@@ -22,19 +22,21 @@ let otherspath = './assets/videos/data/other.json';
 let favorites;
 let favoritespath = './assets/videos/data/favorites.json';
 
+let users;
+
 let videoData = {};
 let categories = [];
 
 function requireVideoData(){
     if(Object.keys(videoData).length == 0 || categories.length == 0){
         //Categories holds the names of the categories, keyed by their api label
-        console.log("Getting categories")
+        //console.log("Getting categories")
         categories = JSON.parse(fs.readFileSync(`./assets/videos/data/categories.json`));
         for (var cat in categories){
             videoData[cat] = [];
         }
-        console.log(videoData);
-        console.log(categories);
+        //console.log(videoData);
+        //console.log(categories);
     }
 
     for (var cat in videoData){
@@ -140,16 +142,20 @@ app.get('/test', (req, res) =>{
     res.send("success");
 })
 
-app.post('/api/login', (req, res) =>{
+app.get('/api/profile/list', (req, res)=>{
+    let users = require("./assets/users.json")
+    console.log('Users', users)
+    res.json(users);
+});
+
+app.post('/api/profile/:userName', (req, res) =>{
     let users = require("./assets/users.json")
     //console.log(users)
-    let userByName = users[req.body.username];
+    let userByName = users[req.params.userName];
     //console.log(userByName);
     let user;
     if(userByName){
-        if(userByName.password == req.body.password){
-            user = userByName.name;
-        }
+        user = userByName.name;
     }
     //console.log(user);
     res.send({user});
@@ -157,8 +163,6 @@ app.post('/api/login', (req, res) =>{
 
 app.get('/api/list/categories', (req, res) =>{
     requireVideoData();
-    console.log("Listing categories");
-    console.log(categories);
     res.json(categories);
 })
 

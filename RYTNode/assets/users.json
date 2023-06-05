@@ -1,5 +1,4 @@
-{
-    "jjsmith": {"id": 1,
-                "name": "John Smith", 
-                "password": ""}
-}
+[
+    "John Smith",
+    "Bubbidy"
+]

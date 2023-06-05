@@ -7,5 +7,5 @@ export default function Protected({children, redirect, ...rest }){
     const {StateContext } = useGlobalState();
     const {state} = useContext(StateContext);
 
-    return (state.user ? <Route {...rest}>{children}</Route> : (redirect ? <Redirect to={redirect} /> : <Redirect to='/login' />))
+    return (state.user ? <Route user={state.user} {...rest}>{children}</Route> : (redirect ? <Redirect to={redirect} /> : <Redirect to='/login' />))
 }

@@ -1,0 +1,40 @@
+.profile-select{
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.profile-row{
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+    background: #000A;
+    border-radius: 10px;
+    margin: 30px;
+}
+
+/*
+.profile-select{
+    position:absolute;
+    left: 0;
+    right: 0;
+    padding: 30px;
+    background-color: #1c1c1ce0;
+    border-radius: 10px;
+    width: 30%;
+    margin-top: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 12px;
+    justify-items: center;
+}*/
+
+.profile-select-button{
+    height: 200px;
+    width: 200px;
+}
+
+.profile-select-button > div{
+    font-size: 80px;
+}

@@ -3,6 +3,7 @@ import bgImg from '../assets/sign-in-background.jpg'
 import {useState, useContext} from 'react'
 import useGlobalState from '../services/useGlobalState'
 import { useHistory} from 'react-router-dom'
+import ProfileSelect from './ProfileSelect'
 
 export default function Login()
 {
@@ -57,13 +58,17 @@ export default function Login()
 
     return(
         <Layout>
-            <div className="login-panel">
+            <ProfileSelect/>
+            <img className="login-bg" src={bgImg} alt="Login"></img>
+        </Layout>
+    )
+}
+
+/*
+<div className="login-panel">
                 <h1>Sign In</h1>
                 <input className='loginInput' type='text' placeholder='Username' onChange={setUsernameHandler} value={username} onKeyDown={keyPressHandler}></input>
                 <input className='loginInput' type='text' placeholder='Password' onChange={setPasswordHandler} value={password} onKeyDown={keyPressHandler}></input>
                 <button id='signInButton' onClick={doLogin}>Sign In</button>
             </div>
-            <img className="login-bg" src={bgImg} alt="Login"></img>
-        </Layout>
-    )
-}
+*/
