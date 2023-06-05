@@ -85,7 +85,7 @@ void runPackagingAsync(std::string inFile, std::string libPath, std::string vide
 
 	while (*step < 3);
 
-	*packagingStatus = FINISHING;
+	*packagingStatus = MOVING_FILES;
 	//Rename output folder
 	command = "REN output " + videoID + " > resp.txt 2> resp.err";
 	system(command.c_str());
@@ -124,7 +124,7 @@ void runPackagingAsync(std::string inFile, std::string libPath, std::string vide
 	}
 	catch (std::exception e) { std::cerr << "Couldn't delete file" << std::endl; }
 
-	*packagingStatus = SUCCEEDED;
+	*packagingStatus = FINISHING;
 }
 
 

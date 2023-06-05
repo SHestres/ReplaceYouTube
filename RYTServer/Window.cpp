@@ -61,6 +61,15 @@ bool checkLibraries(json* categories, json* videoLibrary, std::string* message) 
     return broken == 0;
 }
 
+idStatPair findPairById(std::vector<idStatPair> pairs, std::string id) {
+    for (auto pair : pairs) {
+        if (pair.id.compare(id) != -1) {
+            return pair;
+        }
+    }
+    return {"", NULL, NULL};
+}
+
 Window::Window(std::string libraryFilename)
 {
     strcpy_s(m_libraryFolderpath, libraryFilename.c_str());
@@ -426,7 +435,7 @@ void Window::Run()
 
     int fetchInfoDelay = 0;
     json selectedMovieData;
-
+    bool dataIsFromDb = false;
 
     //Video input vars
     vidStat videoStats = IDLE;
@@ -473,6 +482,8 @@ void Window::Run()
 
     json vidsToImport;
     m_pImpData = &vidsToImport;
+
+    std::vector<idStatPair> importingVidStats;
 
     //Try to load previous library info (all but lib path will be overridden by info file in lib)
     json importerInfo;
@@ -553,6 +564,7 @@ void Window::Run()
                                 videoImage = selectedMovie["ImgGLuint"];
                                 videoImageRatio = selectedMovie["ImgRatio"];
                             } catch (std::exception e) { std::cout << "Errored" << std::endl; }
+                            dataIsFromDb = true;
                         }
                     }
                     else{
@@ -746,23 +758,41 @@ void Window::Run()
 
                 ImGui::SetWindowFontScale(TITLE_FONT_SIZE);
                 if (ImGui::Button("Import")) {
-                    /*
-                    packager.Init(filePath, m_libraryFolderpath, tstr(1234));
-                    packageFuture = packager.Run(&videoStats, &packageStep, &errorMsg);
-                    */
 
-                    std::string id = selectedMovie["imdbID"];
+                    std::string id;
+                    if(dataIsFromDb)
+                        id = selectedMovie["imdbID"];
+                    else {
+                        int lastID = stoi(str(importerInfo["lastID"]));
+                        id = "ni" + tstr(lastID + 1);
+                        importerInfo["lastID"] = tstr(lastID);
+                    }
 
                     loadingVids[id] = {
-                        {"imdbID", id},
+                        {"ID", id},
                         {"Title", vidName},
                         {"ImgID", videoImage},
                         {"ImgRatio", videoImageRatio}
                     };
 
+                    vidsToImport[id] = {
+                        {"ID", id},
+                        {"Title", vidName},
+                        {"Favorite", isFavorite},
+                        {"Year", releaseYear},
+                        {"Rated", vidRating},
+                        {"Genre", genreList},
+                        {"Actors", actorList},
+                        {"Plot", description},
+                    };
 
-
-                    std::cout << loadingVids;
+                    vidStat* vidStatPtr = (vidStat*)malloc(sizeof(vidStat));
+                    std::string* errMsg = new std::string("No Error");
+                    idStatPair newPair = { id, vidStatPtr, errMsg };
+                    importingVidStats.push_back(newPair);
+                    
+                    packager.Init(filePath, m_libraryFolderpath, id);
+                    packageFuture = packager.Run(vidStatPtr, &packageStep, errMsg);
 
                     goToLibrary = true;
                 }
@@ -791,10 +821,37 @@ void Window::Run()
                 }
                 ImGui::Text("Step %d", packageStep);
                 space(10);
-                std::string text = "Video Status: " + str(EnumStrings[videoStats]);
-                ImGui::Text(text.c_str());
-                std::string err = "Error Message: " + errorMsg;
-                ImGui::Text(err.c_str());
+                
+
+
+                for (auto& item : loadingVids.items()) {
+                    idStatPair pair = findPairById(importingVidStats, item.key());
+                    if (pair.id.length() > 0) { //Ensure vid was found
+                        json vid;
+                        bool canImport = true;
+                        if (vidsToImport.contains(item.key())) {
+                            vid = vidsToImport[item.key()];
+                            canImport = true;
+                        }
+                        else {
+                            *pair.pErr = "Couldn't find VideoMetadata";
+                            canImport = false;
+                        }
+
+                        std::string text = "Video Status: " + str(EnumStrings[*(pair.stat)]);
+                        ImGui::Text(text.c_str());
+                        std::string err = "Error Message: " + *(pair.pErr);
+                        ImGui::Text(err.c_str());
+
+                        if (*pair.stat == FINISHING) {
+                            if (canImport) {
+                                //TODO: Store video data to json
+                            }
+                            *pair.stat = SUCCEEDED;
+                        }
+                    }
+                }
+
                 ImGui::EndTabItem();
             }
 

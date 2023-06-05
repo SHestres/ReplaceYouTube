@@ -43,6 +43,12 @@ typedef unsigned char stbi_uc;
 #define IMP_INFO_FILEPATH_EXT "/data/importerInfo.json"
 #define DATA_FILEPATH_EXT "/data/"
 
+struct idStatPair {
+	std::string id;
+	vidStat* stat;
+	std::string* pErr;
+};
+
 //Forward Declarations
 void GetMaxMonitorResolution(int* w, int* h);
 bool openFileWithExplorer(std::string* SelectedFile, std::string* FilePath);

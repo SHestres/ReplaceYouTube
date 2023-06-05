@@ -5,6 +5,7 @@
 
 # Large Video Files
 VideoFiles/*
+RYTNode/assets/videos/videos/*
 
 # User-specific files
 *.rsuser
