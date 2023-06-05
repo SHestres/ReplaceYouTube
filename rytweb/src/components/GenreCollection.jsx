@@ -1,17 +1,21 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useContext} from 'react'
 import VideoCard from './VideoCard';
 import { uniqueId } from 'lodash';
 import FavIcon from './FavIcon';
 import InfinityScroll from './InfinityScroll';
+import useGlobalState from '../services/useGlobalState';
 
 export default function GenreCollection({ genre, category, title, hasGenreCallback})
 {
     const [content, setContent] = useState([]);
     const [updateVar, setUpdateVar] = useState(0);
+    const {StateContext } = useGlobalState();
+    const {state} = useContext(StateContext);
+    const [ numGenres, setNumGenres ] = useState(0);
 
     useEffect(() => {
         //console.log(`Fetching genre ${genre.name} from category ${category}`)
-        fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/list/${category}/${genre.name}`)
+        fetch(`http://${window.location.host.split(":", 1)[0]}:5100/api/list/${category}/${genre.name}?user=${state.user}`)
         .then((res) => res.json())
         .then((data) => {
             setContent(data);
@@ -26,7 +30,9 @@ export default function GenreCollection({ genre, category, title, hasGenreCallba
             <div className="movie-row">
                 <div className="movie-category-label">{title? title : genre.name}</div>
                 <InfinityScroll>
-                        {content.map((movie) => <VideoCard key={uniqueId()} {...movie} />)}
+                        {
+                        content.map((movie) => <VideoCard key={uniqueId()} {...movie} />)
+                        }
                 </InfinityScroll>            
             </div>
         ) 

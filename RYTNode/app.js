@@ -193,8 +193,9 @@ app.get('/api/list/:category/:genre', (req, res) => {
     let category = req.params.category;
     let genre = req.params.genre;
 
+
     if(category == "favorites"){
-        let ids = favorites[genre]
+        let ids = favorites[req.query.user][genre]
         filtered = ids.map((id) =>{
             return getVidByID(videoData[genre], id);
         })
